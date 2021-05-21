@@ -26,7 +26,7 @@ class Limit:
     def exhausted(self) -> bool:
         return self.get(self.key) > self.limit
 
-    def left(self) -> dict[str, int]:
+    def left(self) -> dict:
         return {self.key: max(0, self.limit - self.get(self.key))}
 
     def __info__(self):

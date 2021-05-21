@@ -14,7 +14,7 @@ class Any(Limit):
     def exhausted(self) -> bool:
         return any(arg.exhausted() for arg in self.args)
 
-    def left(self) -> dict[str, int]:
+    def left(self) -> dict:
         return {k: v for arg in self.args for k, v in arg.left().items()}
 
     def __info__(self):
