@@ -2,7 +2,8 @@ from collections import namedtuple
 
 from numpy.random import RandomState
 
-BackdoorState = namedtuple('BackdoorState', ['numbers', 'permutation', 'get_function_seed'])
+BackdoorSeeds = namedtuple('BackdoorSeeds', 'list_seed function_seed')
+BackdoorState = namedtuple('BackdoorState', 'numbers permutation seeds')
 
 
 class State:
@@ -28,7 +29,10 @@ class State:
         return BackdoorState(
             lambda: self._numbers(state),
             lambda: self._permutation(state),
-            lambda: state['function_seed'],
+            BackdoorSeeds(
+                state['list_seed'],
+                state['function_seed']
+            )
         )
 
     def _numbers(self, state):

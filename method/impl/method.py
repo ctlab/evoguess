@@ -29,7 +29,7 @@ class Context:
         # todo: refactor
         dimension = iter(Dimension(self.backdoor, self.cache, len(values)))
         dimension = [next(dimension)[1] for _ in range(count)]
-        f_seed = self.cache.state[self.backdoor].get_function_seed()
+        f_seed = self.cache.state[self.backdoor].seeds.function_seed
         tasks = self.function.prepare_tasks(self.instance, self.backdoor, *dimension, seed=f_seed)
 
         return tasks

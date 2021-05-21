@@ -24,7 +24,8 @@ class MethodFuture:
         values = self.context.function.get_values(*results)
         estimation = {
             **self.context.sampling.report(values),
-            **self.context.function.calculate(self.context.backdoor, *results)
+            **self.context.function.calculate(self.context.backdoor, *results),
+            'seeds': self.context.cache.state[self.context.backdoor].seeds._asdict()
         }
         if canceled:
             estimation['value'] = float('inf')
