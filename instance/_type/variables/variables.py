@@ -29,7 +29,7 @@ class Variables:
     def __len__(self):
         return len(self.snapshot())
 
-    def __str__(self):
+    def _to_str(self):
         variables, strings, i, j = self.snapshot(), [], 0, 1
         while i < len(variables):
             if j == len(variables) or variables[j] - variables[i] != j - i:
@@ -40,8 +40,14 @@ class Variables:
                 i, j = j, j + 1
             else:
                 j += 1
+        return ' '.join(strings), len(variables)
 
-        return f"[{' '.join(strings)}]({len(variables)})"
+    def __str__(self):
+        string, count = self._to_str()
+        return f"[{string}]({count})"
+
+    def __repr__(self):
+        return self._to_str()[0]
 
     def __iter__(self):
         return self.snapshot().__iter__()

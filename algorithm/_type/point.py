@@ -49,7 +49,7 @@ class Point:
         return '%s by %.7g (%s samples)' % (self.backdoor, self.get(), self.get('count'))
 
     def to_dict(self):
-        return {'backdoor': str(self.backdoor), **self.estimation}
+        return {'backdoor': repr(self.backdoor), **self.estimation}
 
 
 Vector = Collection[Point]
