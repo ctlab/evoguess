@@ -10,7 +10,7 @@ def first_completed(futures, timeout=None):
     if done: return done
 
     jobs = fc([f.job for f in futures], timeout)
-    return done or [future for future in futures if future.job in jobs]
+    return [future for future in futures if future.job in jobs]
 
 
 class MethodFuture:

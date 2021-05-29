@@ -45,9 +45,10 @@ class Output:
 
         name = f'{dt_name()}-?'
         path = os.path.join(self.path, name)
-        while not os.path.exists(path):
+        while True:
             try:
                 os.mkdir(path)
+                break
             except FileExistsError:
                 time.sleep(1)
                 name = f'{dt_name()}-?'

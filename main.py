@@ -1,14 +1,15 @@
 import sys
 import json
+from util import build
 
-from instance._type.variables import BaseBackdoor
 from output import Output
 from method import Method
 from executor import Executor
 from function import Function
 from instance import Instance
 from algorithm import Algorithm
-from util import build
+
+from instance._type.variables import BaseBackdoor
 
 if __name__ == '__main__':
     assert len(sys.argv) == 2, f'Invalid number of input args {len(sys.argv)}'

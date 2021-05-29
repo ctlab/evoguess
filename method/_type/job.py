@@ -58,9 +58,9 @@ def first_completed(jobs, timeout=None):
 
 class Job:
     def __init__(self, context):
-        self._offset = 0
         self._indexes = []
         self._futures = []
+        self._handled = []
         self._results = []
         self._waiters = []
         self._state = PENDING
@@ -70,6 +70,16 @@ class Job:
         self._processor = threading.Thread(
             target=self._process, args=(context,)
         )
+
+    def _get_active_futures(self):
+        return [
+            self._futures[i]
+            for i in range(len(self._handled))
+            if not self._handled[i]
+        ]
+
+    def _get_completed_results(self):
+        return [result for result in self._results if result]
 
     def _handle_future(self, future, i=None):
         with self._condition:
@@ -82,28 +92,38 @@ class Job:
                 if type(e).__name__ != CANCELLED_ERROR:
                     print(f'Exception in task {i}: ', repr(e))
 
+            self._handled[i] = True
+
     def _process(self, context):
         fn = context.function.get_function()
         awaiter = context.executor.get_awaiter()
 
         cases = []
-        tasks = context.get_tasks(cases, self._offset)
+        tasks = context.get_tasks(cases, len(self._results))
         while self.running() and len(tasks) > 0:
             index_futures = context.executor.submit_all(fn, *tasks)
             indexes, futures = unzip(index_futures)
 
+            is_reasonably = True
             with self._condition:
-                self._offset += len(tasks)
                 self._indexes.extend(indexes)
                 self._futures.extend(futures)
                 self._results.extend(none(tasks))
+                self._handled.extend(none(futures))
 
-            count, timeout = context.get_limits(cases, self._offset)
-            for future in awaiter(self._futures, timeout):
-                self._handle_future(future)
+            active = self._get_active_futures()
+            while len(active) > 0 and is_reasonably:
+                count, timeout = context.get_limits(cases, len(self._results))
+
+                for future in awaiter(active, timeout):
+                    self._handle_future(future)
+
+                active = self._get_active_futures()
+                completed = self._get_completed_results()
+                is_reasonably = context.is_reasonably(active, completed)
 
             cases = [result for result in self._results if result]
-            tasks = context.get_tasks(cases, self._offset)
+            tasks = context.get_tasks(cases, len(self._results))
 
         with self._condition:
             if self._state == RUNNING:

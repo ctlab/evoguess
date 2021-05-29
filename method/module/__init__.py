@@ -1,5 +1,6 @@
-from . import sampling
+from . import sampling, observer
 
 modules = {
     **sampling.samplings,
+    **observer.observers
 }

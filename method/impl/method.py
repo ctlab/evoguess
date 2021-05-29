@@ -15,6 +15,7 @@ class Context:
         self.function = context.get('function')
         self.sampling = context.get('sampling')
         self.executor = context.get('executor')
+        self.observer = context.get('observer')
 
         # todo: refactor
         # dimension = Dimension(backdoor, cache)
@@ -37,15 +38,18 @@ class Context:
     def get_limits(self, cases, offset):
         return 0, None
 
+    def is_reasonably(self, futures, cases):
+        return True
 
 class Method:
     slug = 'method'
     name = 'Method'
 
-    def __init__(self, function, sampling, executor, **kwargs):
+    def __init__(self, function, executor, sampling, observer, **kwargs):
         self.function = function
-        self.sampling = sampling
         self.executor = executor
+        self.sampling = sampling
+        self.observer = observer
 
         self.seed = kwargs.get('seed', randint(2 ** 32 - 1))
         self._cache = Cache(self.seed, *self.sampling.get_size())
@@ -68,7 +72,8 @@ class Method:
             self._cache,
             function=self.function,
             sampling=self.sampling,
-            executor=self.executor
+            executor=self.executor,
+            observer=self.observer
         )).start()
 
         self._cache.active[backdoor] = MethodFuture(job)

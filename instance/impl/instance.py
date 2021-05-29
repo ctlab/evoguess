@@ -41,10 +41,13 @@ class Instance:
         domain_masks = chunk_slice(self_base, domain_mask)
         return variables, domain_masks[:len(variables)]
 
-    def get_assumptions(self, simple_bd, values_bits):
+    def get_assumptions(self, simple_bd, values_bits, to_base=True):
         self_base = 2
         variables, domain_masks = simple_bd
-        values = binary_to_base(self_base + 1, values_bits[0])
+        if to_base:
+            values = binary_to_base(self_base + 1, values_bits[0])
+        else:
+            values = values_bits
 
         assert len(values) >= len(variables)
         values = [value - 1 for value in values[:len(variables)]]

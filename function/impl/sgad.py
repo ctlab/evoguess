@@ -1,15 +1,21 @@
+from util.array import concat
 from .._abc.function import *
 
 from os import getpid
 from time import time as now
-from util import array, numeral
+from multiprocessing.managers import SharedMemoryManager
+
+managers = {
+
+}
 
 
-def gad_function(i, solver, instance, data, key=None):
+def sgad_function(i, solver, instance, data, key=None):
     st_timestamp = now()
-    data_bits = decode_bits(data)
-    simple_bd = instance.prepare_simple_bd(*data_bits[:2])
-    assumptions = instance.get_assumptions(simple_bd, data_bits[2:])
+    bd_vars, all_values, ad_values = data
+    simple_bd = list(bd_vars), []
+    values = [all_values[i * len(simple_bd) + j] for j in range(len(bd_vars))]
+    assumptions = instance.get_assumptions(simple_bd, values, to_base=False)
 
     status, stats, _ = solver.solve(instance.clauses(), assumptions, key=key)
     result = (i, getpid(), status, stats, (st_timestamp, now()))
@@ -18,30 +24,33 @@ def gad_function(i, solver, instance, data, key=None):
     # return destruct_result(result)
 
 
-class GuessAndDetermine(Function):
+class SharedGuessAndDetermine(Function):
     type = 'gad'
-    slug = 'function:gad'
-    name = 'Function: Guess-and-Determine'
+    slug = 'function:sgad'
+    name = 'Function: Shared Guess-and-Determine'
 
     def get_function(self):
-        return gad_function
+        return sgad_function
 
     def prepare_tasks(self, instance, backdoor, *dimension, **kwargs):
-        tasks, bd_bits, ad_bits = [], instance.get_bd_bits(backdoor), []
-        if instance.has_intervals():
-            clauses = instance.clauses()
-            # todo: fix for domain variables
-            assumptions = instance.secret_key.values(seed=kwargs['seed'])
-            _, _, solution = self.solver.solve(clauses, assumptions)
+        tasks, ad_bits = [], []
+        smm = SharedMemoryManager()
+        smm.start()
+        managers[str(backdoor)] = smm
 
-            # todo: consider base for ad_bits
-            # for i, interval in enumerate(_instance.intervals()):
-            #     ad_bits.append(interval.get_bits(solution=solution))
+        def dim_gen():
+            for values in dimension:
+                for value in values:
+                    yield int(value)
 
-        for i, values in enumerate(dimension):
-            bits = array.concat(*numeral.base_to_binary(backdoor.base + 1, *values))
-            task_data = encode_bits([*bd_bits, bits, *ad_bits])
-            tasks.append((i, self.solver, instance, task_data))
+        all_dim = list(dim_gen())
+        print(len(all_dim))
+
+        bits = smm.ShareableList(all_dim)
+        ad_bits = smm.ShareableList(ad_bits)
+        bd_vars = smm.ShareableList(backdoor.snapshot())
+        for i in range(len(dimension)):
+            tasks.append((i, self.solver, instance, [bd_vars, bits, ad_bits]))
         return tasks
 
     def calculate(self, backdoor, *cases):
@@ -72,5 +81,5 @@ class GuessAndDetermine(Function):
 
 
 __all__ = [
-    'GuessAndDetermine'
+    'SharedGuessAndDetermine'
 ]
