@@ -10,6 +10,9 @@ from executor import Executor
 from function import Function
 from instance import Instance
 
+WORKERS = 4
+CHUNK_RATE = 4
+
 COUNT = 100_000
 FUNC_SLUG = 'function:gad'
 # ------ | gad  | sgad
@@ -61,11 +64,11 @@ if __name__ == '__main__':
             }
         },
         'executor': {
-            'workers': 4,
+            'workers': WORKERS,
             'slug': 'executor:process',
             'shaping': {
                 'slug': 'shaping:chunks',
-                'chunk_rate': 4
+                'chunk_rate': CHUNK_RATE
             },
         }
     })
