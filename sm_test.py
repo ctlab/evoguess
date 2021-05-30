@@ -13,7 +13,7 @@ from instance import Instance
 WORKERS = 4
 CHUNK_RATE = 4
 
-COUNT = 100_000
+COUNT = 10_000
 FUNC_SLUG = 'function:gad'
 # ------ | gad  | sgad
 # ---------------------
@@ -38,10 +38,11 @@ if __name__ == '__main__':
                 'slug': 'cnf',
                 'path': '/Users/alpha/evoguess/evoguess_data/templates/sorting/pancake_vs_selection/pancake_vs_selection_7_4.cnf'
             },
-            'secret_key': {
+            'supbs': {
                 'slug': 'interval',
                 'start': 1, 'length': 28
-            }
+            },
+            'input_set': '@supbs'
         },
         'method': {
             'slug': 'method',
@@ -70,6 +71,10 @@ if __name__ == '__main__':
                 'slug': 'shaping:chunks',
                 'chunk_rate': CHUNK_RATE
             },
+        },
+        'backdoor': {
+            'slug': 'backdoor:base',
+            'base': 2
         }
     })
     pargs = json.loads(args)
@@ -81,8 +86,11 @@ if __name__ == '__main__':
         ]}, **pargs
     )
 
+    print(WORKERS, CHUNK_RATE)
+    print(COUNT, FUNC_SLUG)
+
     instance = Instance(pargs['instance'])
-    backdoor = BaseBackdoor(2, instance.secret_key)
+    backdoor = instance.get_backdoor(**pargs['backdoor'])
 
     timestamp = now()
     future = method.queue(instance, backdoor)
