@@ -7,6 +7,7 @@ class Const(Sampling):
 
     def __init__(self, count: int):
         self.count = count
+        super().__init__(count, count)
 
     def get_count(self, backdoor, values=()):
         # todo: filter None values

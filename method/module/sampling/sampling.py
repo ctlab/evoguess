@@ -2,10 +2,11 @@ class Sampling:
     slug = 'sampling'
     name = 'Sampling'
 
-    def get_count(self, backdoor, values=()):
-        raise NotImplementedError
+    def __init__(self, max_size, step_size):
+        self.max_size = max_size
+        self.step_size = step_size
 
-    def get_size(self):
+    def get_count(self, backdoor, values=()):
         raise NotImplementedError
 
     def report(self, values):

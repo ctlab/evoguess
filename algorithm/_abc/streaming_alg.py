@@ -1,7 +1,7 @@
 from .algorithm import *
 
 from time import time as now
-from method._type.method_future import first_completed
+from method._type.futures import first_completed
 
 
 class StreamingAlg(Algorithm):

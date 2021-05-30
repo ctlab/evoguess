@@ -4,10 +4,6 @@ from numpy.random import randint, RandomState
 from util.array import unzip
 
 
-def multi_func(f, tasks):
-    return [f(*args) for args in tasks]
-
-
 class Executor:
     slug = 'executor'
     name = 'Executor'
@@ -20,15 +16,15 @@ class Executor:
         self.workers = kwargs.get('workers', cpu_count())
         self.random_state = RandomState(seed=self.seed)
 
-    def submit(self, fn, task):
+    def submit(self, fn, *args, **kwargs):
         raise NotImplementedError
 
-    def submit_all(self, fn, *tasks):
+    def submit_all(self, fn, data, *tasks):
         index_futures = []
         s_seed = self.random_state.randint(0, 2 ** 31 - 1)
         for shape in self.shaping.get(self.workers, tasks, seed=s_seed):
             index, future_tasks = unzip(shape)
-            future = self.submit(multi_func, (fn, future_tasks))
+            future = self.submit(fn, data, future_tasks)
             index_futures.append((index, future))
         return index_futures
 

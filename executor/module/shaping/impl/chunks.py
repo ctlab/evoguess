@@ -1,6 +1,6 @@
 from ..shaping import *
 
-from util.array import chunk_slice
+from util.array import slicer
 from numpy.random.mtrand import RandomState
 
 
@@ -17,7 +17,7 @@ class Chunks(Shaping):
         chunk_size = max(1, count // (self.chunk_rate * size))
         return [
             tuple((i, tasks[i]) for i in index)
-            for index in chunk_slice(chunk_size, rs.permutation(count))
+            for index in slicer(chunk_size, rs.permutation(count))
         ]
 
     def __info__(self):

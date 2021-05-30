@@ -19,7 +19,7 @@ class Interval(Variables):
         return Interval(self.start, self.length)
 
     def snapshot(self):
-        return self.list
+        return self._list
 
     def __info__(self):
         return {
@@ -29,13 +29,6 @@ class Interval(Variables):
         }
 
 
-SecretKey = Interval
-PublicKey = Interval
-KeyStream = Interval
-
 __all__ = [
-    'Interval',
-    'SecretKey',
-    'PublicKey',
-    'KeyStream'
+    'Interval'
 ]

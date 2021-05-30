@@ -1,20 +1,19 @@
-from .._type.variables.impl import BaseBackdoor
+from .._type.variables.impl import backdoors
 
-from itertools import compress
-from os.path import isfile, join
-
-from util.bitmask import to_bit
+from os.path import isfile
+from util.array import side_trim
+from util.operator import attreq
 from util.numeral import binary_to_base
-from util.array import unzip, concat, side_trim, chunk_slice
 
 
 class Instance:
     slug = 'instance'
     name = 'Instance'
 
-    def __init__(self, cnf, secret_key):
+    def __init__(self, cnf, supbs, input_set):
         self.cnf = cnf
-        self.secret_key = secret_key
+        self.supbs = supbs
+        self.input_set = input_set
 
     def __str__(self):
         return self.name
@@ -25,35 +24,22 @@ class Instance:
     def check(self):
         return isfile(self.cnf.path)
 
-    def get_bd_bits(self, backdoor):
-        if isinstance(backdoor, BaseBackdoor):
-            domain_masks = []
-            bd_mask = [to_bit(sk_var in backdoor) for sk_var in self.secret_key]
-        else:
-            snapshot = backdoor.snapshot()
-            bd_vars, domain_masks = unzip(snapshot)
-            bd_mask = [to_bit(sk_var in bd_vars) for sk_var in self.secret_key]
-        return side_trim(bd_mask, at_start=False), concat(*domain_masks)
+    def get_backdoor(self, slug, **kwargs):
+        return backdoors[slug](**kwargs, _list=self.input_set)
 
-    def prepare_simple_bd(self, bd_mask, domain_mask):
-        self_base = 2
-        variables = list(compress(self.secret_key, bd_mask))
-        domain_masks = chunk_slice(self_base, domain_mask)
-        return variables, domain_masks[:len(variables)]
+    def get_backdoor2(self, bd_type, bd_base, bd_mask):
+        Constructor = next(filter(attreq('type', bd_type), backdoors.values()), None)
+        backdoor = Constructor(base=bd_base, _list=self.input_set)
+        return backdoor._set_mask(bd_mask)
 
-    def get_assumptions(self, simple_bd, values_bits, to_base=True):
-        self_base = 2
-        variables, domain_masks = simple_bd
-        if to_base:
-            values = binary_to_base(self_base + 1, values_bits[0])
-        else:
-            values = values_bits
+    def get_bd_mask(self, backdoor):
+        # assert backdoor._list == self.input_set._list
+        return side_trim(backdoor.get_mask(), at_start=False)
 
-        assert len(values) >= len(variables)
-        values = [value - 1 for value in values[:len(variables)]]
-        # todo: convert bits[2:] to base values
+    def get_assumptions(self, backdoor, values):
+        variables = backdoor.snapshot()
 
-        if self_base > 2:
+        if backdoor.base > 2:
             raise Exception('Haven\'t realised')
         #     assumptions, x_map = [], XMAP.parse(self.x_path, self.key)
         #     domain_masks = domain_masks or [[1] * self.base] * len(values)
@@ -82,7 +68,8 @@ class Instance:
             'slug': self.slug,
             'name': self.name,
             'cnf': self.cnf.__info__(),
-            'secret_key': self.secret_key.__info__()
+            'supbs': self.supbs.__info__(),
+            'input_set': self.input_set.__info__()
         }
 
 
