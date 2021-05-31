@@ -3,6 +3,8 @@ import json
 from util import build
 from time import time as now
 
+from instance._type.variables import BaseBackdoor
+
 from method import Method
 from executor import Executor
 from function import Function
@@ -36,11 +38,10 @@ if __name__ == '__main__':
                 'slug': 'cnf',
                 'path': '/Users/alpha/evoguess/evoguess_data/templates/sorting/pancake_vs_selection/pancake_vs_selection_7_4.cnf'
             },
-            'supbs': {
+            'secret_key': {
                 'slug': 'interval',
                 'start': 1, 'length': 28
-            },
-            'input_set': '@supbs'
+            }
         },
         'method': {
             'slug': 'method',
@@ -69,10 +70,6 @@ if __name__ == '__main__':
                 'slug': 'shaping:chunks',
                 'chunk_rate': CHUNK_RATE
             },
-        },
-        'backdoor': {
-            'slug': 'backdoor:base',
-            'base': 2
         }
     })
     pargs = json.loads(args)
@@ -88,7 +85,7 @@ if __name__ == '__main__':
     print(COUNT, FUNC_SLUG)
 
     instance = Instance(pargs['instance'])
-    backdoor = instance.get_backdoor(**pargs['backdoor'])
+    backdoor = BaseBackdoor(2, instance.secret_key)
 
     timestamp = now()
     future = method.queue(instance, backdoor)
