@@ -11,7 +11,7 @@ def concat(*lists):
     return sum(lists, [])
 
 
-def chunk_slice(size, _list):
+def slicer(size, _list):
     return [_list[i:i + size] for i in range(0, len(_list), size)]
 
 

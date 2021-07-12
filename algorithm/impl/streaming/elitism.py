@@ -1,6 +1,6 @@
 from ..._abc.streaming.genetic import *
 
-from util.array import chunk_slice
+from util.array import slicer
 
 
 class Elitism(Genetic):
@@ -15,7 +15,7 @@ class Elitism(Genetic):
 
     def tweak(self, selected: Population):
         children = []
-        for chunk in chunk_slice(self.min_tweak_size, selected):
+        for chunk in slicer(self.min_tweak_size, selected):
             if len(chunk) == self.min_tweak_size:
                 chunk = self.crossover.cross(*chunk)
             mutated = map(self.mutation.mutate, chunk)

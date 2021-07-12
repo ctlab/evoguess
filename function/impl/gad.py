@@ -2,20 +2,40 @@ from .._abc.function import *
 
 from os import getpid
 from time import time as now
-from util import array, numeral
+from numpy.random.mtrand import RandomState
 
 
-def gad_function(i, solver, instance, data, key=None):
-    st_timestamp = now()
-    data_bits = decode_bits(data)
-    simple_bd = instance.prepare_simple_bd(*data_bits[:2])
-    assumptions = instance.get_assumptions(simple_bd, data_bits[2:])
+def gad_function(common_data, tasks_data=None):
+    inst, slv, meas, info = common_data
 
-    status, stats, _ = solver.solve(instance.clauses(), assumptions, key=key)
-    result = (i, getpid(), status, stats, (st_timestamp, now()))
-    # todo: reformat results
-    return result
-    # return destruct_result(result)
+    results = []
+    bits = decode_bits(info)
+    [dim_type, bd_type] = bits[:2]
+    bd_base = to_number(bits[2:8], 6)
+    mask_len = to_number(bits[8:24], 16)
+    bd_mask = bits[24:mask_len + 24]
+
+    backdoor = inst.get_backdoor2(bd_type, bd_base, bd_mask)
+    bases = backdoor.get_bases()
+
+    for task_data in tasks_data:
+        st_timestamp = now()
+        task_i, task_value = task_data
+
+        if dim_type == NUMBERS:
+            state = RandomState(seed=task_value)
+            values = state.randint(0, bd_base, size=len(backdoor))
+            # todo: apply backdoor.get_masks() to values
+        else:
+            values = decimal_to_base(task_value, bases)
+            # todo: map values using backdoor.get_mappers()
+
+        assumptions = inst.get_assumptions(backdoor, values)
+
+        status, stats, _ = slv.solve(inst.clauses(), assumptions)
+        time, value = stats['time'], meas.get(stats)
+        results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
+    return results
 
 
 class GuessAndDetermine(Function):
@@ -26,32 +46,29 @@ class GuessAndDetermine(Function):
     def get_function(self):
         return gad_function
 
-    def prepare_tasks(self, instance, backdoor, *dimension, **kwargs):
-        tasks, bd_bits, ad_bits = [], instance.get_bd_bits(backdoor), []
+    def prepare_data(self, state, instance, backdoor, dim_type):
         if instance.has_intervals():
-            clauses = instance.clauses()
-            # todo: fix for domain variables
-            assumptions = instance.secret_key.values(seed=kwargs['seed'])
-            _, _, solution = self.solver.solve(clauses, assumptions)
+            # todo: add intervals bits to data
+            pass
 
-            # todo: consider base for ad_bits
-            # for i, interval in enumerate(_instance.intervals()):
-            #     ad_bits.append(interval.get_bits(solution=solution))
-
-        for i, values in enumerate(dimension):
-            bits = array.concat(*numeral.base_to_binary(backdoor.base + 1, *values))
-            task_data = encode_bits([*bd_bits, bits, *ad_bits])
-            tasks.append((i, self.solver, instance, task_data))
-        return tasks
+        bd_mask = instance.get_bd_mask(backdoor)
+        return instance, self.solver, self.measure, encode_bits([
+            *to_bits(dim_type, 1),
+            *to_bits(backdoor.type, 1),
+            *to_bits(backdoor.base, 6),
+            *to_bits(len(bd_mask), 16),
+            *bd_mask
+        ])
 
     def calculate(self, backdoor, *cases):
         statistic = {True: 0, False: 0, None: 0}
         process_time, time_sum, value_sum = 0, 0, 0
+
         for case in cases:
-            statistic[case[2]] += 1
-            time_sum += case[3]['time']
-            value_sum += self.measure.get(case[3])
-            process_time += case[4][1] - case[4][0]
+            time_sum += case[3]
+            value_sum += case[2]
+            process_time += case[5]
+            statistic[case[4]] += 1
 
         time, value, = None, None
         count = backdoor.task_count()
@@ -66,8 +83,8 @@ class GuessAndDetermine(Function):
             'value': value,
             'count': len(cases),
             'job_time': time_sum,
+            'statistic': statistic,
             'process_time': process_time,
-            'statistic': statistic
         }
 
 

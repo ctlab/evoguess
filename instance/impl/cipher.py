@@ -5,8 +5,8 @@ class StreamCipher(Instance):
     slug = 'cipher:stream'
     name = 'Stream Cipher'
 
-    def __init__(self, key_stream, *args, **kwargs):
-        self.key_stream = key_stream
+    def __init__(self, output_set, *args, **kwargs):
+        self.output_set = output_set
         super().__init__(*args, **kwargs)
 
     @staticmethod
@@ -14,12 +14,12 @@ class StreamCipher(Instance):
         return True
 
     def intervals(self):
-        return [self.key_stream]
+        return [self.output_set]
 
     def __info__(self):
         return {
             **super().__info__(),
-            'key_stream': self.key_stream.__info__()
+            'output_set': self.output_set.__info__()
         }
 
 

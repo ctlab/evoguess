@@ -1,45 +1,60 @@
-from ..cache import Cache
 from .._type.job import Job
-from .._type.dimension import Dimension
-from .._type.method_future import MethodFuture, EstimationFuture
+from .._type.futures import MethodFuture, EstimationFuture
 
-from numpy.random import randint
+from util.bitmask import to_bit
+from collections import namedtuple
+from numpy.random import randint, RandomState
+
+Cache = namedtuple('Cache', 'active canceled estimated')
 
 
 class Context:
-    def __init__(self, instance, backdoor, cache, **context):
+    def __init__(self, seeds, instance, backdoor, cache, **context):
         self.cache = cache
         self.instance = instance
         self.backdoor = backdoor
+        self.permutation = None
 
         self.function = context.get('function')
         self.sampling = context.get('sampling')
         self.executor = context.get('executor')
         self.observer = context.get('observer')
 
-        # todo: refactor
-        # dimension = Dimension(backdoor, cache)
-        # self.dimension = iter(dimension)
+        self.state = {
+            **seeds,
+            'base': backdoor.base,
+            'size': len(backdoor),
+            'power': backdoor.task_count(),
+        }
+
+        self.dim_type = to_bit(self.state['power'] > self.sampling.max_size)
+
+    def _permutation(self):
+        if not self.permutation:
+            rs = RandomState(seed=self.state['list_seed'])
+            self.permutation = rs.permutation(self.state['power'])
+        return self.permutation
 
     def get_tasks(self, cases, offset):
-        values = self.function.get_values(*cases)
-        count = self.sampling.get_count(self.backdoor, values=values)
+        count = self.sampling.get_count(self.backdoor, values=cases)
         if count == 0:
             return []
 
-        # todo: refactor
-        dimension = iter(Dimension(self.backdoor, self.cache, len(values)))
-        dimension = [next(dimension)[1] for _ in range(count)]
-        f_seed = self.cache.state[self.backdoor].seeds.function_seed
-        tasks = self.function.prepare_tasks(self.instance, self.backdoor, *dimension, seed=f_seed)
+        if self.dim_type:
+            value = self.state['list_seed']
+            tasks = [(i, value + i) for i in range(offset, offset + count)]
+        else:
+            values = self._permutation()
+            tasks = [(i, values[i]) for i in range(offset, offset + count)]
 
         return tasks
 
-    def get_limits(self, cases, offset):
+    def get_limits(self, values, offset):
         return 0, None
 
-    def is_reasonably(self, futures, cases):
+    def is_reasonably(self, futures, values):
         return True
+
 
 class Method:
     slug = 'method'
@@ -51,8 +66,9 @@ class Method:
         self.sampling = sampling
         self.observer = observer
 
+        self._cache = Cache({}, {}, {})
         self.seed = kwargs.get('seed', randint(2 ** 32 - 1))
-        self._cache = Cache(self.seed, *self.sampling.get_size())
+        self.random_state = RandomState(seed=self.seed)
 
     def queue(self, instance, backdoor):
         if backdoor in self._cache.active:
@@ -66,7 +82,13 @@ class Method:
             _, estimation = self._cache.estimated[backdoor]
             return EstimationFuture(estimation)
 
+        seeds = {
+            'list_seed': self.random_state.randint(0, 2 ** 31),
+            'func_seed': self.random_state.randint(0, 2 ** 32 - 1)
+        }
+
         job = Job(Context(
+            seeds,
             instance,
             backdoor,
             self._cache,
@@ -86,6 +108,7 @@ class Method:
             'seed': self.seed,
             'function': self.function.__info__(),
             'sampling': self.sampling.__info__(),
+            'observer': self.observer.__info__()
         }
 
     def __str__(self):

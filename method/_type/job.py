@@ -78,8 +78,8 @@ class Job:
             if not self._handled[i]
         ]
 
-    def _get_completed_results(self):
-        return [result for result in self._results if result]
+    def _get_completed_values(self):
+        return [result[2] for result in self._results if result]
 
     def _handle_future(self, future, i=None):
         with self._condition:
@@ -96,12 +96,18 @@ class Job:
 
     def _process(self, context):
         fn = context.function.get_function()
+        data = context.function.prepare_data(
+            context.state,
+            context.instance,
+            context.backdoor,
+            context.dim_type,
+        )
         awaiter = context.executor.get_awaiter()
 
-        cases = []
-        tasks = context.get_tasks(cases, len(self._results))
+        completed = []
+        tasks = context.get_tasks(completed, len(self._results))
         while self.running() and len(tasks) > 0:
-            index_futures = context.executor.submit_all(fn, *tasks)
+            index_futures = context.executor.submit_all(fn, data, *tasks)
             indexes, futures = unzip(index_futures)
 
             is_reasonably = True
@@ -113,17 +119,16 @@ class Job:
 
             active = self._get_active_futures()
             while len(active) > 0 and is_reasonably:
-                count, timeout = context.get_limits(cases, len(self._results))
+                count, timeout = context.get_limits(completed, len(self._results))
 
                 for future in awaiter(active, timeout):
                     self._handle_future(future)
 
                 active = self._get_active_futures()
-                completed = self._get_completed_results()
+                completed = self._get_completed_values()
                 is_reasonably = context.is_reasonably(active, completed)
 
-            cases = [result for result in self._results if result]
-            tasks = context.get_tasks(cases, len(self._results))
+            tasks = context.get_tasks(completed, len(self._results))
 
         with self._condition:
             if self._state == RUNNING:

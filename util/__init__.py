@@ -4,6 +4,8 @@ def load_modules(modules=(()), **kwargs):
         if isinstance(value, dict):
             slug = value.pop('slug')
             value = modules[slug](**load_modules(modules, **value))
+        if isinstance(value, str) and '@' in value:
+            value = loaded_kwargs[value[1:]]
         loaded_kwargs[key] = value
     return loaded_kwargs
 

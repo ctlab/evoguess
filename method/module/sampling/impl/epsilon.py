@@ -8,6 +8,7 @@ class Epsilon(Sampling):
     name = 'Sampling: Epsilon'
 
     def __init__(self, mn, mx, step, eps, delta=0.05):
+        super().__init__(mx, step)
         self.eps, self.delta = eps, delta
         self.min, self.max, self.step = mn, mx, step
 

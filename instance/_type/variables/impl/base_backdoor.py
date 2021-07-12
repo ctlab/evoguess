@@ -2,6 +2,7 @@ from instance._type.variables.backdoor import Backdoor
 
 
 class BaseBackdoor(Backdoor):
+    type = 0
     slug = 'backdoor:base'
 
     def __init__(self, base=2, _list=()):
@@ -9,11 +10,8 @@ class BaseBackdoor(Backdoor):
         super().__init__(_list)
 
     def get_copy(self, mask):
-        backdoor = BaseBackdoor(self.base, self.list)
+        backdoor = BaseBackdoor(self.base, self._list)
         return backdoor._set_mask(mask)
-
-    def snapshot(self):
-        return [x for (i, x) in enumerate(self.list) if self.mask[i]]
 
     def get_bases(self):
         return [self.base] * len(self)

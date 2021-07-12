@@ -17,8 +17,8 @@ class Variables:
     name = 'Variables'
 
     def __init__(self, _list):
-        self.list = _list
-        self.length = len(self.list)
+        self._list = _list
+        self.length = len(self._list)
 
     def snapshot(self):
         raise NotImplementedError

@@ -21,11 +21,12 @@ class MethodFuture:
     def _process(self, cases, canceled):
         results = array.trim(cases)
         del self.context.cache.active[self.context.backdoor]
-        values = self.context.function.get_values(*results)
+        # values = self.context.function.get_values(*results)
         estimation = {
-            **self.context.sampling.report(values),
+            'list_seed': self.context.state['list_seed'],
+            'func_seed': self.context.state['func_seed'],
+            # **self.context.sampling.report(values),
             **self.context.function.calculate(self.context.backdoor, *results),
-            'seeds': self.context.cache.state[self.context.backdoor].seeds._asdict()
         }
         if canceled:
             estimation['value'] = float('inf')

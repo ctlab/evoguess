@@ -5,5 +5,5 @@ functions = {
 }
 
 __all__ = [
-    'GuessAndDetermine',
+    'GuessAndDetermine'
 ]
