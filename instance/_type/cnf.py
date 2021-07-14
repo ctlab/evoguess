@@ -1,7 +1,9 @@
+import os
 import re
 import threading
 
 from util.array import trim
+from util.const import TEMPLATE_PATH
 
 cnf_clauses = {}
 lock = threading.Lock()
@@ -13,7 +15,7 @@ class CNF:
     name = 'CNF'
 
     def __init__(self, path):
-        self.path = path
+        self.path = os.path.join(TEMPLATE_PATH, path)
 
     def clauses(self):
         with lock:

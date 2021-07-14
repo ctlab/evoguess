@@ -4,6 +4,7 @@ import time
 import datetime
 
 from util.error import *
+from util.const import EXPERIMENT_PATH
 
 [
     CREATED,
@@ -24,10 +25,9 @@ class Output:
     slug = 'output'
     name = 'Output'
 
-    def __init__(self, root, path, *args, **kwargs):
-        self.path = (root, path)
-
+    def __init__(self, path, *args, **kwargs):
         self.name = None
+        self.path = path
         self.scheme = None
         self.status = CREATED
         self.debug_verb = kwargs.get('debug_verb', 0)
@@ -36,11 +36,10 @@ class Output:
         if self.status != CREATED:
             raise AlreadyOpenedError()
 
-        root, tail = self.path
-        if not os.path.exists(root):
-            raise DirectoryNotExistsError(root)
+        if not os.path.exists(EXPERIMENT_PATH):
+            raise DirectoryNotExistsError(EXPERIMENT_PATH)
 
-        self.path = os.path.join(root, tail)
+        self.path = os.path.join(EXPERIMENT_PATH, self.path)
         os.makedirs(self.path, exist_ok=True)
 
         name = f'{dt_name()}-?'
