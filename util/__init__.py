@@ -1,3 +1,7 @@
+from functools import reduce
+from operator import getitem
+
+
 def load_modules(modules=(()), **kwargs):
     modules, loaded_kwargs = dict(modules), {}
     for key, value in kwargs.items():
@@ -5,7 +9,8 @@ def load_modules(modules=(()), **kwargs):
             slug = value.pop('slug')
             value = modules[slug](**load_modules(modules, **value))
         if isinstance(value, str) and '@' in value:
-            value = loaded_kwargs[value[1:]]
+            references = value[1:].split('.')
+            value = reduce(getitem, references, loaded_kwargs)
         loaded_kwargs[key] = value
     return loaded_kwargs
 
@@ -25,7 +30,10 @@ def build(structure, **kwargs):
 
 
 __all__ = [
+    'dict',
     'array',
+    'const',
+    'error',
     'caster',
     'bitmask',
     'numeral',

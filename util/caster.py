@@ -1,4 +1,5 @@
-import json, math
+import json
+import math
 
 
 def try_int(string):
