@@ -2,7 +2,6 @@ from instance._type.variables.backdoor import Backdoor
 
 
 class BaseBackdoor(Backdoor):
-    type = 0
     slug = 'backdoor:base'
 
     def __init__(self, base=2, _list=()):
