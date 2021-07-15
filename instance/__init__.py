@@ -1,5 +1,5 @@
 from .impl import instances
-from ._type import types, variables
+from .typings import types, variables
 
 from util import load_modules
 
