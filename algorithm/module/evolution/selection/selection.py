@@ -1,4 +1,4 @@
-from algorithm._type import Vector
+from algorithm.typings import Vector
 
 from numpy.random import randint, RandomState
 

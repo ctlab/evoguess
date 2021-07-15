@@ -9,7 +9,7 @@ from function import Function
 from instance import Instance
 from algorithm import Algorithm
 
-from instance._type.variables import BaseBackdoor
+from instance.typings.variables import BaseBackdoor
 
 if __name__ == '__main__':
     assert len(sys.argv) == 2, f'Invalid number of input args {len(sys.argv)}'

@@ -1,4 +1,4 @@
-from algorithm._type import Point
+from algorithm.typings import Point
 from numpy.random import randint, RandomState
 
 

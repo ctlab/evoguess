@@ -1,7 +1,7 @@
 from time import time as now
 
-from .._type import Point, Vector
-from instance._type.variables import Backdoor
+from ..typings import Point, Vector
+from instance.typings.variables import Backdoor
 
 
 class Algorithm:

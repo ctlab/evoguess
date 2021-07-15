@@ -1,4 +1,4 @@
-from .._type.variables.impl import backdoors
+from ..typings.variables.impl import backdoors
 
 from os.path import isfile
 from util.array import side_trim

@@ -1,4 +1,4 @@
-from instance._type.variables.backdoor import Backdoor
+from instance.typings.variables.backdoor import Backdoor
 
 
 class BaseBackdoor(Backdoor):

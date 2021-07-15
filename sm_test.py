@@ -3,7 +3,7 @@ import json
 from util import build
 from time import time as now
 
-from instance._type.variables import BaseBackdoor
+from instance.typings.variables import BaseBackdoor
 
 from method import Method
 from executor import Executor
