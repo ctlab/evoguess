@@ -1,15 +1,15 @@
 from numpy.random.mtrand import RandomState
 
 
-def get_values(variables, seed=None, solution=None):
-    if solution is not None:
-        try:
-            return [solution[x - 1] for x in variables]
-        except IndexError:
-            raise Exception('Solution have too few variables: %d' % len(solution))
-    else:
-        values = RandomState(seed=seed).randint(2, size=len(variables))
-        return [x if values[i] else -x for i, x in enumerate(variables)]
+# def get_values(variables, seed=None, solution=None):
+#     if solution is not None:
+#         try:
+#             return [solution[x - 1] for x in variables]
+#         except IndexError:
+#             raise Exception('Solution have too few variables: %d' % len(solution))
+#     else:
+#         values = RandomState(seed=seed).randint(2, size=len(variables))
+#         return [x if values[i] else -x for i, x in enumerate(variables)]
 
 
 class Variables:
@@ -20,17 +20,17 @@ class Variables:
         self._list = _list
         self.length = len(self._list)
 
-    def snapshot(self):
-        raise NotImplementedError
-
     def __copy__(self):
         raise NotImplementedError
 
+    def variables(self):
+        raise NotImplementedError
+
     def __len__(self):
-        return len(self.snapshot())
+        return len(self.variables())
 
     def _to_str(self):
-        variables, strings, i, j = self.snapshot(), [], 0, 1
+        variables, strings, i, j = self.variables(), [], 0, 1
         while i < len(variables):
             if j == len(variables) or variables[j] - variables[i] != j - i:
                 if j - i > 2:
@@ -43,23 +43,22 @@ class Variables:
         return ' '.join(strings), len(variables)
 
     def __str__(self):
-        string, count = self._to_str()
-        return f"[{string}]({count})"
+        return '[%s](%d)' % self._to_str()
 
     def __repr__(self):
         return self._to_str()[0]
 
     def __iter__(self):
-        return self.snapshot().__iter__()
+        return self.variables().__iter__()
 
     def __hash__(self):
-        return hash(tuple(self.snapshot()))
+        return hash(tuple(self.variables()))
 
     def __contains__(self, item):
-        return item in self.snapshot()
+        return item in self.variables()
 
-    def values(self, **kwargs):
-        return get_values(self.snapshot(), **kwargs)
+    # def values(self, **kwargs):
+    #     return get_values(self.variables(), **kwargs)
 
     def __info__(self):
         return {

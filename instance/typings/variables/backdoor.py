@@ -12,12 +12,18 @@ class Backdoor(Variables):
     def __init__(self, _list=()):
         super().__init__(sorted(set(_list)))
         self._mask = [True] * self.length
-        self._snapshot = copy(self._list)
+        self._variables = copy(self._list)
 
         assert len(self._list) > 0, 'Empty backdoor'
         assert self._list[0] >= 0, 'Backdoor contains negative numbers'
         if len(_list) != self.length:
             warnings.warn('Repeating variables in backdoor', Warning)
+
+    def get_copy(self, mask):
+        raise NotImplementedError
+
+    def variables(self):
+        return self._variables
 
     def __copy__(self):
         return self.get_copy(self._mask)
@@ -28,17 +34,12 @@ class Backdoor(Variables):
         else:
             delta = self.length - len(mask)
             self._mask = mask + [False] * delta
-        self._snapshot = list(compress(self._list, self._mask))
+
+        self._variables = list(compress(self._list, self._mask))
         return self
 
     def get_mask(self):
         return copy(self._mask)
-
-    def snapshot(self):
-        return self._snapshot
-
-    def get_copy(self, mask):
-        raise NotImplementedError
 
     def get_bases(self):
         raise NotImplementedError

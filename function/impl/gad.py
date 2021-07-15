@@ -54,7 +54,7 @@ class GuessAndDetermine(Function):
         bd_mask = instance.get_bd_mask(backdoor)
         return instance, self.solver, self.measure, encode_bits([
             *to_bits(dim_type, 1),
-            *to_bits(backdoor.type, 1),
+            *to_bits(backdoor.kind, 1),
             *to_bits(backdoor.base, 6),
             *to_bits(len(bd_mask), 16),
             *bd_mask

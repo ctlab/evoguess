@@ -18,7 +18,7 @@ class Interval(Variables):
     def __copy__(self):
         return Interval(self.start, self.length)
 
-    def snapshot(self):
+    def variables(self):
         return self._list
 
     def __info__(self):

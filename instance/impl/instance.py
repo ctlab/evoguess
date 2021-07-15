@@ -27,17 +27,17 @@ class Instance:
     def get_backdoor(self, slug, **kwargs):
         return backdoors[slug](**kwargs, _list=self.input_set)
 
-    def get_backdoor2(self, bd_type, bd_base, bd_mask):
-        Constructor = next(filter(attreq('type', bd_type), backdoors.values()), None)
-        backdoor = Constructor(base=bd_base, _list=self.input_set)
-        return backdoor._set_mask(bd_mask)
+    def get_backdoor2(self, kind, base, mask):
+        Constructor = next(filter(attreq('kind', kind), backdoors.values()), None)
+        backdoor = Constructor(base=base, _list=self.input_set)
+        return backdoor._set_mask(mask)
 
     def get_bd_mask(self, backdoor):
         # assert backdoor._list == self.input_set._list
         return side_trim(backdoor.get_mask(), at_start=False)
 
     def get_assumptions(self, backdoor, values):
-        variables = backdoor.snapshot()
+        variables = backdoor.variables()
 
         if backdoor.base > 2:
             raise Exception('Haven\'t realised')
