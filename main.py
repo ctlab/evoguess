@@ -27,5 +27,6 @@ if __name__ == '__main__':
         ]}, **configuration
     )
 
-    backdoor = BaseBackdoor(2, algorithm.instance.secret_key)
+    backdoor_line = configuration['backdoors'][0]
+    backdoor = algorithm.instance.get_backdoor(**backdoor_line)
     solution = algorithm.start(backdoor)
