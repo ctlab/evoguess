@@ -42,6 +42,19 @@ class PySat(Solver):
 
         return status, statistics, solution
 
+    def propagate(self, clauses, assumptions, **kwargs):
+        solver = self.constructor(bootstrap_with=clauses, use_timer=True)
+
+        timestamp = now()
+        status, literals = solver.propagate(assumptions=assumptions)
+        full_time, time = now() - timestamp, solver.time()
+
+        statistics = solver.accum_stats()
+        statistics['time'] = time
+        solver.delete()
+
+        return status, statistics, literals
+
 
 #
 # ----------------------------------------------------------------

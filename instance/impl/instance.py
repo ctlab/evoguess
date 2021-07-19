@@ -21,6 +21,9 @@ class Instance:
     def clauses(self):
         return self.cnf.clauses()
 
+    def max_literal(self):
+        return self.cnf.max_literal()
+
     def check(self):
         return isfile(self.cnf.path)
 

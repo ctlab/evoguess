@@ -30,7 +30,6 @@ def build(structure, **kwargs):
 
 
 __all__ = [
-    'dict',
     'array',
     'const',
     'error',
