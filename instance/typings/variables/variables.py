@@ -20,12 +20,6 @@ class Variables:
         self._list = _list
         self.length = len(self._list)
 
-    def __copy__(self):
-        raise NotImplementedError
-
-    def variables(self):
-        raise NotImplementedError
-
     def __len__(self):
         return len(self.variables())
 
@@ -42,6 +36,18 @@ class Variables:
                 j += 1
         return ' '.join(strings), len(variables)
 
+    @staticmethod
+    def _from_str(string):
+        variables = []
+        for lit in string.split(' '):
+            if '..' in lit:
+                var = lit.split('..')
+                variables.extend(range(int(var[0]), int(var[1]) + 1))
+            else:
+                variables.append(int(lit))
+
+        return variables
+
     def __str__(self):
         return '[%s](%d)' % self._to_str()
 
@@ -56,6 +62,16 @@ class Variables:
 
     def __contains__(self, item):
         return item in self.variables()
+
+    def __copy__(self):
+        raise NotImplementedError
+
+    def variables(self):
+        raise NotImplementedError
+
+    @staticmethod
+    def parse(string):
+        raise NotImplementedError
 
     # def values(self, **kwargs):
     #     return get_values(self.variables(), **kwargs)

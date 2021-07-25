@@ -28,6 +28,10 @@ class BaseBackdoor(Backdoor):
     def empty(base):
         return Backdoor(base)
 
+    @staticmethod
+    def parse(string, base=2):
+        return BaseBackdoor(base, _list=Backdoor._from_str(string))
+
     def __info__(self):
         return {
             **super().__info__(),

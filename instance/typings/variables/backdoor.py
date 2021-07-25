@@ -19,9 +19,6 @@ class Backdoor(Variables):
         if len(_list) != self.length:
             warnings.warn('Repeating variables in backdoor', Warning)
 
-    def get_copy(self, mask):
-        raise NotImplementedError
-
     def variables(self):
         return self._variables
 
@@ -41,6 +38,13 @@ class Backdoor(Variables):
     def get_mask(self):
         return copy(self._mask)
 
+    @staticmethod
+    def _from_str(string):
+        return Variables._from_str(string)
+
+    def get_copy(self, mask):
+        raise NotImplementedError
+
     def get_bases(self):
         raise NotImplementedError
 
@@ -55,6 +59,10 @@ class Backdoor(Variables):
 
     @staticmethod
     def empty(base):
+        raise NotImplementedError
+
+    @staticmethod
+    def parse(string):
         raise NotImplementedError
 
 

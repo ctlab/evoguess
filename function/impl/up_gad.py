@@ -45,6 +45,10 @@ class UPGuessAndDetermine(Function):
     slug = 'function:upgad'
     name = 'Function: UP Guess-and-Determine'
 
+    def __init__(self, max_n, *args, **kwargs):
+        self.max_n = max_n
+        super().__init__(*args, **kwargs)
+
     def get_function(self):
         return gad_function
 
@@ -63,7 +67,7 @@ class UPGuessAndDetermine(Function):
         ])
 
     def calculate(self, backdoor, *cases):
-        statistic = {True: 0, False: 0, None: 0}
+        statistic = {True: 0, False: 0}
         process_time, time_sum, value_sum = 0, 0, 0
 
         for case in cases:
@@ -73,13 +77,18 @@ class UPGuessAndDetermine(Function):
             statistic[case[4]] += 1
 
         time, value, = None, None
-        # count = backdoor.task_count()
         if len(cases) > 0:
             time = log2(float(time_sum) / len(cases)) + len(backdoor)
-            value = log2(float(value_sum) / len(cases)) + len(backdoor)
-
-        if statistic[False] > 0:
-            value = float('inf')
+            if len(backdoor) < self.max_n:
+                count = backdoor.task_count()
+                vfp = float(statistic[True]) / len(cases)
+                pfp = float(statistic[False]) / len(cases)
+                value = log2(vfp * count + pfp * (2 ** self.max_n))
+            else:
+                value = log2(float(value_sum) / len(cases)) + len(backdoor)
+    
+                if statistic[False] > 0:
+                    value = float('inf')
 
         return {
             'time': time,
@@ -88,6 +97,12 @@ class UPGuessAndDetermine(Function):
             'job_time': time_sum,
             'statistic': statistic,
             'process_time': process_time,
+        }
+
+    def __info__(self):
+        return {
+            **super().__info__(),
+            'max_n': self.max_n
         }
 
 
