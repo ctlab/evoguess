@@ -28,7 +28,12 @@ class Instance:
         return isfile(self.cnf.path)
 
     def get_backdoor(self, slug, **kwargs):
-        return backdoors[slug](**kwargs, _list=self.input_set)
+        if '_list' not in kwargs:
+            return backdoors[slug](_list=self.input_set, **kwargs)
+        else:
+            _list = kwargs.pop('_list')
+            mask = [1 if v in _list else 0 for v in self.input_set]
+            return backdoors[slug](_list=self.input_set, **kwargs)._set_mask(mask)
 
     def get_backdoor2(self, kind, base, mask):
         Constructor = next(filter(attreq('kind', kind), backdoors.values()), None)
