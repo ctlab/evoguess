@@ -1,20 +1,43 @@
-from .job import first_completed as fc
+from .job import first_completed as fc, all_completed as ac
 
 from util import array
 from util.error import CancelledError
 
 
 def first_completed(futures, timeout=None):
-    # todo: return done and not_done
-    done = [f for f in futures if isinstance(f, EstimationFuture)]
+    done = set(f for f in futures if f.done())
     if done: return done
 
     jobs = fc([f.job for f in futures], timeout)
-    return [future for future in futures if future.job in jobs]
+    return [f for f in futures if f.job in jobs]
 
 
-class MethodFuture:
+def all_completed(futures, timeout=None):
+    done = set(f for f in futures if f.done())
+    not_done = set(futures) - done
+
+    jobs = ac([f.job for f in not_done], timeout)
+    return [f for f in futures if f in done or f.job in jobs]
+
+
+class Handle:
+    def __init__(self, done=False):
+        self._done = done
+
+    def done(self):
+        return self._done
+
+    def result(self, timeout=None):
+        raise NotImplementedError
+
+    def cancel_and_result(self):
+        raise NotImplementedError
+
+
+class JobHandle(Handle):
     def __init__(self, job):
+        super().__init__()
+
         self.job = job
         self.context = job.context
 
@@ -51,20 +74,23 @@ class MethodFuture:
         return self._process(self.job._results, True)
 
 
-class EstimationFuture:
+class VoidHandle(Handle):
     def __init__(self, estimation):
-        self.estimation = estimation
+        super().__init__()
+        self._done = True
+        self._estimation = estimation
 
     def result(self, timeout=None):
-        return {**self.estimation, 'job_time': 0}
+        return self._estimation
 
     def cancel_and_result(self):
-        return {**self.estimation, 'job_time': 0}
+        return self._estimation
 
 
 __all__ = [
-    'MethodFuture',
-    'EstimationFuture',
+    'Handle',
+    'JobHandle',
+    'VoidHandle',
     #
-    'first_completed',
+    'n_completed',
 ]
