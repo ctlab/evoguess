@@ -11,6 +11,7 @@ class Evolution(IterableAlg):
     def __init__(self, mutation, selection, *args, **kwargs):
         self.mutation = mutation
         self.selection = selection
+        self.vector_length = self.population_size
         self.stagnation = kwargs.get("stagnation", 0)
 
         self.root, self.best = None, None
@@ -28,25 +29,18 @@ class Evolution(IterableAlg):
         self.limit.set('stagnation', 0)
         return self.root
 
-    def iteration(self, vector: Population) -> IterationFuture:
+    def start_iteration(self, vector: Vector) -> Vector:
         selected = self.selection.breed(vector, self.population_size)
+        return self.tweak(selected)
 
-        child_futures = [
-            (child, self.method.queue(self.instance, child.backdoor))
-            for child in self.tweak(selected)
-        ]
-        callback = lambda popup: self.post_estimation(popup, selected)
-        return IterationFuture(child_futures, callback)
-
-    def postprocess(self, solution: Population):
-        pass
-
-    def post_estimation(self, child, parents):
+    def end_iteration(self, parents: Vector, child: Vector) -> Vector:
         population = self.join(parents, child)
-
         if self._is_stagnation(population):
             population = [self.root]
         return population
+
+    def postprocess(self, solution: Population):
+        pass
 
     def _is_stagnation(self, population):
         population_best = sorted(population)[0]

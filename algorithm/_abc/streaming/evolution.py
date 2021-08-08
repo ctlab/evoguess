@@ -36,7 +36,7 @@ class Evolution(StreamingAlg):
         selected = self.selection.breed(vector, size)
         return self.tweak(selected)
 
-    def append_points(self, vector: Population, *points: Individual) -> Population:
+    def update_core_vector(self, vector: Population, *points: Individual) -> Population:
         population = self.join(vector, points)
         self._update_best(population)
         return population
