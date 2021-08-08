@@ -1,23 +1,17 @@
-from .job import first_completed as fc, all_completed as ac
+from .job import n_completed as nc
 
 from util import array
 from util.error import CancelledError
 
 
-def first_completed(futures, timeout=None):
-    done = set(f for f in futures if f.done())
-    if done: return done
+def n_completed(handles, count, timeout=None):
+    done = set(h for h in handles if h.done())
+    if len(done) >= count:
+        return done
 
-    jobs = fc([f.job for f in futures], timeout)
-    return [f for f in futures if f.job in jobs]
-
-
-def all_completed(futures, timeout=None):
-    done = set(f for f in futures if f.done())
-    not_done = set(futures) - done
-
-    jobs = ac([f.job for f in not_done], timeout)
-    return [f for f in futures if f in done or f.job in jobs]
+    not_done = set(handles) - done
+    jobs = nc([h.job for h in not_done], count, timeout)
+    return [h for h in handles if h in done or h.job in jobs]
 
 
 class Handle:
@@ -37,11 +31,11 @@ class Handle:
 class JobHandle(Handle):
     def __init__(self, job):
         super().__init__()
-
         self.job = job
         self.context = job.context
 
     def _process(self, cases, canceled):
+        self._done = True
         results = array.trim(cases)
         del self.context.cache.active[self.context.backdoor]
         # values = self.context.function.get_values(*results)
