@@ -9,7 +9,7 @@ from executor import Executor
 from function import Function
 from instance import Instance
 
-WORKERS = 4
+WORKERS = 36
 CHUNK_RATE = 1
 
 COUNT = 65_536
