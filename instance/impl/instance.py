@@ -32,6 +32,8 @@ class Instance:
             return backdoors[slug](_list=self.input_set, **kwargs)
         else:
             _list = kwargs.pop('_list')
+            if isinstance(_list, str):
+                _list = backdoors[slug]._from_str(_list)
             mask = [1 if v in _list else 0 for v in self.input_set]
             return backdoors[slug](_list=self.input_set, **kwargs)._set_mask(mask)
 

@@ -1,9 +1,12 @@
+from .single import Single
 from .chunks import Chunks
 
 shapings = {
-    Chunks.slug: Chunks
+    Single.slug: Single,
+    Chunks.slug: Chunks,
 }
 
 __all__ = [
-    'Chunks'
+    'Single',
+    'Chunks',
 ]
