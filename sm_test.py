@@ -120,7 +120,7 @@ if __name__ == '__main__':
     instance = Instance(pargs['instance'])
 
     while index < len(backdoor_strings):
-        if len(bd_futures) < 1000:
+        if len(bd_futures) < 100:
             bd_str = backdoor_strings[index]
             backdoor = instance.get_backdoor(**pargs['backdoor'], _list=bd_str)
             bd_futures.append((backdoor, method.queue(instance, backdoor)))
