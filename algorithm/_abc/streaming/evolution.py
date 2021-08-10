@@ -13,7 +13,7 @@ class Evolution(StreamingAlg):
         self.mutation = mutation
         self.selection = selection
         self.stagnation = kwargs.get("stagnation", 0)
-        self.in_process_count = self.population_size
+        self.max_pending_points = self.population_size
 
         self.root, self.best = None, None
         super().__init__(*args, **kwargs)
