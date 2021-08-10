@@ -1,4 +1,5 @@
 import json
+import os
 
 from method._type.futures import first_completed
 from util import build
@@ -15,7 +16,7 @@ CHUNK_RATE = 1
 COUNT = 65_536
 FUNC_SLUG = 'function:upgad'
 
-BD_FILE = 'backdoors'
+BD_PATH = os.path.join('2021.08.08_11:40:42-2021.08.09_11:40:46', 'backdoors')
 
 
 def wait(bd_futures):
@@ -32,17 +33,17 @@ def wait(bd_futures):
 
 
 def log_estimation(key, estimation):
-    with open(f'{BD_FILE}_all', 'a+') as handle:
+    with open(f'{BD_PATH}_all', 'a+') as handle:
         handle.write(f'{key}: {json.dumps(estimation)}\n')
 
 
 def log_progress(current, count, index):
-    with open(f'{BD_FILE}_%', 'a+') as handle:
+    with open(f'{BD_PATH}_%', 'a+') as handle:
         handle.write(f'progress: {current}/{count} of {index}\n')
 
 
 def log_len_estimation(bd_len, bd_estimations):
-    with open(f'{BD_FILE}_{bd_len}', 'a+') as handle:
+    with open(f'{BD_PATH}_{bd_len}', 'a+') as handle:
         for bd, est in bd_estimations:
             handle.write(f'{repr(bd)}: {json.dumps(est)}\n')
 
@@ -109,7 +110,7 @@ if __name__ == '__main__':
     print(COUNT, FUNC_SLUG)
 
     backdoor_strings = []
-    with open(BD_FILE, 'r') as handle:
+    with open(BD_PATH, 'r') as handle:
         for line in handle.readlines():
             backdoor_strings.append(line.strip())
 
