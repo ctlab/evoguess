@@ -14,9 +14,10 @@ WORKERS = 36
 CHUNK_RATE = 1
 
 COUNT = 65_536
-FUNC_SLUG = 'function:upgad'
+BY_RESULTS = False
+FUNC_SLUG = 'function:gad'
 
-BD_PATH = os.path.join('2021.08.08_11:40:42-2021.08.09_11:40:46', 'backdoors')
+BD_PATH = os.path.join('2021.08.08_11:40:42-2021.08.09_11:40:46', 'selected_bds')
 
 
 def wait(bd_futures):
@@ -40,12 +41,6 @@ def log_estimation(key, estimation):
 def log_progress(current, count, index):
     with open(f'{BD_PATH}_%', 'a+') as handle:
         handle.write(f'progress: {current}/{count} of {index}\n')
-
-
-def log_len_estimation(bd_len, bd_estimations):
-    with open(f'{BD_PATH}_{bd_len}', 'a+') as handle:
-        for bd, est in bd_estimations:
-            handle.write(f'{repr(bd)}: {json.dumps(est)}\n')
 
 
 if __name__ == '__main__':
@@ -89,7 +84,7 @@ if __name__ == '__main__':
             'workers': WORKERS,
             'slug': 'executor:process',
             'shaping': {
-                'slug': 'shaping:chunks',
+                'slug': 'shaping:single',
                 'chunk_rate': CHUNK_RATE
             },
         },
@@ -98,63 +93,54 @@ if __name__ == '__main__':
         }
     })
     pargs = json.loads(args)
-
-    _, method = build(
-        {Method: [
-            Function,
-            Executor
-        ]}, **pargs
-    )
-
-    print(WORKERS, CHUNK_RATE)
-    print(COUNT, FUNC_SLUG)
-
-    backdoor_strings = []
-    with open(BD_PATH, 'r') as handle:
-        for line in handle.readlines():
-            backdoor_strings.append(line.strip())
-
-    index = 0
-    bd_futures = []
-    estimations = {}
     instance = Instance(pargs['instance'])
 
-    while index < len(backdoor_strings):
-        if len(bd_futures) < 100:
-            bd_str = backdoor_strings[index]
-            backdoor = instance.get_backdoor(**pargs['backdoor'], _list=bd_str)
-            bd_futures.append((backdoor, method.queue(instance, backdoor)))
-            index += 1
-        else:
+    if BY_RESULTS:
+        exit(0)
+        # estimations = {}
+        # with open(f'{BD_PATH}_all', 'r') as handle:
+        #     for line in handle.readlines():
+        #         bd_str, est_str = line.strip().split(': ', 1)
+        #         backdoor = instance.get_backdoor(**pargs['backdoor'], _list=bd_str)
+        #         estimations[bd_str] = (backdoor, json.loads(est_str))
+    else:
+        _, method = build(
+            {Method: [
+                Function,
+                Executor
+            ]}, **pargs
+        )
+
+        print(WORKERS)
+        print(COUNT, FUNC_SLUG)
+
+        backdoor_strings = []
+        with open(BD_PATH, 'r') as handle:
+            for line in handle.readlines():
+                backdoor_strings.append(line.strip())
+
+        index = 0
+        bd_futures = []
+        estimations = {}
+
+        while index < len(backdoor_strings):
+            if len(bd_futures) < 100:
+                bd_str = backdoor_strings[index]
+                backdoor = instance.get_backdoor(**pargs['backdoor'], _list=bd_str)
+                bd_futures.append((backdoor, method.queue(instance, backdoor)))
+                index += 1
+            else:
+                bd_futures, done = wait(bd_futures)
+                for backdoor, estimation in done:
+                    key = repr(backdoor)
+                    log_estimation(key, estimation)
+                    estimations[key] = (backdoor, estimation)
+                    log_progress(len(estimations), len(backdoor_strings), index)
+
+        while len(bd_futures) > 0:
             bd_futures, done = wait(bd_futures)
             for backdoor, estimation in done:
                 key = repr(backdoor)
                 log_estimation(key, estimation)
                 estimations[key] = (backdoor, estimation)
-                log_progress(len(estimations), len(backdoor_strings), index)
-
-    while len(bd_futures) > 0:
-        bd_futures, done = wait(bd_futures)
-        for backdoor, estimation in done:
-            key = repr(backdoor)
-            log_estimation(key, estimation)
-            estimations[key] = (backdoor, estimation)
-            log_progress(len(estimations), len(backdoor_strings), len(backdoor_strings))
-
-    len_index = []
-    estimations_by_len = {}
-    for key, bd_estimation in estimations.items():
-        backdoor, _ = bd_estimation
-        if len(backdoor) in estimations_by_len:
-            estimations_by_len[len(backdoor)].append(bd_estimation)
-        else:
-            len_index.append(len(backdoor))
-            estimations_by_len[len(backdoor)] = [bd_estimation]
-
-    for bd_len in sorted(len_index):
-        bd_estimations = sorted(estimations_by_len[bd_len], key=lambda x: x[1]['statistic']['false'])
-        print(f'\n{bd_len}-len backdoors:')
-        for backdoor, estimation in bd_estimations[:10]:
-            print(f'{repr(backdoor)}: {json.dumps(estimation)}')
-
-        log_len_estimation(bd_len, bd_estimations)
+                log_progress(len(estimations), len(backdoor_strings), len(backdoor_strings))

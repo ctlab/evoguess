@@ -2,7 +2,7 @@ class Shaping:
     slug = 'shaping'
     name = 'Shaping'
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         pass
 
     def get(self, size, tasks, seed=None):

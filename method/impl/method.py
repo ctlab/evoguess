@@ -30,7 +30,7 @@ class Context:
         self.dim_type = to_bit(self.state['power'] > self.sampling.max_size)
 
     def _permutation(self):
-        if not self.permutation:
+        if self.permutation is None:
             rs = RandomState(seed=self.state['list_seed'])
             self.permutation = rs.permutation(self.state['power'])
         return self.permutation

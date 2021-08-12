@@ -8,7 +8,7 @@ class Chunks(Shaping):
     slug = 'shaping:chunks'
     name = 'Shaping: Chunks'
 
-    def __init__(self, chunk_rate):
+    def __init__(self, chunk_rate, *args, **kwargs):
         self.chunk_rate = chunk_rate
         super().__init__()
 
