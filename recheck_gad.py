@@ -15,9 +15,9 @@ CHUNK_RATE = 1
 
 COUNT = 65_536
 BY_RESULTS = False
-FUNC_SLUG = 'function:gad'
+FUNC_SLUG = 'function:incrgad'
 
-BD_PATH = os.path.join('2021.08.08_11:40:42-2021.08.09_11:40:46', 'selected_bds')
+BD_PATH = os.path.join('2021.08.08_11:40:42-2021.08.09_11:40:46', 'selected_incr_bds')
 
 
 def wait(bd_futures):
@@ -64,6 +64,7 @@ if __name__ == '__main__':
             'slug': 'method',
             'sampling': {
                 'slug': 'sampling:const',
+                'order': 'reversed',
                 'count': COUNT
             },
             'observer': {
@@ -85,7 +86,6 @@ if __name__ == '__main__':
             'slug': 'executor:process',
             'shaping': {
                 'slug': 'shaping:single',
-                'chunk_rate': CHUNK_RATE
             },
         },
         'backdoor': {
@@ -96,13 +96,16 @@ if __name__ == '__main__':
     instance = Instance(pargs['instance'])
 
     if BY_RESULTS:
-        exit(0)
-        # estimations = {}
-        # with open(f'{BD_PATH}_all', 'r') as handle:
-        #     for line in handle.readlines():
-        #         bd_str, est_str = line.strip().split(': ', 1)
-        #         backdoor = instance.get_backdoor(**pargs['backdoor'], _list=bd_str)
-        #         estimations[bd_str] = (backdoor, json.loads(est_str))
+        estimations = []
+        with open(f'{BD_PATH}_all', 'r') as handle:
+            for line in handle.readlines():
+                bd_str, est_str = line.strip().split(': ', 1)
+                backdoor = instance.get_backdoor(**pargs['backdoor'], _list=bd_str)
+                estimations.append((backdoor, json.loads(est_str)))
+
+        bd_estimations = sorted(estimations, key=lambda x: x[1]['job_time'])
+        for backdoor, estimation in bd_estimations[:10]:
+            print(f'{repr(backdoor)}: {json.dumps(estimation)}')
     else:
         _, method = build(
             {Method: [

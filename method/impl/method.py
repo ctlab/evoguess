@@ -10,10 +10,10 @@ Cache = namedtuple('Cache', 'active canceled estimated')
 
 class Context:
     def __init__(self, seeds, instance, backdoor, cache, **context):
+        self.index = None
         self.cache = cache
         self.instance = instance
         self.backdoor = backdoor
-        self.permutation = None
 
         self.function = context.get('function')
         self.sampling = context.get('sampling')
@@ -29,22 +29,26 @@ class Context:
 
         self.dim_type = to_bit(self.state['power'] > self.sampling.max_size)
 
-    def _permutation(self):
-        if self.permutation is None:
-            rs = RandomState(seed=self.state['list_seed'])
-            self.permutation = rs.permutation(self.state['power'])
-        return self.permutation
+    def _get_indexes(self):
+        if self.index is None:
+            if self.sampling.order == self.sampling.RANDOM:
+                rs = RandomState(seed=self.state['list_seed'])
+                self.index = rs.permutation(self.state['power'])
+            elif self.sampling.order == self.sampling.DIRECT:
+                self.index = list(range(self.state['power']))
+            elif self.sampling.order == self.sampling.REVERSED:
+                self.index = list(range(self.state['power']))[::-1]
+        return self.index
 
     def get_tasks(self, cases, offset):
         count = self.sampling.get_count(self.backdoor, values=cases)
-        if count == 0:
-            return []
+        if count == 0: return []
 
         if self.dim_type:
             value = self.state['list_seed']
             tasks = [(i, value + i) for i in range(offset, offset + count)]
         else:
-            values = self._permutation()
+            values = self._get_indexes()
             tasks = [(i, values[i]) for i in range(offset, offset + count)]
 
         return tasks

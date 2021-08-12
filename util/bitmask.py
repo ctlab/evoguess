@@ -16,7 +16,3 @@ def in_masks(values, masks):
 
 def apply_masks(values, masks):
     return list(map(apply_mask, values, masks))
-
-
-def in_bits(value, bits):
-    return bits[-value - 1]

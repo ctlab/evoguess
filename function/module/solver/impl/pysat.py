@@ -1,13 +1,8 @@
-import numpy as np
-
 from ..solver import *
 
 from pysat import solvers
 from threading import Timer
 from time import time as now
-
-saved_stats = {}
-saved_solvers = {}
 
 
 class PySat(Solver):
@@ -15,9 +10,32 @@ class PySat(Solver):
     slug = 'solver:pysat'
     name = 'Solver: PySat'
 
-    def solve(self, clauses, assumptions, limit=0, key=None):
-        solver = self.constructor(bootstrap_with=clauses, use_timer=True)
+    def prototype(self, clauses):
+        return _IPySat(self.constructor(bootstrap_with=clauses, use_timer=True))
 
+    def propagate(self, clauses, assumptions, **kwargs):
+        with self.constructor(bootstrap_with=clauses, use_timer=True) as solver:
+            status, statistics, literals = self.propagate_with(solver, assumptions, **kwargs)
+
+        return status, statistics, literals
+
+    def solve(self, clauses, assumptions, limit=0, **kwargs):
+        with self.constructor(bootstrap_with=clauses, use_timer=True) as solver:
+            status, statistics, solution = self.solve_with(solver, assumptions, limit, **kwargs)
+
+        return status, statistics, solution
+
+    @staticmethod
+    def propagate_with(solver, assumptions, **kwargs):
+        timestamp = now()
+        status, literals = solver.propagate(assumptions=assumptions)
+        full_time, time = now() - timestamp, solver.time()
+
+        statistics = {**solver.accum_stats(), 'time': time}
+        return status, statistics, literals
+
+    @staticmethod
+    def solve_with(solver, assumptions, limit=0, **kwargs):
         if limit > 0:
             timer = Timer(limit, solver.interrupt, ())
             timer.start()
@@ -36,24 +54,30 @@ class PySat(Solver):
             full_time, time = now() - timestamp, solver.time()
 
         solution = solver.get_model() if status else None
-        statistics = solver.accum_stats()
-        statistics['time'] = time
-        solver.delete()
-
+        statistics = {**solver.accum_stats(), 'time': time}
         return status, statistics, solution
 
-    def propagate(self, clauses, assumptions, **kwargs):
-        solver = self.constructor(bootstrap_with=clauses, use_timer=True)
 
-        timestamp = now()
-        status, literals = solver.propagate(assumptions=assumptions)
-        full_time, time = now() - timestamp, solver.time()
+class _IPySat:
+    def __init__(self, solver):
+        self.solver = solver
 
-        statistics = solver.accum_stats()
-        statistics['time'] = time
-        solver.delete()
+    def __enter__(self):
+        return self
 
-        return status, statistics, literals
+    def solve(self, assumptions, limit=0, **kwargs):
+        return PySat.solve_with(self.solver, assumptions, limit, **kwargs)
+
+    def propagate(self, assumptions, **kwargs):
+        return PySat.propagate_with(self.solver, assumptions, **kwargs)
+
+    def delete(self):
+        if self.solver:
+            self.solver.delete()
+            self.solver = None
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.delete()
 
 
 #

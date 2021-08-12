@@ -2,7 +2,12 @@ class Sampling:
     slug = 'sampling'
     name = 'Sampling'
 
-    def __init__(self, max_size, step_size):
+    RANDOM = 'random'
+    DIRECT = 'direct'
+    REVERSED = 'reversed'
+
+    def __init__(self, order, max_size, step_size):
+        self.order = order
         self.max_size = max_size
         self.step_size = step_size
 
@@ -16,6 +21,7 @@ class Sampling:
         return {
             'slug': self.slug,
             'name': self.name,
+            'order': self.order
         }
 
     def __str__(self):
