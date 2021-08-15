@@ -6,7 +6,7 @@ class Sampling:
     DIRECT = 'direct'
     REVERSED = 'reversed'
 
-    def __init__(self, order, max_size, step_size):
+    def __init__(self, max_size, step_size, order=RANDOM):
         self.order = order
         self.max_size = max_size
         self.step_size = step_size

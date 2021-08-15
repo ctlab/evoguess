@@ -7,8 +7,8 @@ class Epsilon(Sampling):
     slug = 'sampling:epsilon'
     name = 'Sampling: Epsilon'
 
-    def __init__(self, order, mn, mx, step, eps, delta=0.05):
-        super().__init__(order, mx, step)
+    def __init__(self, mn, mx, step, eps, delta=0.05, *args, **kwargs):
+        super().__init__(mx, step, *args, **kwargs)
         self.eps, self.delta = eps, delta
         self.min, self.max, self.step = mn, mx, step
 

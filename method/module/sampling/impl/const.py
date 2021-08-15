@@ -5,9 +5,9 @@ class Const(Sampling):
     slug = 'sampling:const'
     name = 'Sampling: Const'
 
-    def __init__(self, order, count: int):
+    def __init__(self, count: int, *args, **kwargs):
         self.count = count
-        super().__init__(order, count, count)
+        super().__init__(count, count, *args, **kwargs)
 
     def get_count(self, backdoor, values=()):
         # todo: filter None values
