@@ -1,5 +1,5 @@
 from .._type.job import Job
-from .._type.futures import MethodFuture, EstimationFuture
+from .._type.handler import VoidHandle, JobHandle
 
 from util.bitmask import to_bit
 from collections import namedtuple
@@ -80,11 +80,11 @@ class Method:
 
         if backdoor in self._cache.canceled:
             _, estimation = self._cache.estimated[backdoor]
-            return EstimationFuture(estimation)
+            return VoidHandle({**estimation, 'job_time': 0})
 
         if backdoor in self._cache.estimated:
             _, estimation = self._cache.estimated[backdoor]
-            return EstimationFuture(estimation)
+            return VoidHandle({**estimation, 'job_time': 0})
 
         seeds = {
             'list_seed': self.random_state.randint(0, 2 ** 31),
@@ -102,7 +102,7 @@ class Method:
             observer=self.observer
         )).start()
 
-        self._cache.active[backdoor] = MethodFuture(job)
+        self._cache.active[backdoor] = JobHandle(job)
         return self._cache.active[backdoor]
 
     def __info__(self):

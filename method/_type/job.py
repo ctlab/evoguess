@@ -1,25 +1,43 @@
 import threading
 
-from util.array import unzip, none
+from util.array import unzip, none, for_each
 from util.error import AlreadyRunning, CancelledError
 
-PENDING = 0
-RUNNING = 1
-FINISHED = 2
-CANCELLED = 3
+[
+    PENDING,
+    RUNNING,
+    FINISHED,
+    CANCELLED
+] = range(4)
 
 TIMEOUT_ERROR = 'TimeoutError'
 CANCELLED_ERROR = 'CancelledError'
 
 
-class _FirstCompletedWaiter:
+class _Waiter(object):
     def __init__(self):
-        self.event = threading.Event()
         self.finished_jobs = []
+        self.event = threading.Event()
+
+    def add_result(self, future):
+        self.finished_jobs.append(future)
+
+
+class _NCompletedWaiter(_Waiter):
+    def __init__(self, pending_calls):
+        super().__init__()
+        self.lock = threading.Lock()
+        self.pending_calls = pending_calls
+
+    def _decrement_pending_calls(self):
+        with self.lock:
+            self.pending_calls -= 1
+            if not self.pending_calls:
+                self.event.set()
 
     def add_result(self, job):
-        self.finished_jobs.append(job)
-        self.event.set()
+        super().add_result(job)
+        self._decrement_pending_calls()
 
 
 class _AcquireJobs(object):
@@ -35,25 +53,31 @@ class _AcquireJobs(object):
             job._condition.release()
 
 
-def _create_and_install_waiters(jobs):
-    waiter = _FirstCompletedWaiter()
-    for job in jobs:
-        job._waiters.append(waiter)
-    return waiter
-
-
-def first_completed(jobs, timeout=None):
+def n_completed(jobs, count, timeout=None):
     with _AcquireJobs(jobs):
-        done = [job for job in jobs if job._state > RUNNING]
-        if len(done) > 0: return done
-        waiter = _create_and_install_waiters(jobs)
+        done = set(j for j in jobs if j._state > RUNNING)
+        if len(done) >= count:
+            return done
+
+        not_done = set(jobs) - done
+        waiter = _NCompletedWaiter(count - len(done))
+        for_each(not_done, lambda j: j._waiters.append(waiter))
 
     waiter.event.wait(timeout)
     for job in jobs:
         with job._condition:
             job._waiters.remove(waiter)
 
-    return waiter.finished_jobs
+    done.update(waiter.finished_jobs)
+    return done
+
+
+def first_completed(jobs, timeout=None):
+    return n_completed(jobs, 1, timeout)
+
+
+def all_completed(jobs, timeout=None):
+    return n_completed(jobs, len(jobs), timeout)
 
 
 class Job:

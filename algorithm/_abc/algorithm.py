@@ -1,6 +1,7 @@
-from time import time as now
-
 from ..typings import Point, Vector
+
+from time import time as now
+from util.array import for_each
 from instance.typings.variables import Backdoor
 
 
@@ -28,24 +29,24 @@ class Algorithm:
         self.start_stamp = now()
         self.output.open('algorithm')
         self.output.info(**self.__info__())
-
         self.output.debug(1, 0, f'Algorithm start on {self.start_stamp}')
+
         # preprocess
         vector, preprocess_stamp = self.preprocess(*backdoors), now()
         self.limit.set('time', preprocess_stamp - self.start_stamp)
+        self.output.debug(1, 1, f'Initial vector with {len(vector)} points:')
+        for_each(vector, lambda point: self.output.debug(1, 2, point.to_dict()))
         self.output.debug(1, 1, f'Algorithm end preprocess on {preprocess_stamp}')
-        # todo: log preprocess result
-        # self.output.log(f'')
+
         # process
         solution, process_stamp = self.process(vector), now()
         self.output.debug(1, 1, f'Algorithm end process on {process_stamp}')
+
         # postprocess
         _, postprocess_stamp = self.postprocess(solution), now()
         self.output.debug(1, 1, f'Algorithm end postprocess on {postprocess_stamp}')
-        # todo: log postprocess result
-        # self.output.log(f'')
-        self.output.debug(1, 0, f'Algorithm end on {now()}')
 
+        self.output.debug(1, 0, f'Algorithm end on {now()}')
         self.output.close()
         return solution
 
@@ -56,6 +57,13 @@ class Algorithm:
     def start_from_vector(self, vector: Vector) -> Vector:
         # todo: provide backdoor values
         return self.start(*[p.backdoor for p in sorted(vector)])
+
+    def _proceed_index_result(self, index, vector):
+        self.output.log({
+            'index': index,
+            'spent': round(self.limit.get('time'), 2),
+            'points': [point.to_dict() for point in vector]
+        })
 
     def __info__(self):
         return {

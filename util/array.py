@@ -1,10 +1,6 @@
-def none(arg):
-    for fn in [len, int]:
-        try:
-            return [None] * fn(arg)
-        except TypeError:
-            continue
-    return []
+def for_each(_list, fn):
+    for item in _list:
+        fn(item)
 
 
 def concat(*lists):
@@ -13,6 +9,13 @@ def concat(*lists):
 
 def slicer(size, _list):
     return [_list[i:i + size] for i in range(0, len(_list), size)]
+
+
+def none(dimension):
+    if hasattr(dimension, '__len__'):
+        return [None] * len(dimension)
+    else:
+        return [None] * int(dimension)
 
 
 def first_non_zero_position(_list, direction=True):

@@ -1,24 +1,42 @@
-from .job import first_completed as fc
+from .job import n_completed as nc
 
 from util import array
 from util.error import CancelledError
 
 
-def first_completed(futures, timeout=None):
-    # todo: return done and not_done
-    done = [f for f in futures if isinstance(f, EstimationFuture)]
-    if done: return done
+def n_completed(handles, count, timeout=None):
+    done = set(h for h in handles if h.done())
+    count = min(count, len(handles))
+    if len(done) >= count:
+        return done
 
-    jobs = fc([f.job for f in futures], timeout)
-    return [future for future in futures if future.job in jobs]
+    not_done = set(handles) - done
+    jobs = nc([h.job for h in not_done], count, timeout)
+    return [h for h in handles if h in done or h.job in jobs]
 
 
-class MethodFuture:
+class Handle:
+    def __init__(self, done=False):
+        self._done = done
+
+    def done(self):
+        return self._done
+
+    def result(self, timeout=None):
+        raise NotImplementedError
+
+    def cancel_and_result(self):
+        raise NotImplementedError
+
+
+class JobHandle(Handle):
     def __init__(self, job):
+        super().__init__()
         self.job = job
         self.context = job.context
 
     def _process(self, cases, canceled):
+        self._done = True
         results = array.trim(cases)
         del self.context.cache.active[self.context.backdoor]
         # values = self.context.function.get_values(*results)
@@ -51,20 +69,23 @@ class MethodFuture:
         return self._process(self.job._results, True)
 
 
-class EstimationFuture:
+class VoidHandle(Handle):
     def __init__(self, estimation):
-        self.estimation = estimation
+        super().__init__()
+        self._done = True
+        self._estimation = estimation
 
     def result(self, timeout=None):
-        return {**self.estimation, 'job_time': 0}
+        return self._estimation
 
     def cancel_and_result(self):
-        return {**self.estimation, 'job_time': 0}
+        return self._estimation
 
 
 __all__ = [
-    'MethodFuture',
-    'EstimationFuture',
+    'Handle',
+    'JobHandle',
+    'VoidHandle',
     #
-    'first_completed',
+    'n_completed',
 ]

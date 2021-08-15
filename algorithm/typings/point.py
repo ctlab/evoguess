@@ -9,13 +9,13 @@ class Point:
         self.estimated = False
         self.estimation = {'value': float('inf')}
 
-    def set(self, value, **kwargs):
+    def set(self, **estimation):
         if not self.estimated:
             self.estimated = True
-            self.estimation = {**kwargs, 'value': value}
+            self.estimation = estimation
             return self
         else:
-            raise Exception('Point\'s kwargs have already set')
+            raise Exception('Estimation already set')
 
     def get(self, key='value'):
         return self.estimation.get(key, None)
@@ -45,11 +45,11 @@ class Point:
     def __ge__(self, other):
         return self.compare(other) >= 0
 
-    def __str__(self):
-        return '%s by %.7g (%s samples)' % (self.backdoor, self.get(), self.get('count'))
+    # def __str__(self):
+    #     return '%s by %.7g (%s samples)' % (self.backdoor, self.get(), self.get('count'))
 
     def to_dict(self):
-        return {'backdoor': repr(self.backdoor), **self.estimation}
+        return {'backdoor': repr(self.backdoor), 'size': len(self.backdoor), **self.estimation}
 
 
 Vector = Collection[Point]

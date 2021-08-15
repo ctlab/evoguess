@@ -86,7 +86,7 @@ class UPGuessAndDetermine(Function):
                 value = log2(vfp * count + pfp * (2 ** self.max_n))
             else:
                 value = log2(float(value_sum) / len(cases)) + len(backdoor)
-    
+
                 if statistic[False] > 0:
                     value = float('inf')
 

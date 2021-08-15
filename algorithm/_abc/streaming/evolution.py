@@ -13,7 +13,7 @@ class Evolution(StreamingAlg):
         self.mutation = mutation
         self.selection = selection
         self.stagnation = kwargs.get("stagnation", 0)
-        self.in_process_count = self.population_size
+        self.max_pending_points = self.population_size
 
         self.root, self.best = None, None
         super().__init__(*args, **kwargs)
@@ -36,7 +36,7 @@ class Evolution(StreamingAlg):
         selected = self.selection.breed(vector, size)
         return self.tweak(selected)
 
-    def append_points(self, vector: Population, *points: Individual) -> Population:
+    def update_core_vector(self, vector: Population, *points: Individual) -> Population:
         population = self.join(vector, points)
         self._update_best(population)
         return population
