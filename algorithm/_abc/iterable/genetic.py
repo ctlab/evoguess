@@ -2,6 +2,7 @@ from .evolution import *
 
 
 class Genetic(Evolution):
+    tweak_chunk_size = 2
     name = 'Algorithm(Iterable): Genetic'
 
     def __init__(self, crossover, *args, **kwargs):
