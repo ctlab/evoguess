@@ -11,10 +11,10 @@ from algorithm import Algorithm
 if __name__ == '__main__':
     args = json.dumps({
         'algorithm': {
-            'mu': 2, 'lmbda': 3,
+            'mu': 1, 'lmbda': 1,
             'slug': 'iterable:plus',
             'limit': {
-                'value': '00:03:00',
+                'value': '12:00:00',
                 'slug': 'limit:walltime',
             },
             'selection': {
@@ -28,7 +28,6 @@ if __name__ == '__main__':
             }
         },
         'output': {
-            'debug_verb': 4,
             'slug': 'output:json',
             'path': 'test/pvs_7_4',
         },
