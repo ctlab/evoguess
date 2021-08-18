@@ -47,9 +47,13 @@ class Point:
 
     # def __str__(self):
     #     return '%s by %.7g (%s samples)' % (self.backdoor, self.get(), self.get('count'))
-
-    def to_dict(self):
-        return {'backdoor': repr(self.backdoor), 'size': len(self.backdoor), **self.estimation}
+    # todo: make backdoor cache static
+    def to_dict(self, replace=None):
+        if replace is not None:
+            guid = replace[repr(self.backdoor)]
+            return {'backdoor': guid, 'size': len(self.backdoor), **self.estimation}
+        else:
+            return {'backdoor': repr(self.backdoor), 'size': len(self.backdoor), **self.estimation}
 
 
 Vector = Collection[Point]

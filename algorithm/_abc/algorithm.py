@@ -59,10 +59,11 @@ class Algorithm:
         return self.start(*[p.backdoor for p in sorted(vector)])
 
     def _proceed_index_result(self, index, vector):
+        replace = self.output.make_replace([p.backdoor for p in vector])
         self.output.log({
             'index': index,
             'spent': round(self.limit.get('time'), 2),
-            'points': [point.to_dict() for point in vector]
+            'points': [point.to_dict(replace) for point in vector]
         })
 
     def __info__(self):

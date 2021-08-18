@@ -82,12 +82,16 @@ class Output:
 
     def write(self, file, *strings: str):
         assert self.is_open(), 'Output isn\'t open'
-        file_path = os.path.join(self.path, file)
-        with open(file_path, 'a+') as f:
-            f.writelines(['%s\n' % s for s in strings])
+        if len(strings) > 0:
+            file_path = os.path.join(self.path, file)
+            with open(file_path, 'a+') as f:
+                f.writelines([f'{s}\n' for s in strings])
         return self
 
     def log(self, *objects):
+        raise NotImplementedError
+
+    def make_replace(self, backdoors):
         raise NotImplementedError
 
     def debug(self, verbosity: int, level: int, *strings: str):
