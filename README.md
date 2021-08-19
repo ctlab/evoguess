@@ -466,3 +466,20 @@ Names: `cd`, `g3`, `g4`, `lgl`, `mcb`, `mcm`, `mpl`, `mc`, `m22`, `mgh`.
     'path': <относительно EXPERIMENT_PATH из .env файла>
 }
 ```
+
+### 7. Backdoors
+
+```
+'backdoors': [<backdoor>, ...]
+```
+
+#### 6.1. `Base` backdoor
+
+Если параметр **_list** не указан, то в качестве набора переменных будет использоваться **input_set** текущего `Instance`
+
+```
+{
+    'slug': 'backdoor:base',
+    '_list': <optional number list>
+}
+```
