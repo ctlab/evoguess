@@ -7,10 +7,12 @@ class Epsilon(Sampling):
     slug = 'sampling:epsilon'
     name = 'Sampling: Epsilon'
 
-    def __init__(self, mn, mx, step, eps, delta=0.05, *args, **kwargs):
-        super().__init__(mx, step, *args, **kwargs)
-        self.eps, self.delta = eps, delta
-        self.min, self.max, self.step = mn, mx, step
+    def __init__(self, step, epsilon, delta=0.05, *args, **kwargs):
+        self.step = step
+        self.delta = delta
+        self.epsilon = epsilon
+        self.min, self.max = kwargs['min'], kwargs['max']
+        super().__init__(self.max, step, *args, **kwargs)
 
     def _n_e_d(self, values):
         n = len(values)
@@ -29,7 +31,7 @@ class Epsilon(Sampling):
         if count == 0:
             return min(self.min, bd_count)
         elif count < bd_count and count < self.max:
-            if self._get_eps(values) > self.eps:
+            if self._get_eps(values) > self.epsilon:
                 bound = min(count + self.step, self.max, bd_count)
                 return bound - count
         return 0
@@ -49,7 +51,7 @@ class Epsilon(Sampling):
             'max': self.max,
             'step': self.step,
             'delta': self.delta,
-            'epsilon': self.eps,
+            'epsilon': self.epsilon,
         }
 
 

@@ -5,9 +5,9 @@ class Tournament(Selection):
     slug = 'selection:tournament'
     name = 'Tournament(Selection)'
 
-    def __init__(self, number_of_rounds, **kwargs):
+    def __init__(self, rounds, **kwargs):
+        self.rounds = rounds
         super().__init__(**kwargs)
-        self.number_of_rounds = number_of_rounds
 
     def breed(self, estimated: Vector, size: int) -> Vector:
         pass
@@ -15,7 +15,7 @@ class Tournament(Selection):
     def __info__(self):
         return {
             **super().__info__(),
-            'number_of_rounds': self.number_of_rounds
+            'rounds': self.rounds
         }
 
 

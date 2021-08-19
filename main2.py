@@ -12,7 +12,8 @@ if __name__ == '__main__':
     args = json.dumps({
         'algorithm': {
             'mu': 1, 'lmbda': 1,
-            'slug': 'iterable:plus',
+            'size': 8, 'elites': 2,
+            'slug': 'iterable:elitism',
             'limit': {
                 'value': '12:00:00',
                 'slug': 'limit:walltime',
@@ -81,7 +82,7 @@ if __name__ == '__main__':
             }
         ],
     })
-    pargs = json.loads(args)
+    configuration = json.loads(args)
 
     _, algorithm = build(
         {Algorithm: [
@@ -91,11 +92,11 @@ if __name__ == '__main__':
                 Function,
                 Executor
             ]},
-        ]}, **pargs
+        ]}, **configuration
     )
 
     backdoors = [
         algorithm.instance.get_backdoor(**backdoor)
-        for backdoor in pargs['backdoors']
+        for backdoor in configuration['backdoors']
     ]
     solution = algorithm.start(*backdoors)

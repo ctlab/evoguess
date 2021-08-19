@@ -18,7 +18,7 @@ class Context:
         self.function = context.get('function')
         self.sampling = context.get('sampling')
         self.executor = context.get('executor')
-        self.observer = context.get('observer')
+        # self.observer = context.get('observer')
 
         self.state = {
             **seeds,
@@ -64,11 +64,11 @@ class Method:
     slug = 'method'
     name = 'Method'
 
-    def __init__(self, function, executor, sampling, observer, **kwargs):
+    def __init__(self, function, executor, sampling, **kwargs):
         self.function = function
         self.executor = executor
         self.sampling = sampling
-        self.observer = observer
+        # self.observer = observer
 
         self._cache = Cache({}, {}, {})
         self.seed = kwargs.get('seed', randint(2 ** 32 - 1))
@@ -99,7 +99,7 @@ class Method:
             function=self.function,
             sampling=self.sampling,
             executor=self.executor,
-            observer=self.observer
+            # observer=self.observer
         )).start()
 
         self._cache.active[backdoor] = JobHandle(job)
@@ -112,7 +112,7 @@ class Method:
             'seed': self.seed,
             'function': self.function.__info__(),
             'sampling': self.sampling.__info__(),
-            'observer': self.observer.__info__()
+            # 'observer': self.observer.__info__()
         }
 
     def __str__(self):
