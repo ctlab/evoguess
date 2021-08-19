@@ -10,6 +10,20 @@ pip3 install python-sat
 pip3 install python-dotenv
 ```
 
+Установка EvoGuess
+
+```
+mkdir evoguess-fw && cd evoguess-fw
+git clone git@github.com:alpavlenko/evoguess.git
+git clone git@github.com:alpavlenko/evoguess_data.git
+```
+
+## Environment
+
+Указать путь до папки **evoguess-fw** в `ROOT_PATH`.
+
+Проверить, что `MAIN_PATH` и `DATA_PATH` указывают на папки **evoguess** и **evoguess_data** соответственно.
+
 ## Запуск
 
 Передать конфигурацию строкой в json-формате в качестве аргумента для `main.py`
