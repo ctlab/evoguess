@@ -10,9 +10,9 @@ class Instance:
     slug = 'instance'
     name = 'Instance'
 
-    def __init__(self, cnf, supbs, input_set):
+    def __init__(self, cnf, input_set, *args, **kwargs):
         self.cnf = cnf
-        self.supbs = supbs
+        self.supbs = kwargs.get('supbs')
         self.input_set = input_set
 
     def __str__(self):
@@ -78,7 +78,7 @@ class Instance:
             'slug': self.slug,
             'name': self.name,
             'cnf': self.cnf.__info__(),
-            'supbs': self.supbs.__info__(),
+            # 'supbs': self.supbs.__info__(),
             'input_set': self.input_set.__info__()
         }
 
