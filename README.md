@@ -20,7 +20,7 @@ git clone git@github.com:alpavlenko/evoguess_data.git
 
 ## Environment
 
-Указать путь до папки **evoguess-fw** в `ROOT_PATH`.
+Указать путь до папки **evoguess-fw** в `ROOT_PATH` в файле `.env`.
 
 Проверить, что `MAIN_PATH` и `DATA_PATH` указывают на папки **evoguess** и **evoguess_data** соответственно.
 
