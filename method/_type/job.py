@@ -13,7 +13,6 @@ from util.error import AlreadyRunning, CancelledError
 TIMEOUT_ERROR = 'TimeoutError'
 CANCELLED_ERROR = 'CancelledError'
 
-
 class _Waiter(object):
     def __init__(self):
         self.finished_jobs = []
@@ -81,7 +80,7 @@ def all_completed(jobs, timeout=None):
 
 
 class Job:
-    def __init__(self, context):
+    def __init__(self, context, job_id):
         self._indexes = []
         self._futures = []
         self._handled = []
@@ -92,6 +91,7 @@ class Job:
 
         self._condition = threading.Condition()
         self._processor = threading.Thread(
+            name=f'JobManagerThread {job_id}',
             target=self._process, args=(context,)
         )
 
@@ -167,7 +167,13 @@ class Job:
             raise AlreadyRunning()
 
         self._state = RUNNING
-        self._processor.start()
+        try:
+            self._processor.start()
+        except RuntimeError as e:
+            print(f'{threading.active_count()} active threads:')
+            for thread in threading.enumerate():
+                print(f'-- {thread}')
+            raise e
         return self
 
     def cancel(self):
@@ -213,3 +219,6 @@ class Job:
 
     def join(self):
         self._processor.join()
+
+    # def __del__(self):
+    #     del self._processor
