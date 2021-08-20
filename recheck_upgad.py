@@ -1,9 +1,9 @@
 import json
 import os
 
-from method._type.futures import first_completed
 from util import build
 from time import time as now
+from method._type.handler import n_completed
 
 from method import Method
 from executor import Executor
@@ -21,7 +21,7 @@ BD_PATH = os.path.join('2021.08.08_11:40:42-2021.08.09_11:40:46', 'backdoors')
 
 
 def wait(bd_futures):
-    completed = first_completed([f for _, f in bd_futures])
+    completed = n_completed([f for _, f in bd_futures], 1)
 
     next_bd_futures, done_estimations = [], []
     for bd, future in bd_futures:
