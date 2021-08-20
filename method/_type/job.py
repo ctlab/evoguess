@@ -63,7 +63,7 @@ def n_completed(jobs, count, timeout=None):
         for_each(not_done, lambda j: j._waiters.append(waiter))
 
     waiter.event.wait(timeout)
-    for job in jobs:
+    for job in not_done:
         with job._condition:
             job._waiters.remove(waiter)
 
