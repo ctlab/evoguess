@@ -36,6 +36,7 @@ def gad_function(common_data, tasks_data=None):
             status, stats, _ = solver.solve(assumptions)
             time, value = stats['time'], meas.get(stats)
             results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
+
     return results
 
 

@@ -19,24 +19,26 @@ def gad_function(common_data, tasks_data=None):
     backdoor = inst.get_backdoor2(bd_type, bd_base, bd_mask)
     bases = backdoor.get_bases()
 
-    for task_data in tasks_data:
-        st_timestamp = now()
-        task_i, task_value = task_data
+    with slv.prototype(inst.clauses()) as solver:
+        for task_data in tasks_data:
+            st_timestamp = now()
+            task_i, task_value = task_data
 
-        if dim_type == NUMBERS:
-            state = RandomState(seed=task_value)
-            values = state.randint(0, bd_base, size=len(backdoor))
-            # todo: apply backdoor.get_masks() to values
-        else:
-            values = decimal_to_base(task_value, bases)
-            # todo: map values using backdoor.get_mappers()
+            if dim_type == NUMBERS:
+                state = RandomState(seed=task_value)
+                values = state.randint(0, bd_base, size=len(backdoor))
+                # todo: apply backdoor.get_masks() to values
+            else:
+                values = decimal_to_base(task_value, bases)
+                # todo: map values using backdoor.get_mappers()
 
-        assumptions = inst.get_assumptions(backdoor, values)
+            assumptions = inst.get_assumptions(backdoor, values)
 
-        status, stats, literals = slv.propagate(inst.clauses(), assumptions)
-        time, value = stats['time'], meas.get(stats)
-        status = not (status and len(literals) < inst.max_literal())
-        results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
+            status, stats, literals = solver.propagate(assumptions)
+            time, value = stats['time'], meas.get(stats)
+            status = not (status and len(literals) < inst.max_literal())
+            results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
+
     return results
 
 

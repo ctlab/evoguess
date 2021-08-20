@@ -71,13 +71,10 @@ class _IPySat:
     def propagate(self, assumptions, **kwargs):
         return PySat.propagate_with(self.solver, assumptions, **kwargs)
 
-    def delete(self):
+    def __exit__(self, exc_type, exc_value, traceback):
         if self.solver:
             self.solver.delete()
             self.solver = None
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.delete()
 
 
 #

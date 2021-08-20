@@ -311,7 +311,7 @@ python3 main2.py
 
 ##### 3.1.1. Sampling
 
-##### 3.1.1.1 `Const` sampling
+##### 3.1.1.1. `Const` sampling
 
 Постоянный размер выборки.
 
@@ -325,7 +325,7 @@ python3 main2.py
 
 Orders: `random`, `direct`, `reversed`.
 
-##### 3.1.1.2 `Epsilon` sampling
+##### 3.1.1.2. `Epsilon` sampling
 
 ```
 'sampling': {
@@ -365,7 +365,7 @@ Orders: `random`, `direct`, `reversed`.
 
 ##### 4.3.1. Solver
 
-##### 4.3.1.1 `PySat` solver
+##### 4.3.1.1. `PySat` solver
 
 ```
 'solver': {
@@ -377,7 +377,7 @@ Names: `cd`, `g3`, `g4`, `lgl`, `mcb`, `mcm`, `mpl`, `mc`, `m22`, `mgh`.
 
 ##### 4.3.2. Measure
 
-##### 4.3.2.1 `Time` measure
+##### 4.3.2.1. `Time` measure
 
 ```
 'measure': {
@@ -385,7 +385,7 @@ Names: `cd`, `g3`, `g4`, `lgl`, `mcb`, `mcm`, `mpl`, `mc`, `m22`, `mgh`.
 }
 ```
 
-##### 4.3.2.2 `Conflicts` measure
+##### 4.3.2.2. `Conflicts` measure
 
 ```
 'measure': {
@@ -393,7 +393,7 @@ Names: `cd`, `g3`, `g4`, `lgl`, `mcb`, `mcm`, `mpl`, `mc`, `m22`, `mgh`.
 }
 ```
 
-##### 4.3.2.3 `Propagations` measure
+##### 4.3.2.3. `Propagations` measure
 
 ```
 'measure': {
@@ -401,7 +401,7 @@ Names: `cd`, `g3`, `g4`, `lgl`, `mcb`, `mcm`, `mpl`, `mc`, `m22`, `mgh`.
 }
 ```
 
-##### 4.3.2.4 `Learned literals` measure
+##### 4.3.2.4. `Learned literals` measure
 
 ```
 'measure': {
@@ -435,7 +435,7 @@ Names: `cd`, `g3`, `g4`, `lgl`, `mcb`, `mcm`, `mpl`, `mc`, `m22`, `mgh`.
 
 ##### 5.3.1. Shaping
 
-##### 5.3.1.1 `Single` shaping
+##### 5.3.1.1. `Single` shaping
 
 Помещает всю выборку задач в задании на один поток/процесс.
 
@@ -445,7 +445,7 @@ Names: `cd`, `g3`, `g4`, `lgl`, `mcb`, `mcm`, `mpl`, `mc`, `m22`, `mgh`.
 }
 ```
 
-##### 5.3.1.1 `Chunks` shaping
+##### 5.3.1.2. `Chunks` shaping
 
 Делит выборку задач на *chunk_rate\*workers* равных частей.
 
@@ -473,7 +473,7 @@ Names: `cd`, `g3`, `g4`, `lgl`, `mcb`, `mcm`, `mpl`, `mc`, `m22`, `mgh`.
 'backdoors': [<backdoor>, ...]
 ```
 
-#### 6.1. `Base` backdoor
+#### 7.1. `Base` backdoor
 
 Если параметр **_list** не указан, то в качестве набора переменных будет использоваться **input_set** текущего `Instance`
 
