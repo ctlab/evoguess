@@ -14,7 +14,7 @@ class Chunks(Shaping):
 
     def get(self, size, tasks, seed=None):
         rs, count = RandomState(seed=seed), len(tasks)
-        chunk_size = max(1, count // (self.chunk_rate * size))
+        chunk_size = max(1, int(count // max(1, self.chunk_rate * size)))
         return [
             tuple((i, tasks[i]) for i in index)
             for index in slicer(chunk_size, rs.permutation(count))
