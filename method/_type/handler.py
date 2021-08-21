@@ -5,14 +5,15 @@ from util.error import CancelledError
 
 
 def n_completed(handles, count, timeout=None):
-    done = set(h for h in handles if h.done())
-    count = min(count, len(handles))
-    if len(done) >= count:
-        return done
+    done = [h for h in handles if h.done()]
+    count = min(count, len(handles)) - len(done)
 
-    not_done = set(handles) - done
-    jobs = nc([h.job for h in not_done], count, timeout)
-    return [h for h in handles if h in done or h.job in jobs]
+    if count > 0:
+        not_done = set(handles) - set(done)
+        jobs = nc([h.job for h in not_done], count, timeout)
+        return [h for h in handles if h in done or h.job in jobs]
+    else:
+        return done
 
 
 class Handle:
