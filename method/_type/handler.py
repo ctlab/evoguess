@@ -6,10 +6,10 @@ from util.error import CancelledError
 
 def n_completed(handles, count, timeout=None):
     done = [h for h in handles if h.done()]
-    count = min(count, len(handles)) - len(done)
 
-    if count > 0:
+    if count > len(done):
         not_done = set(handles) - set(done)
+        count = min(count - len(done), len(not_done))
         jobs = nc([h.job for h in not_done], count, timeout)
         return [h for h in handles if h in done or h.job in jobs]
     else:
@@ -72,8 +72,7 @@ class JobHandle(Handle):
 
 class VoidHandle(Handle):
     def __init__(self, estimation):
-        super().__init__()
-        self._done = True
+        super().__init__(done=True)
         self._estimation = estimation
 
     def result(self, timeout=None):

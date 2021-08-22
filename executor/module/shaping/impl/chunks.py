@@ -25,3 +25,4 @@ class Chunks(Shaping):
             **super().__info__(),
             'chunk_rate': self.chunk_rate
         }
+

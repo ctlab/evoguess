@@ -34,7 +34,7 @@ class Algorithm:
         # preprocess
         vector, preprocess_stamp = self.preprocess(*backdoors), now()
         self.limit.set('time', preprocess_stamp - self.start_stamp)
-        self.output.debug(1, 1, f'Initial vector with {len(vector)} points:')
+        self.output.debug(1, 1, f'Initial vector with {len(vector)} point(s):')
         for_each(vector, lambda point: self.output.debug(1, 2, point.to_dict()))
         self.output.debug(1, 1, f'Algorithm end preprocess on {preprocess_stamp}')
 

@@ -36,22 +36,25 @@ class AsyncAlg(Algorithm):
         self._proceed_index_result(index_num, vector)
 
         while not self.limit.exhausted():
+            index_num = self.limit.increase('index')
             to_process = max(0, self.max_pending_points - len(point_handles))
             point_handles.extend([
                 (point, self.method.queue(self.instance, point.backdoor))
                 for point in self.get_next_points(vector, to_process)
             ])
+            self.output.debug(1, 1, f'Index {index_num} with {len(point_handles)} handles')
             points, point_handles = self._await(point_handles, self.min_vector_length)
 
             vector = self.update_core_vector(vector, *points)
-            index_num = self.limit.increase('index')
             self._proceed_index_result(index_num, vector)
 
         return vector
 
     def _await(self, point_handles, count):
-        handles = [h for (_, h) in point_handles]
+        count = min(count, len(point_handles))
         timeout = self.limit.left().get('time')
+        handles = [h for (_, h) in point_handles]
+        self.output.debug(1, 2, f'Wait {set(handles)} with {count}')
         done = n_completed(handles, count, timeout)
         self.limit.set('time', now() - self.start_stamp)
 

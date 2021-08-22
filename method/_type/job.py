@@ -1,6 +1,8 @@
+import os
 import threading
 
 from util.array import unzip, none, for_each
+from util.const import DATA_PATH
 from util.error import AlreadyRunning, CancelledError
 
 [
@@ -12,6 +14,7 @@ from util.error import AlreadyRunning, CancelledError
 
 TIMEOUT_ERROR = 'TimeoutError'
 CANCELLED_ERROR = 'CancelledError'
+
 
 class _Waiter(object):
     def __init__(self):
@@ -88,6 +91,8 @@ class Job:
         self._waiters = []
         self._state = PENDING
         self.context = context
+
+        self.job_id = job_id
 
         self._condition = threading.Condition()
         self._processor = threading.Thread(
@@ -168,8 +173,17 @@ class Job:
 
         self._state = RUNNING
         try:
+            filepath = os.path.join(DATA_PATH, 'THREADS')
+            with open(filepath, 'a+') as handle:
+                handle.write(f'{threading.active_count()} active threads in {self.job_id} job\n')
             self._processor.start()
         except RuntimeError as e:
+            filepath = os.path.join(DATA_PATH, 'ERRORS')
+            with open(filepath, 'a+') as handle:
+                handle.write(f'{threading.active_count()} active threads:\n')
+                for thread in threading.enumerate():
+                    print(f'-- {thread}\n')
+                print('\n\n')
             print(f'{threading.active_count()} active threads:')
             for thread in threading.enumerate():
                 print(f'-- {thread}')
