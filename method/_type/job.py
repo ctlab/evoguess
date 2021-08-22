@@ -172,22 +172,10 @@ class Job:
             raise AlreadyRunning()
 
         self._state = RUNNING
-        try:
-            filepath = os.path.join(DATA_PATH, 'THREADS')
-            with open(filepath, 'a+') as handle:
-                handle.write(f'{threading.active_count()} active threads in {self.job_id} job\n')
-            self._processor.start()
-        except RuntimeError as e:
-            filepath = os.path.join(DATA_PATH, 'ERRORS')
-            with open(filepath, 'a+') as handle:
-                handle.write(f'{threading.active_count()} active threads:\n')
-                for thread in threading.enumerate():
-                    print(f'-- {thread}\n')
-                print('\n\n')
-            print(f'{threading.active_count()} active threads:')
-            for thread in threading.enumerate():
-                print(f'-- {thread}')
-            raise e
+        filepath = os.path.join(DATA_PATH, 'THREADS')
+        with open(filepath, 'a+') as handle:
+            handle.write(f'{threading.active_count()} active threads in {self.job_id} job\n')
+        self._processor.start()
         return self
 
     def cancel(self):
