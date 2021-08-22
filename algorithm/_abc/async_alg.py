@@ -54,7 +54,7 @@ class AsyncAlg(Algorithm):
         count = min(count, len(point_handles))
         timeout = self.limit.left().get('time')
         handles = [h for (_, h) in point_handles]
-        self.output.debug(1, 2, f'Wait {set(handles)} with {count}')
+        self.output.debug(1, 2, f'Wait {len(set(handles))} handles with {count}')
         done = n_completed(handles, count, timeout)
         self.limit.set('time', now() - self.start_stamp)
 
