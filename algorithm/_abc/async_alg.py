@@ -38,12 +38,16 @@ class AsyncAlg(Algorithm):
         while not self.limit.exhausted():
             index_num = self.limit.increase('index')
             to_process = max(0, self.max_pending_points - len(point_handles))
+            self.output.debug(1, 1, f'Index {index_num} will get {to_process} new points')
             point_handles.extend([
                 (point, self.method.queue(self.instance, point.backdoor))
                 for point in self.get_next_points(vector, to_process)
             ])
+            new_job_ids = [h.job.job_id for _, h in point_handles[-to_process:]]
+            self.output.debug(1, 1, f'Index {index_num} get jobs: {new_job_ids}')
             self.output.debug(1, 1, f'Index {index_num} with {len(point_handles)} handles')
             points, point_handles = self._await(point_handles, self.min_vector_length)
+            self.output.debug(1, 1, f'Index {index_num} with {len(points)} estimated points')
 
             vector = self.update_core_vector(vector, *points)
             self._proceed_index_result(index_num, vector)
@@ -56,6 +60,7 @@ class AsyncAlg(Algorithm):
         handles = [h for (_, h) in point_handles]
         self.output.debug(1, 2, f'Wait {len(set(handles))} handles with {count}')
         done = n_completed(handles, count, timeout)
+        self.output.debug(1, 2, f'Complete {len(done)} of {count}: {[h.job.job_id for h in done]}')
         self.limit.set('time', now() - self.start_stamp)
 
         if len(done) < count:
@@ -66,14 +71,14 @@ class AsyncAlg(Algorithm):
             ]
             return all_handles, []
 
-        estimated, left_point_futures = [], []
+        estimated, left_point_handles = [], []
         for point, handle in point_handles:
             if handle not in done:
-                left_point_futures.append((point, handle))
+                left_point_handles.append((point, handle))
             else:
                 estimated.append(point.set(**handle.result()))
 
-        return estimated, left_point_futures
+        return estimated, left_point_handles
 
 
 __all__ = [
