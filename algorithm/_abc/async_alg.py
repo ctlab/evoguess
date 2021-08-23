@@ -1,5 +1,6 @@
 from .algorithm import *
 
+import tracemalloc
 from time import time as now
 from method._type.handler import n_completed
 
@@ -22,6 +23,7 @@ class AsyncAlg(Algorithm):
         raise NotImplementedError
 
     def process(self, vector: Vector) -> Vector:
+        tracemalloc.start()
         index_num = self.limit.set('index', 0)
         point_handles = [
             (point, self.method.queue(self.instance, point.backdoor))
@@ -45,6 +47,8 @@ class AsyncAlg(Algorithm):
             ])
             new_job_ids = [h.job.job_id for _, h in point_handles[-to_process:]]
             self.output.debug(1, 1, f'Index {index_num} get jobs: {new_job_ids}')
+            peek_mem = tracemalloc.get_traced_memory()[1] // 1_048_576
+            self.output.debug(1, 1, f'Memory peek: {peek_mem} MB')
             self.output.debug(1, 1, f'Index {index_num} with {len(point_handles)} handles')
             points, point_handles = self._await(point_handles, self.min_vector_length)
             self.output.debug(1, 1, f'Index {index_num} with {len(points)} estimated points')
@@ -52,6 +56,7 @@ class AsyncAlg(Algorithm):
             vector = self.update_core_vector(vector, *points)
             self._proceed_index_result(index_num, vector)
 
+        tracemalloc.stop()
         return vector
 
     def _await(self, point_handles, count):
