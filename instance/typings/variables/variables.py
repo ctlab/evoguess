@@ -23,8 +23,9 @@ class Variables:
     def __len__(self):
         return len(self.variables())
 
-    def _to_str(self):
-        variables, strings, i, j = self.variables(), [], 0, 1
+    @staticmethod
+    def _to_str(variables):
+        strings, i, j = [], 0, 1
         while i < len(variables):
             if j == len(variables) or variables[j] - variables[i] != j - i:
                 if j - i > 2:
@@ -34,7 +35,7 @@ class Variables:
                 i, j = j, j + 1
             else:
                 j += 1
-        return ' '.join(strings), len(variables)
+        return ' '.join(strings)
 
     @staticmethod
     def _from_str(string):
@@ -48,11 +49,12 @@ class Variables:
 
         return variables
 
-    def __str__(self):
-        return '[%s](%d)' % self._to_str()
-
     def __repr__(self):
-        return self._to_str()[0]
+        return self._to_str(self.variables())
+
+    def __str__(self):
+        variables = self.variables()
+        return f'[{self._to_str(variables)}]({len(variables)})'
 
     def __iter__(self):
         return self.variables().__iter__()

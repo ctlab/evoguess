@@ -25,11 +25,12 @@ class Evolution(StreamingAlg):
     def join(self, parents: Population, children: Population):
         raise NotImplementedError
 
-    def preprocess(self, *backdoors: Backdoor) -> Vector:
+    def preprocess(self, *backdoors: Backdoor) -> Population:
         self.root = list(map(Individual, backdoors))
         self.best = sorted(self.root)[0]
         self.limit.set('stagnation', 0)
         return self.root
+        # return super().preprocess(*backdoors)
 
     def get_next_points(self, vector: Population, count: int) -> Individual:
         # todo: consider stagnation

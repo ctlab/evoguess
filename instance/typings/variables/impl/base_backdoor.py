@@ -26,7 +26,11 @@ class BaseBackdoor(Backdoor):
 
     @staticmethod
     def empty(base):
-        return Backdoor(base)
+        return BaseBackdoor(base)
+
+    @staticmethod
+    def _to_str(variables):
+        return Backdoor._to_str(variables)
 
     @staticmethod
     def parse(string, base=2):

@@ -39,6 +39,10 @@ class Backdoor(Variables):
         return copy(self._mask)
 
     @staticmethod
+    def _to_str(variables):
+        return Variables._to_str(variables)
+
+    @staticmethod
     def _from_str(string):
         return Variables._from_str(string)
 

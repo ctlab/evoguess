@@ -5,20 +5,20 @@ from typing import Collection
 class Point:
     def __init__(self, backdoor):
         super().__init__()
-        self.backdoor = backdoor
         self.estimated = False
-        self.estimation = {'value': float('inf')}
+        self.backdoor = backdoor
+        self._payload = {'value': float('inf')}
 
     def set(self, **estimation):
         if not self.estimated:
             self.estimated = True
-            self.estimation = estimation
+            self._payload.update(estimation)
             return self
         else:
             raise Exception('Estimation already set')
 
     def get(self, key='value'):
-        return self.estimation.get(key, None)
+        return self._payload.get(key, None)
 
     def compare(self, other):
         try:
@@ -47,13 +47,11 @@ class Point:
 
     # def __str__(self):
     #     return '%s by %.7g (%s samples)' % (self.backdoor, self.get(), self.get('count'))
-    # todo: make backdoor cache static
-    def to_dict(self, replace=None):
-        if replace is not None:
-            guid = replace[repr(self.backdoor)]
-            return {'backdoor': guid, 'size': len(self.backdoor), **self.estimation}
-        else:
-            return {'backdoor': repr(self.backdoor), 'size': len(self.backdoor), **self.estimation}
+
+    def to_dict(self):
+        base = self.backdoor._to_str(self.backdoor._list)
+        hex_mask = hex(int(''.join([str(int(x)) for x in self.backdoor._mask]), 2))
+        return {'backdoor': {'base': base, 'mask': hex_mask}, 'size': len(self.backdoor), **self._payload}
 
 
 Vector = Collection[Point]

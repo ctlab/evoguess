@@ -6,8 +6,8 @@ from instance.typings.variables import Backdoor
 
 
 class Algorithm:
-    slug = None
     name = 'Algorithm'
+    slug = None
 
     def __init__(self, limit, output, method, instance, *args, **kwargs):
         self.limit = limit
@@ -59,11 +59,10 @@ class Algorithm:
         return self.start(*[p.backdoor for p in sorted(vector)])
 
     def _proceed_index_result(self, index, vector):
-        replace = self.output.make_replace([p.backdoor for p in vector])
         self.output.log({
             'index': index,
             'spent': round(self.limit.get('time'), 2),
-            'points': [point.to_dict(replace) for point in vector]
+            'points': [point.to_dict() for point in vector]
         })
 
     def __info__(self):

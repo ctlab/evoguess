@@ -2,8 +2,8 @@ from .async_alg import *
 
 
 class IterableAlg(AsyncAlg):
-    vector_length = None
     name = 'Iterable(Algorithm)'
+    vector_length = None
 
     def __init__(self, *args, **kwargs):
         self.min_vector_length = self.vector_length

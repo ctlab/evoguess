@@ -2,8 +2,9 @@ from .async_alg import *
 
 
 class StreamingAlg(AsyncAlg):
-    min_vector_length = 1
     name = 'Algorithm(Streaming)'
+    min_vector_length = None
+    max_pending_points = None
 
     def preprocess(self, *backdoors: Backdoor) -> Vector:
         raise NotImplementedError

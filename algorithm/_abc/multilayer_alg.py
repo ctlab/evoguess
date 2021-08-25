@@ -2,8 +2,8 @@ from .async_alg import *
 
 
 class MultilayerAlg(AsyncAlg):
-    min_vector_length = 1
     name = 'Algorithm(Multilayer)'
+    min_vector_length = 1
 
     def __init__(self, *args, **kwargs):
         self.layers = {}
