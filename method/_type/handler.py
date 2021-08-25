@@ -47,6 +47,8 @@ class JobHandle(Handle):
             # **self.context.sampling.report(values),
             **self.context.function.calculate(self.context.backdoor, *results),
         }
+        # todo: separate result and estimation
+        results = []
         if canceled:
             estimation['value'] = float('inf')
             self.context.cache.canceled[self.context.backdoor] = results, estimation
