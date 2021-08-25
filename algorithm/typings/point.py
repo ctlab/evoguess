@@ -48,10 +48,14 @@ class Point:
     # def __str__(self):
     #     return '%s by %.7g (%s samples)' % (self.backdoor, self.get(), self.get('count'))
 
-    def to_dict(self):
-        base = self.backdoor._to_str(self.backdoor._list)
-        hex_mask = hex(int(''.join([str(int(x)) for x in self.backdoor._mask]), 2))
-        return {'backdoor': {'base': base, 'mask': hex_mask}, 'size': len(self.backdoor), **self._payload}
+    # todo: make backdoor cache static
+    def to_dict(self, replace=None):
+        if replace is not None:
+            guid = replace[repr(self.backdoor)]
+            return {'backdoor': guid, 'size': len(self.backdoor), **self._payload}
+        else:
+            return {'backdoor': repr(self.backdoor), 'size': len(self.backdoor), **self._payload}
+
 
 
 Vector = Collection[Point]
