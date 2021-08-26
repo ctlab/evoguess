@@ -57,7 +57,6 @@ class Point:
             return {'backdoor': repr(self.backdoor), 'size': len(self.backdoor), **self._payload}
 
 
-
 Vector = Collection[Point]
 
 __all__ = [

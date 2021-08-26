@@ -58,12 +58,14 @@ class _AcquireJobs(object):
 def n_completed(jobs, count, timeout=None):
     with _AcquireJobs(jobs):
         done = set(j for j in jobs if j._state > RUNNING)
-        if len(done) >= count:
-            return done
-
         not_done = set(jobs) - done
-        waiter = _NCompletedWaiter(count - len(done))
-        for_each(not_done, lambda j: j._waiters.append(waiter))
+        count = min(count - len(done), len(not_done))
+
+        if count > 0:
+            waiter = _NCompletedWaiter(count)
+            for_each(not_done, lambda j: j._waiters.append(waiter))
+        else:
+            return done
 
     waiter.event.wait(timeout)
     for job in not_done:
