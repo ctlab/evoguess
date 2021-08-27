@@ -60,16 +60,26 @@ class PySat(Solver):
 
 class _IPySat:
     def __init__(self, solver):
+        self.stat = {}
         self.solver = solver
 
     def __enter__(self):
         return self
 
+    def _fix_stat(self, stat):
+        for key, value in stat.items():
+            if key != 'time':
+                stat[key] -= self.stat.get(key, 0)
+                self.stat[key] = value
+        return stat
+
     def solve(self, assumptions, limit=0, **kwargs):
-        return PySat.solve_with(self.solver, assumptions, limit, **kwargs)
+        st, stat, sol = PySat.solve_with(self.solver, assumptions, limit, **kwargs)
+        return st, self._fix_stat(stat), sol
 
     def propagate(self, assumptions, **kwargs):
-        return PySat.propagate_with(self.solver, assumptions, **kwargs)
+        st, stat, liters = PySat.propagate_with(self.solver, assumptions, **kwargs)
+        return st, self._fix_stat(stat), liters
 
     def __exit__(self, exc_type, exc_value, traceback):
         if self.solver:
