@@ -1,6 +1,6 @@
 import json
 from os.path import join
-from operator import  attrgetter
+from operator import attrgetter
 from concurrent.futures.process import ProcessPoolExecutor
 
 from instance import Instance
@@ -10,9 +10,9 @@ from function.module.solver import solvers
 MAX_WORKERS = 36
 MAX_COUNT = 65_536
 
-TARGET_FILE = 'BEST'
 PROJECT = 'aaai_2021'
 INSTANCE = 'pvs_4_7_simp'
+TARGET_FILE = 'BEST'
 
 # EXPERIMENT = '2021.08.25_22:13:53-2021.08.26_10:13:54'  # 2/8 n20 2k 12h async $
 # EXPERIMENT = '2021.08.25_22:13:54-2021.08.26_10:13:54'  # 2/8 n20 1k 12h async $
@@ -114,10 +114,10 @@ if __name__ == '__main__':
             handle.write(json.dumps(result))
 
     if len(backdoor_lines) > 1:
-        time_results = sorted(all_results, key=attrgetter('time'))
+        time_results = sorted(all_results, key=lambda x: x['time'])
         with open(f'{BD_PATH}_BY_TIME', 'w+') as handle:
             handle.write(json.dumps(time_results))
 
-        prop_results = sorted(all_results, key=attrgetter('propagations'))
+        prop_results = sorted(all_results, key=lambda x: x['propagations'])
         with open(f'{BD_PATH}_BY_PROPS', 'w+') as handle:
             handle.write(json.dumps(prop_results))
