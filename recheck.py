@@ -1,6 +1,6 @@
 import json
-from operator import itemgetter, attrgetter
 from os.path import join
+from operator import  attrgetter
 from concurrent.futures.process import ProcessPoolExecutor
 
 from instance import Instance
@@ -110,14 +110,14 @@ if __name__ == '__main__':
     all_results = []
     for result in task_map(worker_func, backdoor_lines):
         all_results.append(result)
-        with open(f'{BD_PATH}_VALUES') as handle:
+        with open(f'{BD_PATH}_VALUES', 'w+') as handle:
             handle.write(json.dumps(result))
 
     if len(backdoor_lines) > 1:
         time_results = sorted(all_results, key=attrgetter('time'))
-        with open(f'{BD_PATH}_BY_TIME') as handle:
+        with open(f'{BD_PATH}_BY_TIME', 'w+') as handle:
             handle.write(json.dumps(time_results))
 
         prop_results = sorted(all_results, key=attrgetter('propagations'))
-        with open(f'{BD_PATH}_BY_PROPS') as handle:
+        with open(f'{BD_PATH}_BY_PROPS', 'w+') as handle:
             handle.write(json.dumps(prop_results))
