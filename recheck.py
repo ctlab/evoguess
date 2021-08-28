@@ -7,10 +7,8 @@ from instance import Instance
 from util.const import EXPERIMENT_PATH
 from function.module.solver import solvers
 
-WORKERS = 36
-CHUNK_RATE = 1
-
-COUNT = 65_536
+MAX_WORKERS = 36
+MAX_COUNT = 65_536
 
 TARGET_FILE = 'BEST'
 PROJECT = 'aaai_2021'
@@ -49,7 +47,7 @@ def decimal_to_base(number, bases):
 
 def worker_func(bd_line):
     backdoor = instance.get_backdoor('backdoor:base', _list=bd_line)
-    if backdoor.task_count() > COUNT:
+    if backdoor.task_count() > MAX_COUNT:
         return {'backdoor': bd_line, 'time': float('inf'), 'propagations': float('inf')}
 
     max_literal = instance.max_literal()
@@ -100,13 +98,13 @@ if __name__ == '__main__':
             backdoor_lines.append(line.strip())
 
     executor = None
-    WORKERS = min(WORKERS, len(backdoor_lines))
-    print(f'{WORKERS} workers for {len(backdoor_lines)} backdoors')
+    workers = min(MAX_WORKERS, len(backdoor_lines))
+    print(f'{workers} workers for {len(backdoor_lines)} backdoors')
 
-    if WORKERS == 1:
+    if workers == 1:
         task_map = map
     else:
-        executor = ProcessPoolExecutor(max_workers=WORKERS)
+        executor = ProcessPoolExecutor(max_workers=workers)
         task_map = executor.map
 
     all_results = []
