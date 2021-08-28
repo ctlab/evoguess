@@ -115,9 +115,9 @@ if __name__ == '__main__':
 
     if len(backdoor_lines) > 1:
         time_results = sorted(all_results, key=attrgetter('time'))
-        with open(f'{BD_PATH}_TIME') as handle:
+        with open(f'{BD_PATH}_BY_TIME') as handle:
             handle.write(json.dumps(time_results))
 
         prop_results = sorted(all_results, key=attrgetter('propagations'))
-        with open(f'{BD_PATH}_PROPAGATION') as handle:
+        with open(f'{BD_PATH}_BY_PROPS') as handle:
             handle.write(json.dumps(prop_results))
