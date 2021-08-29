@@ -110,14 +110,16 @@ if __name__ == '__main__':
     all_results = []
     for result in task_map(worker_func, backdoor_lines):
         all_results.append(result)
-        with open(f'{BD_PATH}_VALUES', 'w+') as handle:
-            handle.write(json.dumps(result))
+        with open(f'{BD_PATH}_VALUES', 'a+') as handle:
+            handle.write(f'{json.dumps(result)}\n')
 
     if len(backdoor_lines) > 1:
         time_results = sorted(all_results, key=lambda x: x['time'])
         with open(f'{BD_PATH}_BY_TIME', 'w+') as handle:
-            handle.write(json.dumps(time_results))
+            for time_result in time_results:
+                handle.write(f'{json.dumps(time_result)}\n')
 
         prop_results = sorted(all_results, key=lambda x: x['propagations'])
         with open(f'{BD_PATH}_BY_PROPS', 'w+') as handle:
-            handle.write(json.dumps(prop_results))
+            for prop_result in prop_results:
+                handle.write(f'{json.dumps(prop_result)}\n')
