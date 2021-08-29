@@ -10,6 +10,7 @@ from function.module.solver import solvers
 MAX_WORKERS = 36
 MAX_COUNT = 65_536
 
+SOLVER = 'g3'
 PROJECT = 'aaai_2021'
 INSTANCE = 'pvs_4_7_simp'
 TARGET_FILE = 'BEST'
@@ -50,9 +51,9 @@ def worker_func(bd_line):
     if backdoor.task_count() > MAX_COUNT:
         return {'backdoor': bd_line, 'time': float('inf'), 'propagations': float('inf')}
 
+    up_tasks, hard_tasks = [], []
     max_literal = instance.max_literal()
     backdoor_bases = backdoor.get_bases()
-    statuses, up_tasks, hard_tasks = [], [], []
     with solver.prototype(instance.clauses()) as slv:
         for task_i in range(backdoor.task_count()):
             values = decimal_to_base(task_i, backdoor_bases)
@@ -60,15 +61,18 @@ def worker_func(bd_line):
             status, stats, literals = slv.propagate(assumptions)
             status = not (status and len(literals) < max_literal)
             (up_tasks if status else hard_tasks).append((task_i, assumptions))
-            statuses.append(status)
 
-    time_sum, prop_sum = 0., 0.
+    all_tasks = up_tasks + hard_tasks
+    progress, time_sum, prop_sum = 0, 0., 0.
     statistic = {'up': len(up_tasks), 'hard': len(hard_tasks)}
     with solver.prototype(instance.clauses()) as slv:
-        for task_i, assumptions in up_tasks + hard_tasks:
+        for task_i, assumptions in all_tasks:
             status, stats, _ = slv.solve(assumptions)
+
+            progress += 1
             time_sum += stats['time']
             prop_sum += stats['propagations']
+            print(f'solved {progress}/{len(all_tasks)}, spent {round(time_sum, 2)} sec')
 
     return {
         'time': time_sum,
@@ -90,7 +94,7 @@ if __name__ == '__main__':
             'start': 1, 'length': instances[INSTANCE]['input']
         }
     })
-    solver = solvers.get('solver:pysat:g3')()
+    solver = solvers.get(f'solver:pysat:{SOLVER}')()
 
     backdoor_lines = []
     with open(BD_PATH, 'r') as handle:
