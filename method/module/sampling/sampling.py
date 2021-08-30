@@ -6,10 +6,9 @@ class Sampling:
     DIRECT = 'direct'
     REVERSED = 'reversed'
 
-    def __init__(self, max_size, step_size, order=RANDOM, *args, **kwargs):
+    def __init__(self, max_size, order=RANDOM, *args, **kwargs):
         self.order = order
         self.max_size = max_size
-        self.step_size = step_size
 
     def report(self, values):
         raise NotImplementedError

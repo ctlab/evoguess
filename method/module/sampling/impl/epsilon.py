@@ -12,7 +12,7 @@ class Epsilon(Sampling):
         self.delta = delta
         self.epsilon = epsilon
         self.min, self.max = kwargs['min'], kwargs['max']
-        super().__init__(self.max, step, *args, **kwargs)
+        super().__init__(self.max, *args, **kwargs)
 
     def _n_e_d(self, values):
         n = len(values)
