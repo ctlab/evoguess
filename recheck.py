@@ -12,24 +12,52 @@ MAX_COUNT = 65_536
 
 SOLVER = 'g3'
 PROJECT = 'aaai_2021'
-INSTANCE = 'pvs_4_7_simp'
 TARGET_FILE = 'BEST'
 
-# EXPERIMENT = '2021.08.25_22:13:53-2021.08.26_10:13:54'  # 2/8 n20 2k 12h async $
-# EXPERIMENT = '2021.08.25_22:13:54-2021.08.26_10:13:54'  # 2/8 n20 1k 12h async $
-# EXPERIMENT = '2021.08.26_20:46:54-2021.08.27_08:46:55'  # 2/8 n20 1k 12h iter
-EXPERIMENT = '2021.08.26_20:46:57-2021.08.27_08:46:57'  # 2/8 n20 4k 12h iter
-# EXPERIMENT = '2021.08.26_20:46:58-2021.08.27_08:46:58'  # 2/8 n20 2k 12h iter
+# INSTANCE, EXPERIMENT = 'pvs_4_7_simp', '2021.08.25_22:13:53-2021.08.26_10:13:54'  # 2/8 n20 2k 12h async $
+# INSTANCE, EXPERIMENT = 'pvs_4_7_simp', '2021.08.25_22:13:54-2021.08.26_10:13:54'  # 2/8 n20 1k 12h async $
+# INSTANCE, EXPERIMENT = 'pvs_4_7_simp', '2021.08.26_20:46:54-2021.08.27_08:46:55'  # 2/8 n20 1k 12h iter
+# INSTANCE, EXPERIMENT = 'pvs_4_7_simp', '2021.08.26_20:46:57-2021.08.27_08:46:57'  # 2/8 n20 4k 12h iter
+# INSTANCE, EXPERIMENT = 'pvs_4_7_simp', '2021.08.26_20:46:58-2021.08.27_08:46:58'  # 2/8 n20 2k 12h iter
+INSTANCE, EXPERIMENT = 'pvs_5_7_simp', '2021.08.30_05:51:03-2021.08.30_17:51:03'  # 2/8 n20 2k 12h iter []
+
+# INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.08.30_05:51:01-2021.08.30_17:51:02'  # 2/8 n20 2k 12h iter []
+# INSTANCE, EXPERIMENT = 'bvp_6_7_simp', '2021.08.30_05:41:00-2021.08.30_17:41:00'  # 2/8 n20 2k 12h iter []
+
+# INSTANCE, EXPERIMENT = 'bvs_4_8_simp', '2021.08.29_23:49:05-2021.08.30_11:49:05'  # 2/8 n20 2k 12h iter []
+# INSTANCE, EXPERIMENT = 'bvs_6_7_simp', '2021.08.30_05:40:02-2021.08.30_17:40:02'  # 2/8 n20 2k 12h iter []
 
 instances = {
     'pvs_4_7_simp': {
         'input': 1213, 'tags': ['pancake_vs_selection', '4x7_simp'],
         'path': 'sorting/pancake_vs_selection/pancake_vs_selection_7_4_simp.cnf'
     },
-    'pvs_4_7': {
-        'input': 3244, 'tags': ['pancake_vs_selection', '4x7'],
-        'path': 'sorting/pancake_vs_selection/pancake_vs_selection_7_4.cnf'
+    'pvs_5_7_simp': {
+        'input': 1596, 'tags': ['pancake_vs_selection', '5x7_simp'],
+        'path': 'sorting/pancake_vs_selection/pancake_vs_selection_7_5_simp.cnf'
     },
+    #
+    # bubble_vs_pancake
+    #
+    'bvp_4_8_simp': {
+        'input': 1315, 'tags': ['bubble_vs_pancake', '4x8_simp'],
+        'path': 'sorting/bubble_vs_pancake/bubble_vs_pancake_8_4_simp.cnf'
+    },  # 6100
+    'bvp_6_7_simp': {
+        'input': 1558, 'tags': ['bubble_vs_pancake', '6x7_simp'],
+        'path': 'sorting/bubble_vs_pancake/bubble_vs_pancake_7_6_simp.cnf'
+    },  # 2300
+    #
+    # bubble_vs_selection
+    #
+    'bvs_4_8_simp': {
+        'input': 1314, 'tags': ['bubble_vs_selection', '4x8_simp'],
+        'path': 'sorting/bubble_vs_selection/bubble_vs_selection_8_4_simp.cnf'
+    },  # 2500
+    'bvs_6_7_simp': {
+        'input': 1531, 'tags': ['bubble_vs_selection', '6x7_simp'],
+        'path': 'sorting/bubble_vs_selection/bubble_vs_selection_7_6_simp.cnf'
+    },  # 1700
 }
 
 # use custom path to file with backdoors
@@ -114,16 +142,16 @@ if __name__ == '__main__':
     all_results = []
     for result in task_map(worker_func, backdoor_lines):
         all_results.append(result)
-        with open(f'{BD_PATH}_VALUES', 'a+') as handle:
+        with open(f'{BD_PATH}_{SOLVER}_VALUES', 'a+') as handle:
             handle.write(f'{json.dumps(result)}\n')
 
     if len(backdoor_lines) > 1:
         time_results = sorted(all_results, key=lambda x: x['time'])
-        with open(f'{BD_PATH}_BY_TIME', 'w+') as handle:
+        with open(f'{BD_PATH}_{SOLVER}_BY_TIME', 'w+') as handle:
             for time_result in time_results:
                 handle.write(f'{json.dumps(time_result)}\n')
 
         prop_results = sorted(all_results, key=lambda x: x['propagations'])
-        with open(f'{BD_PATH}_BY_PROPS', 'w+') as handle:
+        with open(f'{BD_PATH}_{SOLVER}_BY_PROPS', 'w+') as handle:
             for prop_result in prop_results:
                 handle.write(f'{json.dumps(prop_result)}\n')
