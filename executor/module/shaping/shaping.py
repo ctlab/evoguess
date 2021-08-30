@@ -5,7 +5,7 @@ class Shaping:
     def __init__(self, *args, **kwargs):
         pass
 
-    def get(self, size, tasks, seed=None):
+    def get(self, size, tasks):
         raise NotImplementedError
 
     def __info__(self):

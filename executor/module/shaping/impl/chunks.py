@@ -12,12 +12,12 @@ class Chunks(Shaping):
         self.chunk_rate = chunk_rate
         super().__init__()
 
-    def get(self, size, tasks, seed=None):
-        rs, count = RandomState(seed=seed), len(tasks)
+    def get(self, size, tasks):
+        count = len(tasks)
         chunk_size = max(1, int(count // max(1, self.chunk_rate * size)))
         return [
-            tuple((i, tasks[i]) for i in index)
-            for index in slicer(chunk_size, rs.permutation(count))
+            tuple((task[0], task) for task in task_chunk)
+            for task_chunk in slicer(chunk_size, tasks)
         ]
 
     def __info__(self):
@@ -25,4 +25,3 @@ class Chunks(Shaping):
             **super().__info__(),
             'chunk_rate': self.chunk_rate
         }
-

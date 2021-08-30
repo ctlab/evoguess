@@ -174,9 +174,6 @@ class Job:
             raise AlreadyRunning()
 
         self._state = RUNNING
-        # filepath = os.path.join(DATA_PATH, 'THREADS')
-        # with open(filepath, 'a+') as handle:
-        #     handle.write(f'{threading.active_count()} active threads in {self.job_id} job\n')
         self._processor.start()
         return self
 
@@ -223,6 +220,3 @@ class Job:
 
     def join(self):
         self._processor.join()
-
-    # def __del__(self):
-    #     del self._processor

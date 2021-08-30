@@ -21,8 +21,8 @@ class Executor:
 
     def submit_all(self, fn, data, *tasks):
         index_futures = []
-        s_seed = self.random_state.randint(0, 2 ** 31 - 1)
-        for shape in self.shaping.get(self.workers, tasks, seed=s_seed):
+        # todo: task[0] ?????
+        for shape in self.shaping.get(self.workers, tasks):
             index, future_tasks = unzip(shape)
             future = self.submit(fn, data, future_tasks)
             index_futures.append((index, future))
