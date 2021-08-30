@@ -41,17 +41,17 @@ class Context:
                 self.sequence = list(range(self.state['power']))[::-1]
         return self.sequence
 
-    def get_tasks(self, cases, offset):
-        count = self.sampling.get_count(self.backdoor, values=cases)
-        if count == 0: return []
+    def get_tasks(self, results):
+        tasks, offset = [], len(results)
+        count = self.sampling.get_count(self.backdoor, results)
 
-        if self.dim_type:
-            value = self.state['list_seed']
-            tasks = [(i, value + i) for i in range(offset, offset + count)]
-        else:
-            values = self._get_sequence()
-            tasks = [(i, values[i]) for i in range(offset, offset + count)]
-
+        if count > 0:
+            if self.dim_type:
+                value = self.state['list_seed']
+                tasks = [(i, value + i) for i in range(offset, offset + count)]
+            else:
+                values = self._get_sequence()
+                tasks = [(i, values[i]) for i in range(offset, offset + count)]
         return tasks
 
     def get_limits(self, values, offset):

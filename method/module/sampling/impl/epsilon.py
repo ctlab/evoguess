@@ -24,16 +24,17 @@ class Epsilon(Sampling):
         n, e, d = self._n_e_d(values)
         return sqrt(d / (self.delta * n)) / e
 
-    def get_count(self, backdoor, values=()):
-        # todo: filter None values
-        count = len(values)
+    def get_count(self, backdoor, results=()):
+        count = len(results)
         bd_count = backdoor.task_count()
+
         if count == 0:
             return min(self.min, bd_count)
         elif count < bd_count and count < self.max:
+            values = [r[2] for r in results if r]
             if self._get_eps(values) > self.epsilon:
                 bound = min(count + self.step, self.max, bd_count)
-                return bound - count
+                return max(0, bound - count)
         return 0
 
     def get_size(self):

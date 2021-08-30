@@ -136,7 +136,7 @@ class Job:
         awaiter = context.executor.get_awaiter()
 
         completed = []
-        tasks = context.get_tasks(completed, len(self._results))
+        tasks = context.get_tasks(self._results)
         while self.running() and len(tasks) > 0:
             index_futures = context.executor.submit_all(fn, data, *tasks)
             indexes, futures = unzip(index_futures)
@@ -159,7 +159,7 @@ class Job:
                 completed = self._get_completed_values()
                 is_reasonably = context.is_reasonably(active, completed)
 
-            tasks = context.get_tasks(completed, len(self._results))
+            tasks = context.get_tasks(self._results)
 
         with self._condition:
             if self._state == RUNNING:

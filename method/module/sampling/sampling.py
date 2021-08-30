@@ -11,10 +11,10 @@ class Sampling:
         self.max_size = max_size
         self.step_size = step_size
 
-    def get_count(self, backdoor, values=()):
+    def report(self, values):
         raise NotImplementedError
 
-    def report(self, values):
+    def get_count(self, backdoor, results=()):
         raise NotImplementedError
 
     def __info__(self):

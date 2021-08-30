@@ -9,10 +9,9 @@ class Const(Sampling):
         self.count = count
         super().__init__(count, count, *args, **kwargs)
 
-    def get_count(self, backdoor, values=()):
-        # todo: filter None values
+    def get_count(self, backdoor, results=()):
         count = min(self.count, backdoor.task_count())
-        return max(0, count - len(values))
+        return max(0, count - len(results))
 
     def get_size(self):
         return self.count, self.count
