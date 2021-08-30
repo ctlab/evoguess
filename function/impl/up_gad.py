@@ -91,8 +91,8 @@ class UPGuessAndDetermine(Function):
                 if statistic[False] > 0:
                     value = float('inf')
                 else:
-                    value = sum(values_sum.values()) / len(cases)
-                    value = log2(value) + len(backdoor)
+                    value = len(backdoor)
+                    # value = sum(values_sum.values()) / len(cases)
 
         return {
             'time': time,
