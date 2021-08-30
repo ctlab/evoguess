@@ -82,9 +82,10 @@ class GuessAndDetermine(Function):
             'time': time,
             'value': value,
             'count': len(cases),
-            'job_time': time_sum,
             'statistic': statistic,
-            'process_time': process_time,
+            'job_time': round(time_sum, 2),
+            'job_value': round(value_sum, 2),
+            'process_time': round(process_time, 2)
         }
 
 
