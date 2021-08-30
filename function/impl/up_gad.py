@@ -69,14 +69,15 @@ class UPGuessAndDetermine(Function):
         ])
 
     def calculate(self, backdoor, *cases):
+        process_time, time_sum = 0, 0
         statistic = {True: 0, False: 0}
-        process_time, time_sum, value_sum = 0, 0, 0
+        values_sum = {True: 0, False: 0}
 
         for case in cases:
             time_sum += case[3]
-            value_sum += case[2]
             process_time += case[5]
             statistic[case[4]] += 1
+            values_sum[case[4]] += case[2]
 
         time, value, = None, None
         if len(cases) > 0:
@@ -87,18 +88,19 @@ class UPGuessAndDetermine(Function):
                 pfp = float(statistic[False]) / len(cases)
                 value = log2(vfp * count + pfp * (2 ** self.max_n))
             else:
-                value = log2(float(value_sum) / len(cases)) + len(backdoor)
-
                 if statistic[False] > 0:
                     value = float('inf')
+                else:
+                    value = sum(values_sum.values()) / len(cases)
+                    value = log2(value) + len(backdoor)
 
         return {
             'time': time,
             'value': value,
             'count': len(cases),
             'statistic': statistic,
+            'job_values': values_sum,
             'job_time': round(time_sum, 2),
-            'job_value': round(value_sum, 2),
             'process_time': round(process_time, 2),
         }
 
