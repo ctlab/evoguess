@@ -1,8 +1,6 @@
 from os import cpu_count
 from numpy.random import randint, RandomState
 
-from util.array import unzip
-
 
 class Executor:
     slug = 'executor'
@@ -21,10 +19,9 @@ class Executor:
 
     def submit_all(self, fn, data, *tasks):
         index_futures = []
-        # todo: task[0] ?????
         for shape in self.shaping.get(self.workers, tasks):
-            index, future_tasks = unzip(shape)
-            future = self.submit(fn, data, future_tasks)
+            index = [task[0] for task in shape]
+            future = self.submit(fn, data, shape)
             index_futures.append((index, future))
         return index_futures
 

@@ -13,12 +13,9 @@ class Chunks(Shaping):
         super().__init__()
 
     def get(self, size, tasks):
-        count = len(tasks)
-        chunk_size = max(1, int(count // max(1, self.chunk_rate * size)))
-        return [
-            tuple((task[0], task) for task in task_chunk)
-            for task_chunk in slicer(chunk_size, tasks)
-        ]
+        chunks_count = max(1, self.chunk_rate * size)
+        chunk_size = max(1, int(len(tasks) // chunks_count))
+        return slicer(chunk_size, tasks)
 
     def __info__(self):
         return {

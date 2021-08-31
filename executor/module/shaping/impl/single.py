@@ -6,4 +6,4 @@ class Single(Shaping):
     name = 'Shaping: Single'
 
     def get(self, size, tasks):
-        return [tuple((task[0], task) for task in tasks)]
+        return [tasks]
