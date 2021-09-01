@@ -2,6 +2,7 @@ from ..mutation import *
 
 
 class Uniform(Mutation):
+    slug = 'mutation:uniform'
     name = 'Uniform(Mutation)'
 
     def __init__(self, scale=1., **kwargs):
