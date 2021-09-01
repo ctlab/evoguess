@@ -82,7 +82,7 @@ def worker_func(bd_line):
     up_tasks, hard_tasks = [], []
     max_literal = instance.max_literal()
     backdoor_bases = backdoor.get_bases()
-    with solver.prototype(instance.clauses()) as slv:
+    with up_solver.prototype(instance.clauses()) as slv:
         for task_i in range(backdoor.task_count()):
             values = decimal_to_base(task_i, backdoor_bases)
             assumptions = instance.get_assumptions(backdoor, values)
@@ -100,7 +100,7 @@ def worker_func(bd_line):
             progress += 1
             time_sum += stats['time']
             prop_sum += stats['propagations']
-            print(f'solved {progress}/{len(all_tasks)}, spent {round(time_sum, 2)} sec')
+            # print(f'solved {progress}/{len(all_tasks)}, spent {round(time_sum, 2)} sec')
 
     return {
         'time': time_sum,
@@ -123,6 +123,7 @@ if __name__ == '__main__':
         }
     })
     solver = solvers.get(f'solver:pysat:{SOLVER}')()
+    up_solver = solvers.get(f'solver:pysat:g3')()
 
     backdoor_lines = []
     with open(BD_PATH, 'r') as handle:
