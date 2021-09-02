@@ -28,6 +28,5 @@ class Uniform(Mutation):
 
 
 __all__ = [
-    'Point',
     'Uniform'
 ]
