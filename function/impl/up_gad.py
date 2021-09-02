@@ -49,6 +49,7 @@ class UPGuessAndDetermine(Function):
 
     def __init__(self, max_n, *args, **kwargs):
         self.max_n = max_n
+        self.alpha_n = kwargs.get('alpha_n', max_n)
         super().__init__(*args, **kwargs)
 
     def get_function(self):
@@ -86,7 +87,7 @@ class UPGuessAndDetermine(Function):
                 count = backdoor.task_count()
                 vfp = float(statistic[True]) / len(cases)
                 pfp = float(statistic[False]) / len(cases)
-                value = log2(vfp * count + pfp * (2 ** self.max_n))
+                value = log2(vfp * count + pfp * (2 ** self.alpha_n))
             else:
                 if statistic[False] > 0:
                     value = float('inf')
@@ -107,7 +108,8 @@ class UPGuessAndDetermine(Function):
     def __info__(self):
         return {
             **super().__info__(),
-            'max_n': self.max_n
+            'max_n': self.max_n,
+            'alpha_n': self.alpha_n,
         }
 
 
