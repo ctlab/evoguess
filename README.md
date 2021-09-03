@@ -311,7 +311,7 @@ python3 main2.py
 
 ##### 3.1.1. Sampling
 
-##### 3.1.1.1. `Const` sampling
+###### 3.1.1.1. `Const` sampling
 
 Постоянный размер выборки.
 
@@ -325,7 +325,7 @@ python3 main2.py
 
 Orders: `random`, `direct`, `reversed`.
 
-##### 3.1.1.2. `Epsilon` sampling
+###### 3.1.1.2. `Epsilon` sampling
 
 ```
 'sampling': {
@@ -335,6 +335,17 @@ Orders: `random`, `direct`, `reversed`.
     'step': <number>,
     'epsilon': <number>,
     'delta': <optional number>,
+    'order': <optional string>
+}
+```
+
+###### 3.1.1.3. `UP Steps` sampling
+
+```
+'sampling': {
+    'slug': 'sampling:up_steps',
+    'min': <number>,
+    'steps': <number>,
     'order': <optional string>
 }
 ```
