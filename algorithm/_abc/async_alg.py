@@ -1,7 +1,7 @@
 from .algorithm import *
 
 from time import time as now
-from method._type.handler import n_completed
+from method.typings.handler import n_completed
 
 
 class AsyncAlg(Algorithm):

@@ -1,6 +1,6 @@
 from .job import n_completed as nc
 
-from util import array
+from util.array import trim
 from util.error import CancelledError
 
 
@@ -17,11 +17,8 @@ def n_completed(handles, count, timeout=None):
 
 
 class Handle:
-    def __init__(self, done=False):
-        self._done = done
-
     def done(self):
-        return self._done
+        raise NotImplementedError
 
     def result(self, timeout=None):
         raise NotImplementedError
@@ -32,13 +29,11 @@ class Handle:
 
 class JobHandle(Handle):
     def __init__(self, job):
-        super().__init__()
         self.job = job
         self.context = job.context
 
     def _process(self, cases, canceled):
-        self._done = True
-        results = array.trim(cases)
+        results = trim(cases)
         del self.context.cache.active[self.context.backdoor]
         # values = self.context.function.get_values(*results)
         estimation = {
@@ -57,6 +52,9 @@ class JobHandle(Handle):
 
         return estimation
 
+    def done(self):
+        return self.job.done()
+
     def result(self, timeout=None):
         try:
             cases = self.job.result(timeout)
@@ -74,8 +72,10 @@ class JobHandle(Handle):
 
 class VoidHandle(Handle):
     def __init__(self, estimation):
-        super().__init__(done=True)
         self._estimation = estimation
+
+    def done(self):
+        return True
 
     def result(self, timeout=None):
         return self._estimation

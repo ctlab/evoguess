@@ -1,8 +1,6 @@
-import os
 import threading
 
 from util.array import unzip, none, for_each
-from util.const import DATA_PATH
 from util.error import AlreadyRunning, CancelledError
 
 [

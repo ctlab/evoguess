@@ -1,8 +1,10 @@
+from typing import Tuple
 from ..typings import Point, Vector
+from method.typings.handler import Handle
+from instance.typings.variables import Backdoor
 
 from time import time as now
 from util.array import for_each
-from instance.typings.variables import Backdoor
 
 
 class Algorithm:
@@ -14,6 +16,7 @@ class Algorithm:
         self.output = output
         self.method = method
         self.instance = instance
+
         self.start_stamp = None
 
     def preprocess(self, *backdoors: Backdoor) -> Vector:
@@ -44,6 +47,8 @@ class Algorithm:
 
         # postprocess
         _, postprocess_stamp = self.postprocess(solution), now()
+        self.output.debug(1, 1, f'Found solution with {len(solution)} point(s):')
+        for_each(solution, lambda point: self.output.debug(1, 2, point.to_dict()))
         self.output.debug(1, 1, f'Algorithm end postprocess on {postprocess_stamp}')
 
         self.output.debug(1, 0, f'Algorithm end on {now()}')
@@ -57,6 +62,9 @@ class Algorithm:
     def start_from_vector(self, vector: Vector) -> Vector:
         # todo: provide backdoor values
         return self.start(*[p.backdoor for p in sorted(vector)])
+
+    def _queue(self, point: Point) -> Tuple[Point, Handle]:
+        return point, self.method.queue(self.instance, point.backdoor)
 
     def _proceed_index_result(self, index, vector):
         replace = self.output.make_replace([p.backdoor for p in vector])
