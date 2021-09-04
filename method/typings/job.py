@@ -177,8 +177,8 @@ class Job:
 
     def cancel(self):
         with self._condition:
-            if self._state in [CANCELLED, FINISHED]:
-                return True
+            if self._state == FINISHED:
+                return False
 
             if self._state == RUNNING:
                 self._state = CANCELLED
@@ -186,7 +186,11 @@ class Job:
                     future.cancel()
                 self._condition.notify_all()
 
-        return False
+        if self._processor is not None:
+            self._processor.join()
+            self._processor = None
+
+        return True
 
     def cancelled(self):
         with self._condition:
@@ -215,6 +219,3 @@ class Job:
                 return self._results
             else:
                 raise TimeoutError()
-
-    def join(self):
-        self._processor.join()

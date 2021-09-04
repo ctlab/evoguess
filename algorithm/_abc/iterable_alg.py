@@ -1,4 +1,4 @@
-from .async_alg import *
+from .algorithm_abc import *
 
 
 class IterableAlg(AsyncAlg):
@@ -17,9 +17,6 @@ class IterableAlg(AsyncAlg):
         raise NotImplementedError
 
     def end_iteration(self, current: Vector, new: Vector) -> Vector:
-        raise NotImplementedError
-
-    def postprocess(self, solution: Vector):
         raise NotImplementedError
 
     def get_next_points(self, vector: Vector, count: int) -> Vector:

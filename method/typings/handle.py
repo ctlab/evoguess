@@ -58,16 +58,15 @@ class JobHandle(Handle):
     def result(self, timeout=None):
         try:
             cases = self.job.result(timeout)
+            return self._process(cases, False)
         except CancelledError:
-            cases = self.job._results
-            self.job.join()
-
-        return self._process(cases, False)
+            return self._process([], True)
 
     def cancel_and_result(self):
-        if not self.job.cancel():
-            self.job.join()
-        return self._process(self.job._results, True)
+        if self.job.cancel():
+            return self._process([], True)
+        else:
+            return self._process(self.job._results, False)
 
 
 class VoidHandle(Handle):

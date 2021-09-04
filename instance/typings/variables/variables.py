@@ -1,4 +1,4 @@
-from numpy.random.mtrand import RandomState
+from copy import copy
 
 
 # def get_values(variables, seed=None, solution=None):
@@ -66,10 +66,10 @@ class Variables:
         return item in self.variables()
 
     def __copy__(self):
-        raise NotImplementedError
+        return Variables(copy(self._list))
 
     def variables(self):
-        raise NotImplementedError
+        return self._list
 
     @staticmethod
     def parse(string):

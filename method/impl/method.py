@@ -1,5 +1,5 @@
 from ..typings.job import Job
-from ..typings.handler import VoidHandle, JobHandle
+from ..typings.handle import VoidHandle, JobHandle
 
 import pylru
 from util.bitmask import to_bit

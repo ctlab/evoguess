@@ -1,4 +1,4 @@
-from .async_alg import *
+from .algorithm_abc import *
 
 
 class StreamingAlg(AsyncAlg):
