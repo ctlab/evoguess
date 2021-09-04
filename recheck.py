@@ -1,5 +1,4 @@
 import json
-from mpi4py import MPI
 from os.path import join
 from concurrent.futures.process import ProcessPoolExecutor
 
@@ -14,37 +13,16 @@ SOLVER = 'g3'
 PROJECT = 'aaai_2021'
 TARGET_FILE = 'RECHECK100'
 
-rank = MPI.COMM_WORLD.Get_rank()
-print(rank)
+# INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.04_13:32:09-2021.09.05_01:32:09'  # 2/8 n20 1-8k 12h iter []
+# INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.04_13:32:10-2021.09.05_01:32:09'  # 2/8 n20 1-8k 12h iter []
+# INSTANCE, EXPERIMENT = 'ps_7_8_simp', '2021.09.03_15:46:12-2021.09.04_03:46:28'  # 2/8 n20 1-8k 12h iter []
+INSTANCE, EXPERIMENT = 'ps_7_8_simp', '2021.09.04_13:28:12-2021.09.05_01:28:13'  # 2/8 n20 1-8k 12h iter []
 
-if rank == 0:
-    INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.04_13:32:09-2021.09.05_01:32:09'  # 2/8 n20 1-8k 12h iter []
-elif rank == 1:
-    INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.04_13:32:10-2021.09.05_01:32:09'  # 2/8 n20 1-8k 12h iter []
-elif rank == 2:
-    INSTANCE, EXPERIMENT = 'ps_7_8_simp', '2021.09.03_15:46:12-2021.09.04_03:46:28'  # 2/8 n20 1-8k 12h iter []
-elif rank == 3:
-    INSTANCE, EXPERIMENT = 'ps_7_8_simp', '2021.09.04_13:28:12-2021.09.05_01:28:13'  # 2/8 n20 1-8k 12h iter []
+# INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.09.03_12:57:05-2021.09.04_00:57:05'  # 2/8 n20 1-8k 12h iter []
+# INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.09.03_13:19:06-2021.09.04_01:19:06'  # 2/8 n20 1-8k 12h iter []
 
-    # INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.08.30_05:51:01-2021.08.30_17:51:02'  # 2/8 n20 2k 12h iter []
-    # INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.09.02_09:32:05-2021.09.02_21:32:06'  # 2/8 n20 1-8k 12h iter []
-    # INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.09.02_09:33:05-2021.09.02_21:33:05'  # 2/8 n20 1-8k 12h iter []
-elif rank == 4:
-    INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.09.03_12:57:05-2021.09.04_00:57:05'  # 2/8 n20 1-8k 12h iter []
-elif rank == 5:
-    INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.09.03_13:19:06-2021.09.04_01:19:06'  # 2/8 n20 1-8k 12h iter []
-
-    # INSTANCE, EXPERIMENT = 'bvp_6_7_simp', '2021.08.30_05:41:00-2021.08.30_17:41:00'  # 2/8 n20 2k 12h iter []
-    # INSTANCE, EXPERIMENT = 'bvp_6_7_simp', '2021.09.02_09:32:04-2021.09.02_21:32:04'  # 2/8 n20 1-8k 12h iter []
-elif rank == 6:
-    INSTANCE, EXPERIMENT = 'bvp_6_7_simp', '2021.09.02_09:32:05-2021.09.02_21:32:06'  # 2/8 n20 1-8k 12h iter []
-    # INSTANCE, EXPERIMENT = 'bvp_6_7_simp','2021.09.03_13:26:06-2021.09.04_01:26:07'  # 2/8 n20 1-8k 12h iter []
-elif rank == 7:
-    INSTANCE, EXPERIMENT = 'bvp_6_7_simp', '2021.09.03_14:15:07-2021.09.04_02:15:20'  # 2/8 n20 1-8k 12h iter []
-
-# INSTANCE, EXPERIMENT = 'bvs_4_8_simp', '2021.08.29_23:49:05-2021.08.30_11:49:05'  # 2/8 n20 2k 12h iter []
-# INSTANCE, EXPERIMENT = 'bvs_6_7_simp', '2021.08.30_05:40:02-2021.08.30_17:40:02'  # 2/8 n20 2k 12h iter []
-
+# INSTANCE, EXPERIMENT = 'bvp_6_7_simp', '2021.09.02_09:32:05-2021.09.02_21:32:06'  # 2/8 n20 1-8k 12h iter []
+# INSTANCE, EXPERIMENT = 'bvp_6_7_simp', '2021.09.03_14:15:07-2021.09.04_02:15:20'  # 2/8 n20 1-8k 12h iter []
 
 instances = {
     'pvs_4_7_simp': {
