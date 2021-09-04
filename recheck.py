@@ -1,6 +1,6 @@
 import json
+from mpi4py import MPI
 from os.path import join
-from operator import attrgetter
 from concurrent.futures.process import ProcessPoolExecutor
 
 from instance import Instance
@@ -12,52 +12,82 @@ MAX_COUNT = 65_536
 
 SOLVER = 'g3'
 PROJECT = 'aaai_2021'
-TARGET_FILE = 'BEST'
+TARGET_FILE = 'RECHECK100'
 
-# INSTANCE, EXPERIMENT = 'pvs_4_7_simp', '2021.08.25_22:13:53-2021.08.26_10:13:54'  # 2/8 n20 2k 12h async $
-# INSTANCE, EXPERIMENT = 'pvs_4_7_simp', '2021.08.25_22:13:54-2021.08.26_10:13:54'  # 2/8 n20 1k 12h async $
-# INSTANCE, EXPERIMENT = 'pvs_4_7_simp', '2021.08.26_20:46:54-2021.08.27_08:46:55'  # 2/8 n20 1k 12h iter
-# INSTANCE, EXPERIMENT = 'pvs_4_7_simp', '2021.08.26_20:46:57-2021.08.27_08:46:57'  # 2/8 n20 4k 12h iter
-# INSTANCE, EXPERIMENT = 'pvs_4_7_simp', '2021.08.26_20:46:58-2021.08.27_08:46:58'  # 2/8 n20 2k 12h iter
-INSTANCE, EXPERIMENT = 'pvs_5_7_simp', '2021.08.30_05:51:03-2021.08.30_17:51:03'  # 2/8 n20 2k 12h iter []
+rank = MPI.COMM_WORLD.Get_rank()
+print(rank)
 
-# INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.08.30_05:51:01-2021.08.30_17:51:02'  # 2/8 n20 2k 12h iter []
-# INSTANCE, EXPERIMENT = 'bvp_6_7_simp', '2021.08.30_05:41:00-2021.08.30_17:41:00'  # 2/8 n20 2k 12h iter []
+if rank == 0:
+    INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.04_13:32:09-2021.09.05_01:32:09'  # 2/8 n20 1-8k 12h iter []
+elif rank == 1:
+    INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.04_13:32:10-2021.09.05_01:32:09'  # 2/8 n20 1-8k 12h iter []
+elif rank == 2:
+    INSTANCE, EXPERIMENT = 'ps_7_8_simp', '2021.09.03_15:46:12-2021.09.04_03:46:28'  # 2/8 n20 1-8k 12h iter []
+elif rank == 3:
+    INSTANCE, EXPERIMENT = 'ps_7_8_simp', '2021.09.04_13:28:12-2021.09.05_01:28:13'  # 2/8 n20 1-8k 12h iter []
+
+    # INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.08.30_05:51:01-2021.08.30_17:51:02'  # 2/8 n20 2k 12h iter []
+    # INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.09.02_09:32:05-2021.09.02_21:32:06'  # 2/8 n20 1-8k 12h iter []
+    # INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.09.02_09:33:05-2021.09.02_21:33:05'  # 2/8 n20 1-8k 12h iter []
+elif rank == 4:
+    INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.09.03_12:57:05-2021.09.04_00:57:05'  # 2/8 n20 1-8k 12h iter []
+elif rank == 5:
+    INSTANCE, EXPERIMENT = 'bvp_4_8_simp', '2021.09.03_13:19:06-2021.09.04_01:19:06'  # 2/8 n20 1-8k 12h iter []
+
+    # INSTANCE, EXPERIMENT = 'bvp_6_7_simp', '2021.08.30_05:41:00-2021.08.30_17:41:00'  # 2/8 n20 2k 12h iter []
+    # INSTANCE, EXPERIMENT = 'bvp_6_7_simp', '2021.09.02_09:32:04-2021.09.02_21:32:04'  # 2/8 n20 1-8k 12h iter []
+elif rank == 6:
+    INSTANCE, EXPERIMENT = 'bvp_6_7_simp', '2021.09.02_09:32:05-2021.09.02_21:32:06'  # 2/8 n20 1-8k 12h iter []
+    # INSTANCE, EXPERIMENT = 'bvp_6_7_simp','2021.09.03_13:26:06-2021.09.04_01:26:07'  # 2/8 n20 1-8k 12h iter []
+elif rank == 7:
+    INSTANCE, EXPERIMENT = 'bvp_6_7_simp', '2021.09.03_14:15:07-2021.09.04_02:15:20'  # 2/8 n20 1-8k 12h iter []
 
 # INSTANCE, EXPERIMENT = 'bvs_4_8_simp', '2021.08.29_23:49:05-2021.08.30_11:49:05'  # 2/8 n20 2k 12h iter []
 # INSTANCE, EXPERIMENT = 'bvs_6_7_simp', '2021.08.30_05:40:02-2021.08.30_17:40:02'  # 2/8 n20 2k 12h iter []
 
+
 instances = {
     'pvs_4_7_simp': {
         'input': 1213, 'tags': ['pancake_vs_selection', '4x7_simp'],
-        'path': 'sorting/pancake_vs_selection/pancake_vs_selection_7_4_simp.cnf'
-    },
-    'pvs_5_7_simp': {
-        'input': 1596, 'tags': ['pancake_vs_selection', '5x7_simp'],
-        'path': 'sorting/pancake_vs_selection/pancake_vs_selection_7_5_simp.cnf'
+        'path': 'sorting/pancake_vs_selection/pancake_vs_selection_7_4_simp.cnf',
+        'times': {'g3': 2000, 'g4': 1550, 'cd': 0}
     },
     #
     # bubble_vs_pancake
     #
     'bvp_4_8_simp': {
         'input': 1315, 'tags': ['bubble_vs_pancake', '4x8_simp'],
-        'path': 'sorting/bubble_vs_pancake/bubble_vs_pancake_8_4_simp.cnf'
-    },  # 6100
+        'path': 'sorting/bubble_vs_pancake/bubble_vs_pancake_8_4_simp.cnf',
+        'times': {'g3': 7300, 'g4': 5800, 'cd': 0}
+    },
     'bvp_6_7_simp': {
         'input': 1558, 'tags': ['bubble_vs_pancake', '6x7_simp'],
-        'path': 'sorting/bubble_vs_pancake/bubble_vs_pancake_7_6_simp.cnf'
-    },  # 2300
+        'path': 'sorting/bubble_vs_pancake/bubble_vs_pancake_7_6_simp.cnf',
+        'times': {'g3': 3000, 'g4': 2800, 'cd': 0}
+    },
     #
     # bubble_vs_selection
     #
     'bvs_4_8_simp': {
         'input': 1314, 'tags': ['bubble_vs_selection', '4x8_simp'],
-        'path': 'sorting/bubble_vs_selection/bubble_vs_selection_8_4_simp.cnf'
-    },  # 2500
+        'path': 'sorting/bubble_vs_selection/bubble_vs_selection_8_4_simp.cnf',
+        'times': {'g3': 3100, 'g4': 3100, 'cd': 0}
+    },
     'bvs_6_7_simp': {
         'input': 1531, 'tags': ['bubble_vs_selection', '6x7_simp'],
-        'path': 'sorting/bubble_vs_selection/bubble_vs_selection_7_6_simp.cnf'
-    },  # 1700
+        'path': 'sorting/bubble_vs_selection/bubble_vs_selection_7_6_simp.cnf',
+        'times': {'g3': 2200, 'g4': 2600, 'cd': 0}
+    },
+    'ps_7_8_simp': {
+        'input': 5666, 'tags': ['pancake_sort', '7x8_simp', '3719p'],
+        'path': 'sorting/equivcheck_pancake_8_7/PancakeSort_8_7mut3719p_simp.cnf',
+        'times': {'g3': 3000, 'g4': 0, 'cd': 0}
+    },
+    'sgen_150_1001': {
+        'input': 150, 'tags': ['sgen', '6_150_1001'],
+        'path': 'sgen/sgen6_900_1001.cnf',
+        'times': {'g3': 7000, 'g4': 0, 'cd': 0}
+    },
 }
 
 # use custom path to file with backdoors
@@ -93,9 +123,16 @@ def worker_func(bd_line):
     all_tasks = up_tasks + hard_tasks
     progress, time_sum, prop_sum = 0, 0., 0.
     statistic = {'up': len(up_tasks), 'hard': len(hard_tasks)}
+    limit = instances[INSTANCE]['times'].get(SOLVER, 0)
     with solver.prototype(instance.clauses()) as slv:
         for task_i, assumptions in all_tasks:
-            status, stats, _ = slv.solve(assumptions)
+            limit = max(0, limit - time_sum)
+            status, stats, _ = slv.solve(assumptions, limit=limit)
+
+            if status is None:
+                time_sum = float('inf')
+                prop_sum = float('inf')
+                break
 
             progress += 1
             time_sum += stats['time']
