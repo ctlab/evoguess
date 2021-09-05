@@ -48,6 +48,7 @@ class PySat(Solver):
                 timer.cancel()
             else:
                 solver.clear_interrupt()
+            del timer
         else:
             timestamp = now()
             status = solver.solve(assumptions=assumptions)
