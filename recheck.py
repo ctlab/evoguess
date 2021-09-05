@@ -1,4 +1,5 @@
 import json
+import threading
 from os.path import join
 from concurrent.futures.process import ProcessPoolExecutor
 
@@ -11,7 +12,7 @@ MAX_COUNT = 65_536
 
 SOLVER = 'g3'
 PROJECT = 'aaai_2021'
-TARGET_FILE = 'RECHECK100'
+TARGET_FILE = 'BEST'
 
 # INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.04_13:32:09-2021.09.05_01:32:09'  # 2/8 n20 1-8k 12h iter []
 # INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.04_13:32:10-2021.09.05_01:32:09'  # 2/8 n20 1-8k 12h iter []
@@ -103,11 +104,15 @@ def worker_func(bd_line):
     statistic = {'up': len(up_tasks), 'hard': len(hard_tasks)}
     limit = instances[INSTANCE]['times'].get(SOLVER, 0)
     with solver.prototype(instance.clauses()) as slv:
-        for task_i, assumptions in all_tasks:
-            limit = max(0, limit - time_sum)
-            status, stats, _ = slv.solve(assumptions, limit=limit)
+        timer = None
+        if limit > 0:
+            timer = threading.Timer(limit, slv.solver.interrupt, ())
+            timer.start()
 
-            if status is None:
+        for task_i, assumptions in all_tasks:
+            status, stats, _ = slv.solve(assumptions)
+
+            if timer and status is None:
                 time_sum = float('inf')
                 prop_sum = float('inf')
                 break
@@ -116,6 +121,10 @@ def worker_func(bd_line):
             time_sum += stats['time']
             prop_sum += stats['propagations']
             # print(f'solved {progress}/{len(all_tasks)}, spent {round(time_sum, 2)} sec')
+
+        if timer and timer.is_alive():
+            timer.cancel()
+        del timer
 
     return {
         'time': time_sum,
