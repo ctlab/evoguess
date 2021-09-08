@@ -35,14 +35,14 @@ class PySat(Solver):
         return status, statistics, literals
 
     @staticmethod
-    def solve_with(solver, assumptions, limit=0, **kwargs):
+    def solve_with(solver, assumptions, limit=0, expect_interrupt=False):
         if limit > 0:
             timer = Timer(limit, solver.interrupt, ())
             timer.start()
 
             timestamp = now()
-            status = solver.solve_limited(assumptions=assumptions, expect_interrupt=True)
-            full_time, time = now() - timestamp, solver.time()
+            status = solver.solve_limited(assumptions, expect_interrupt)
+            time = now() - timestamp
 
             if timer.is_alive():
                 timer.cancel()
@@ -51,8 +51,13 @@ class PySat(Solver):
             del timer
         else:
             timestamp = now()
-            status = solver.solve_limited(assumptions=assumptions, expect_interrupt=True)
-            full_time, time = now() - timestamp, solver.time()
+            if not expect_interrupt:
+                status = solver.solve(assumptions)
+                time = solver.time()
+            else:
+                timestamp = now()
+                status = solver.solve_limited(assumptions, expect_interrupt)
+                time = now() - timestamp
 
         solution = solver.get_model() if status else None
         statistics = {**solver.accum_stats(), 'time': time}

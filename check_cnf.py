@@ -8,20 +8,10 @@ MAX_WORKERS = 36
 
 SOLVERS = ['g3', 'g4', 'cd']
 INSTANCES = {
-    'pvs_4_7': 'sorting/pancake_vs_selection/pancake_vs_selection_7_4.cnf',
-    'pvs_5_7': 'sorting/pancake_vs_selection/pancake_vs_selection_7_5.cnf',
-    'pvs_3_8': 'sorting/pancake_vs_selection/pancake_vs_selection_8_3.cnf',
-    #
-    'bvs_4_8': 'sorting/bubble_vs_selection/bubble_vs_selection_8_4.cnf',
-    'bvs_5_8': 'sorting/bubble_vs_selection/bubble_vs_selection_8_5.cnf',
-    'bvs_6_7': 'sorting/bubble_vs_selection/bubble_vs_selection_7_6.cnf',
-    'bvs_7_7': 'sorting/bubble_vs_selection/bubble_vs_selection_7_7.cnf',
-    #
-    'bvp_3_8': 'sorting/bubble_vs_pancake/bubble_vs_pancake_8_3.cnf',
-    'bvp_4_8': 'sorting/bubble_vs_pancake/bubble_vs_pancake_8_4.cnf',
-    'bvp_5_8': 'sorting/bubble_vs_pancake/bubble_vs_pancake_8_5.cnf',
-    'bvp_6_7': 'sorting/bubble_vs_pancake/bubble_vs_pancake_7_6.cnf',
-    'bvp_7_7': 'sorting/bubble_vs_pancake/bubble_vs_pancake_7_7.cnf',
+    'sgen_150_100': 'sgen/sgen6_900_100.cnf',
+    'sgen_150_200': 'sgen/sgen6_900_200.cnf',
+    'sgen_150_300': 'sgen/sgen6_900_300.cnf',
+    'sgen_150_1001': 'sgen/sgen6_900_1001.cnf',
 }
 
 

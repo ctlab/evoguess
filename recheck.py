@@ -1,6 +1,7 @@
 import json
 import threading
 from os.path import join
+from time import time as now
 from concurrent.futures.process import ProcessPoolExecutor
 
 from instance import Instance
@@ -10,7 +11,7 @@ from function.module.solver import solvers
 MAX_WORKERS = 36
 MAX_COUNT = 65_536
 
-SOLVER = 'g3'
+SOLVER = 'g4'
 PROJECT = 'aaai_2021'
 TARGET_FILE = 'RECHECK100'
 
@@ -30,6 +31,13 @@ INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.06_01:05:21-2021.09.06_05:05:21
 # INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.06_01:05:22-2021.09.06_05:05:21'  # 2/8 n20 1-8k 4h iter []
 # INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.06_01:05:23-2021.09.06_05:05:21'  # 2/8 n20 1-8k 4h iter []
 # INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.06_01:05:24-2021.09.06_05:05:21'  # 2/8 n20 1-8k 4h iter []
+# INSTANCE, EXPERIMENT = 'sgen_150_1001', '2021.09.06_10:32:36-2021.09.06_14:32:36'  # 2/8 n20 1-8k 4h iter []
+
+INSTANCE, EXPERIMENT = 'sgen_150_200', '2021.09.06_10:54:12-2021.09.06_14:54:12'  # 2/8 n20 1-8k 4h iter []
+# INSTANCE, EXPERIMENT = 'sgen_150_200', '2021.09.06_10:54:14-2021.09.06_14:54:15'  # 2/8 n20 1-8k 4h iter []
+# INSTANCE, EXPERIMENT = 'sgen_150_200', '2021.09.06_10:54:15-2021.09.06_14:54:15'  # 2/8 n20 1-8k 4h iter []
+# INSTANCE, EXPERIMENT = 'sgen_150_200', '2021.09.06_10:54:16-2021.09.06_14:54:15'  # 2/8 n20 1-8k 4h iter []
+# INSTANCE, EXPERIMENT = 'sgen_150_200', '2021.09.06_12:05:12-2021.09.06_16:05:12'  # 2/8 n20 1-8k 4h iter []
 
 instances = {
     'pvs_4_7_simp': {
@@ -71,8 +79,13 @@ instances = {
     'sgen_150_1001': {
         'input': 150, 'tags': ['sgen', '6_150_1001'],
         'path': 'sgen/sgen6_900_1001.cnf',
-        'times': {'g3': 7000, 'g4': 0, 'cd': 0}
+        'times': {'g3': 8500, 'g4': 3250, 'cd': 0}
     },
+    'sgen_150_200': {
+        'input': 150, 'tags': ['sgen', '6_150_200'],
+        'path': 'sgen/sgen6_900_200.cnf',
+        'times': {'g3': 5600, 'g4': 2800, 'cd': 0}
+    }
 }
 
 # use custom path to file with backdoors
@@ -90,6 +103,7 @@ def decimal_to_base(number, bases):
 
 
 def worker_func(bd_line):
+    st_stamp = now()
     backdoor = instance.get_backdoor('backdoor:base', _list=bd_line)
     if backdoor.task_count() > MAX_COUNT:
         return {'backdoor': bd_line, 'time': float('inf'), 'propagations': float('inf')}
@@ -103,7 +117,7 @@ def worker_func(bd_line):
             assumptions = instance.get_assumptions(backdoor, values)
             status, stats, literals = slv.propagate(assumptions)
             status = not (status and len(literals) < max_literal)
-            (up_tasks if status else hard_tasks).append((task_i, assumptions))
+            (up_tasks if status else hard_tasks).append(assumptions)
 
     all_tasks = up_tasks + hard_tasks
     progress, time_sum, prop_sum = 0, 0., 0.
@@ -115,8 +129,8 @@ def worker_func(bd_line):
             timer = threading.Timer(limit, slv.solver.interrupt, ())
             timer.start()
 
-        for task_i, assumptions in all_tasks:
-            status, stats, _ = slv.solve(assumptions)
+        for assumptions in all_tasks:
+            status, stats, _ = slv.solve(assumptions, expect_interrupt=True)
 
             if timer and status is None:
                 time_sum = float('inf')
@@ -136,7 +150,8 @@ def worker_func(bd_line):
         'time': time_sum,
         'backdoor': bd_line,
         'statistic': statistic,
-        'propagations': prop_sum
+        'propagations': prop_sum,
+        'work_time': now() - st_stamp,
     }
 
 
