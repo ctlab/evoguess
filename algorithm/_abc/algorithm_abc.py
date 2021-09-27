@@ -5,7 +5,7 @@ from method.typings.handle import n_completed
 
 
 class AlgorithmABC(Algorithm):
-    name = 'Algorithm ABC'
+    name = 'Algorithm(ABC)'
 
     def __init__(self, *args, **kwarg):
         super().__init__(*args, **kwarg)
@@ -15,17 +15,17 @@ class AlgorithmABC(Algorithm):
         index_value = self.limit.set('index', 0)
         self.root = [p for p in points if p.estimated]
         p_handles = [self._queue(p) for p in points if not p.estimated]
-        estimated, _ = self._await(p_handles, len(p_handles))
+        estimated, _ = self._await(*p_handles, count=len(p_handles))
         self.root.extend(estimated)
 
         self._proceed_index_result(index_value, self.root)
-        self.best = sorted(self.root)[0]
+        self.best = min(self.root)
         return self.root
 
     def process(self, estimated: Vector) -> Vector:
         raise NotImplementedError
 
-    def _await(self, point_handles, count):
+    def _await(self, *point_handles, count):
         count = min(count, len(point_handles))
         timeout = self.limit.left().get('time')
         handles = [h for (_, h) in point_handles]
@@ -46,6 +46,14 @@ class AlgorithmABC(Algorithm):
             point.set(**handle.cancel_and_result())
             for point, handle in point_handles
         ]
+
+    def _update_best(self, *points):
+        prev_best = self.best
+        self.best = min(self.best, *points)
+        if self.best != prev_best:
+            self.limit.set('stagnation', 0)
+        else:
+            self.limit.increase('stagnation')
 
 
 __all__ = [

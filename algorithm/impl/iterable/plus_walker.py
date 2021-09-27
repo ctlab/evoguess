@@ -28,7 +28,6 @@ class PlusWalker(AsyncAlg):
 
     def get_next_points(self, vector: Vector, count: int) -> Vector:
         population = []
-        print('govno', len(self.threads), [len(t) for t in self.threads])
         if len(self.threads) == 0:
             self.iteration += 1
             point = sorted(vector)[0]
@@ -62,7 +61,6 @@ class PlusWalker(AsyncAlg):
                 self.vector[t] = point
 
         if all([len(t) == self.q and t[-1].estimated for t in self.threads]):
-            print('jopa', len(self.threads), points)
             vector = sorted(self.vector)[:1]
             self.vector, self.threads = [], []
 

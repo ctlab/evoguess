@@ -1,11 +1,11 @@
-from ..._abc.streaming.genetic import *
+from ..._abc._async.genetic import *
 
 from util.array import slicer
 
 
 class Elitism(Genetic):
-    slug = 'streaming:elitism'
-    name = 'Algorithm(Streaming): Elitism'
+    slug = 'async:elitism'
+    name = 'Algorithm(Async): Elitism'
 
     def __init__(self, size, elites, *args, **kwargs):
         self.population_size = size - elites
@@ -15,8 +15,8 @@ class Elitism(Genetic):
 
     def tweak(self, selected: Population):
         children = []
-        for chunk in slicer(self.min_tweak_size, selected):
-            if len(chunk) == self.min_tweak_size:
+        for chunk in slicer(self.min_await_count, selected):
+            if len(chunk) == self.min_await_count:
                 chunk = self.crossover.cross(*chunk)
             mutated = map(self.mutation.mutate, chunk)
             children.extend(mutated)

@@ -1,56 +1,28 @@
-from ..._abc.algorithm import *
+from ..._abc.algorithm_iterable import *
 
-from random import shuffle
-from time import time as now
+from numpy.random import randint, RandomState
 
 
-class TabuSearch(Algorithm):
+class TabuSearch(AlgorithmIterable):
     slug = 'iterable:tabu'
     name = 'Algorithm(Iterable): Tabu Search'
 
-    def __init__(self, shuffling=False, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.trace = []
         self.tabu = set()
-        self.shuffling = shuffling
-
-        self.root, self.best = None, None
         super().__init__(*args, **kwargs)
 
-    def preprocess(self, *backdoors: Backdoor) -> Vector:
-        self.root = list(map(Point, backdoors))
-        self.best = sorted(self.root)[0]
-        return self.root
-
-    def process(self, vector: Vector) -> Vector:
-        center, next_center = vector[-1], None
-        it_number = self.limit.set('iteration', 0)
-        if not center.estimated:
-            future = self.method.queue(self.instance, center.backdoor)
-            center.set(**future.result())
-        self._process_iteration_result(it_number, vector)
-
-        self.limit.set('time', now() - self.start_stamp)
-        while not self.limit.exhausted():
-            vector = self.iteration(vector)
-            it_number = self.limit.increase('iteration')
-            self._process_iteration_result(it_number, vector)
+        self.shuffle_seed = kwargs.get('shuffle_seed', randint(2 ** 32 - 1))
+        self.shuffle_state = RandomState(seed=self.shuffle_seed)
 
     def iteration(self, vector: Vector) -> Vector:
-        center, next_center = vector[-1], None
-
         visited_points = []
+        center, next_center = vector[-1], None
         for point in self.neighbourhood(center):
             if self.is_tabu(point):
                 continue
 
-            future = self.method.queue(self.instance, point.backdoor)
-            try:
-                timeout = self.limit.left().get('time')
-                point.set(**future.result(timeout))
-            except TimeoutError:
-                point.set(**future.cancel_and_result())
-
-            self.limit.set('time', now() - self.start_stamp)
+            estimated, _ = self._await(self._queue(point), count=1)
             visited_points.append(point)
             if center > point:
                 next_center = point
@@ -73,9 +45,6 @@ class TabuSearch(Algorithm):
         self.output.debug(4, 0, '[TABU] trace length: %d' % len(self.trace))  # debug
         return visited_points + [center]
 
-    def postprocess(self, solution: Vector):
-        pass
-
     def is_tabu(self, point):
         return str(point.backdoor) in self.tabu
 
@@ -88,26 +57,19 @@ class TabuSearch(Algorithm):
         self.output.debug(4, 0, '[TABU] remove tabu: <%s>' % point)  # debug
 
     def neighbourhood(self, point):
-        order = range(point.backdoor.length)
-
-        if self.shuffling:
-            order = list(order)
-            shuffle(order)
-
-        for j in order:
+        size = point.backdoor.length
+        for index in self.shuffle_state.permutation(size):
             mask = point.backdoor.get_mask()
-            mask[j] = not mask[j]
+            mask[index] = not mask[index]
             yield Point(point.backdoor.get_copy(mask))
-
-    def _process_iteration_result(self, number, vector):
-        self.output.log({
-            'iteration': number,
-            'spent_time': self.limit.get('time'),
-            'points': [point.to_dict() for point in vector]
-        })
 
     def __info__(self):
         return {
             **super().__info__(),
-            'shuffling': self.shuffling
+            'shuffle_seed': self.shuffle_seed
         }
+
+
+__all__ = [
+    'TabuSearch'
+]

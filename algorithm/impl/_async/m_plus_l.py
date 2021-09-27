@@ -1,9 +1,9 @@
-from ..._abc.streaming.evolution import *
+from ..._abc._async.evolution import *
 
 
 class MuPlusLambda(Evolution):
-    slug = 'streaming:plus'
-    name = 'Algorithm(Streaming): Evolution (μ + λ)'
+    slug = 'async:plus'
+    name = 'Algorithm(Async): Evolution (μ + λ)'
 
     def __init__(self, mu, lmbda, *args, **kwargs):
         self.population_size = lmbda
