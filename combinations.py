@@ -1,3 +1,5 @@
+import json
+
 import numpy
 
 from uuid import uuid4
@@ -14,18 +16,7 @@ from function.module.solver import solvers
 
 MAX_WORKERS = 4
 
-SOLVER = "g3"
-PROJECT = 'aaai_2021'
-
-# INSTANCE, BACKDOORS = 'sgen_150_200', [
-#     '86 88 90 136..139',
-#     '3 4 56..60',
-#     '21 23..25 36 37 39 40',
-#     '29 36..40 60',
-#     '86 88 90 107..110'
-# ]
-
-INSTANCE, BACKDOORS = 'sgen_150_1001', [
+BACKDOORS = [
     '46..50 101 104 105 148',
     '43 66 68 70 146..150',
     '6..10 33 37 38 40',
@@ -33,19 +24,24 @@ INSTANCE, BACKDOORS = 'sgen_150_1001', [
     '48 91..95 131 134 135'
 ]
 
-instances = {
-    'sgen_150_200': {
-        'input': 150, 'tags': ['sgen', '6_150_200'],
-        'path': 'sgen/sgen6_900_200.cnf',
+configuration = {
+    'instance': {
+        'slug': 'instance',
+        'cnf': {
+            'slug': 'cnf',
+            'path': 'sgen/sgen6_900_200.cnf',
+        },
+        'input_set': {
+            'slug': 'interval',
+            'start': 1, 'length': 150
+        }
     },
-    'sgen_150_1001': {
-        'input': 150, 'tags': ['sgen', '6_150_1001'],
-        'path': 'sgen/sgen6_900_1001.cnf',
-    },
+    'solver': 'solver:pysat:g3'
 }
 
-OUT_DIR = join(EXPERIMENT_PATH, PROJECT, *instances[INSTANCE]['tags'], f'_{uuid4().hex}')
-makedirs(OUT_DIR)
+instance = Instance(configuration['instance'])
+solver = solvers.get(configuration['solver'])()
+up_solver = solvers.get(f'solver:pysat:g3')()
 
 
 def decimal_to_base(number, bases):
@@ -111,20 +107,11 @@ def worker_func(case):
 
 
 if __name__ == '__main__':
-    instance = Instance({
-        'slug': 'instance',
-        'cnf': {
-            'slug': 'cnf',
-            'path': instances[INSTANCE]['path']
-        },
-        'input_set': {
-            'slug': 'interval',
-            'start': 1, 'length': instances[INSTANCE]['input']
-        }
-    })
-    solver = solvers.get(f'solver:pysat:{SOLVER}')()
-    up_solver = solvers.get(f'solver:pysat:g3')()
+    OUT_DIR = join(EXPERIMENT_PATH, 'combinations', f'_{uuid4().hex}')
+    makedirs(OUT_DIR)
 
+    with open(join(OUT_DIR, 'INFO'), 'w+') as handle:
+        handle.write(json.dumps(configuration, indent=2))
     with open(join(OUT_DIR, 'backdoors'), 'w+') as handle:
         handle.write('\n'.join(map(str, BACKDOORS)))
 

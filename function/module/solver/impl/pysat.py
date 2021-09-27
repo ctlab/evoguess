@@ -50,7 +50,6 @@ class PySat(Solver):
                 solver.clear_interrupt()
             del timer
         else:
-            timestamp = now()
             if not expect_interrupt:
                 status = solver.solve(assumptions)
                 time = solver.time()
