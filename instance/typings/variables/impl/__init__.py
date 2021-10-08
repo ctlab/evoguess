@@ -1,8 +1,11 @@
 from .interval import *
 from .base_backdoor import *
+from .variables_list import *
+
 
 types = {
     Interval.slug: Interval,
+    VariablesList.slug : VariablesList
 }
 
 backdoors = {
@@ -14,5 +17,6 @@ for kind, backdoor in enumerate(backdoors.values()):
 
 __all__ = [
     'Interval',
-    'BaseBackdoor'
+    'BaseBackdoor',
+    'VariablesList'
 ]
