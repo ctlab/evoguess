@@ -50,6 +50,7 @@ class UPGuessAndDetermine(Function):
     def __init__(self, max_n, *args, **kwargs):
         self.max_n = max_n
         self.alpha_n = kwargs.get('alpha_n', max_n)
+        self.value_base = kwargs.get('value_base', 2)
         super().__init__(*args, **kwargs)
 
     def get_function(self):
@@ -83,17 +84,23 @@ class UPGuessAndDetermine(Function):
         time, value, = None, None
         if len(cases) > 0:
             time = log2(float(time_sum) / len(cases)) + len(backdoor)
-            if len(backdoor) < self.max_n:
-                count = backdoor.task_count()
+            if self.value_base < 2:
+                count = self.value_base ** len(backdoor)
                 vfp = float(statistic[True]) / len(cases)
                 pfp = float(statistic[False]) / len(cases)
-                value = log2(vfp * count + pfp * (2 ** self.alpha_n))
+                value = vfp * count + pfp * (2 ** self.alpha_n)
             else:
-                if statistic[False] > 0:
-                    value = float('inf')
+                if len(backdoor) < self.max_n:
+                    count = backdoor.task_count()
+                    vfp = float(statistic[True]) / len(cases)
+                    pfp = float(statistic[False]) / len(cases)
+                    value = log2(vfp * count + pfp * (2 ** self.alpha_n))
                 else:
-                    value = len(backdoor)
-                    # value = sum(values_sum.values()) / len(cases)
+                    if statistic[False] > 0:
+                        value = float('inf')
+                    else:
+                        value = len(backdoor)
+                        # value = sum(values_sum.values()) / len(cases)
 
         return {
             'time': time,
