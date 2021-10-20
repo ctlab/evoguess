@@ -5,7 +5,7 @@ from numpy.random import randint, RandomState
 
 
 class Crossover:
-    slug = None
+    slug = 'crossover'
     name = 'Crossover'
 
     def __init__(self, **kwargs):

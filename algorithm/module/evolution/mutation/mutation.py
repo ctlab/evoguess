@@ -3,7 +3,7 @@ from numpy.random import randint, RandomState
 
 
 class Mutation:
-    slug = None
+    slug = 'mutation'
     name = 'Mutation'
 
     def __init__(self, **kwargs):

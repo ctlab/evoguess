@@ -6,8 +6,8 @@ from instance.typings.variables import Backdoor
 
 
 class Algorithm:
+    slug = 'algorithm'
     name = 'Algorithm'
-    slug = None
 
     def __init__(self, limit, output, method, instance, *args, **kwargs):
         self.limit = limit

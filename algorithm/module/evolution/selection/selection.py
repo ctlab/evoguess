@@ -4,7 +4,7 @@ from numpy.random import randint, RandomState
 
 
 class Selection:
-    slug = None
+    slug = 'selection'
     name = 'Selection'
 
     def __init__(self, **kwargs):

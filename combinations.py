@@ -1,5 +1,4 @@
 import json
-
 import numpy
 
 from uuid import uuid4
@@ -11,7 +10,6 @@ from concurrent.futures.process import ProcessPoolExecutor
 
 from instance import Instance
 from util.const import EXPERIMENT_PATH
-
 from function.module.solver import solvers
 
 MAX_WORKERS = 4
@@ -53,6 +51,7 @@ def decimal_to_base(number, bases):
 
 
 def worker_func(case):
+    info = {}
     st_stamp = now()
     tag, bd_lines = case
     backdoors = [
@@ -60,7 +59,6 @@ def worker_func(case):
         for bd_line in bd_lines
     ]
 
-    info = {}
     max_literal = instance.max_literal()
     all_up_tasks, all_hard_tasks = [], []
     for backdoor in backdoors:

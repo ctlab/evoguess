@@ -6,6 +6,7 @@ from util.array import trim
 from util.const import TEMPLATE_PATH
 
 cnf_clauses = {}
+cnf_variables = {}
 cnf_max_literal = {}
 lock = threading.Lock()
 numeral = re.compile('^[-0-9]')
@@ -22,24 +23,30 @@ class CNF:
         if self.path in cnf_clauses:
             return
 
-        clauses, max_lit = [], 0
+        clauses, variables = [], set()
         print('parse cnf... (%s)' % self.path)
         with open(self.path) as f:
             for line in f.readlines():
                 if line[0] in ['p', 'c']:
                     continue
 
-                clause = [int(n) for n in line.split()]
-                max_lit = max(max_lit, *map(abs, clause))
-                clauses.append(trim(clause))
+                clause = trim([int(n) for n in line.split()])
+                variables.update(map(abs, clause))
+                clauses.append(clause)
 
         cnf_clauses[self.path] = clauses
-        cnf_max_literal[self.path] = max_lit
+        cnf_variables[self.path] = variables
+        cnf_max_literal[self.path] = max(variables)
 
     def clauses(self):
         with lock:
             self._parse()
             return cnf_clauses[self.path]
+
+    def variables(self):
+        with lock:
+            self._parse()
+            return cnf_variables[self.path]
 
     def max_literal(self):
         with lock:

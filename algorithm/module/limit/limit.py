@@ -1,6 +1,6 @@
 class Limit:
     key = None
-    slug = None
+    slug = 'limit'
     name = 'Limit'
 
     def __init__(self, value):
