@@ -41,7 +41,7 @@ class PySat(Solver):
             timer.start()
 
             timestamp = now()
-            status = solver.solve_limited(assumptions, expect_interrupt)
+            status = solver.solve_limited(assumptions, expect_interrupt=True)
             time = now() - timestamp
 
             if timer.is_alive():

@@ -47,10 +47,6 @@ class GuessAndDetermine(Function):
         return gad_function
 
     def prepare_data(self, state, instance, backdoor, dim_type):
-        if instance.has_intervals():
-            # todo: add intervals bits to data
-            pass
-
         bd_mask = instance.get_bd_mask(backdoor)
         return instance, self.solver, self.measure, encode_bits([
             *to_bits(dim_type, 1),
