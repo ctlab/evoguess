@@ -8,8 +8,8 @@ from util.array import for_each
 
 
 class Algorithm:
-    name = 'Algorithm'
     slug = None
+    name = 'Algorithm'
 
     def __init__(self, limit, output, method, instance, *args, **kwargs):
         self.limit = limit

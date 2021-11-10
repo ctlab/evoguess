@@ -1,5 +1,7 @@
 from .algorithm_abc import *
 
+from util.array import for_each
+
 
 class AlgorithmAsync(AlgorithmABC):
     max_points = None
@@ -24,7 +26,8 @@ class AlgorithmAsync(AlgorithmABC):
             vector = self.update_vector(vector, *estimated)
             self._proceed_index_result(index, vector)
             self._update_best(*estimated)
-        self._cancel(p_handles)
+        for_each(p_handles, self._cancel)
+
         return vector
 
 

@@ -41,11 +41,10 @@ class AlgorithmABC(Algorithm):
 
         return estimated, left_point_handles
 
-    def _cancel(self, point_handles):
-        return [
-            point.set(**handle.cancel_and_result())
-            for point, handle in point_handles
-        ]
+    # noinspection PyMethodMayBeStatic
+    def _cancel(self, point_handle):
+        point, handle = point_handle
+        return point.set(**handle.cancel_and_result())
 
     def _update_best(self, *points):
         prev_best = self.best
