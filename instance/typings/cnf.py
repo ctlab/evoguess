@@ -14,6 +14,7 @@ numeral = re.compile('^[-0-9]')
 class CNF:
     slug = 'cnf'
     name = 'CNF'
+    has_atmosts = False
 
     def __init__(self, path):
         self.path = os.path.join(TEMPLATE_PATH, path)

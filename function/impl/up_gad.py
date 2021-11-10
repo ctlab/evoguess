@@ -19,7 +19,10 @@ def gad_function(common_data, tasks_data=None):
     backdoor = inst.get_backdoor2(bd_type, bd_base, bd_mask)
     bases = backdoor.get_bases()
 
-    with slv.prototype(inst.clauses()) as solver:
+    kwargs = {}
+    if inst.cnf.has_atmosts and inst.cnf.atmosts():
+        kwargs['atmosts'] = inst.cnf.atmosts()
+    with slv.prototype(inst.clauses(), **kwargs) as solver:
         for task_data in tasks_data:
             st_timestamp = now()
             task_i, task_value = task_data

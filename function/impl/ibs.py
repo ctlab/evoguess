@@ -38,7 +38,10 @@ def ibs_function(common_data, tasks_data=None):
                 if abs(lit) in as_vars:
                     assumptions.append(lit)
 
-            status, stats, _ = slv.solve(inst.clauses(), assumptions, limit=tl)
+            kwargs = {'limit': tl}
+            if inst.cnf.has_atmosts and inst.cnf.atmosts():
+                kwargs['atmosts'] = inst.cnf.atmosts()
+            status, stats, _ = slv.solve(inst.clauses(), assumptions, **kwargs)
             time, value = stats['time'], meas.get(stats)
             results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
 
