@@ -4,12 +4,11 @@ from numpy.random import randint, RandomState
 
 
 class TabuSearch(AlgorithmIterable):
-    slug = 'iterable:tabu'
+    slug = 'iterable:tabu_search'
     name = 'Algorithm(Iterable): Tabu Search'
 
     def __init__(self, *args, **kwargs):
-        self.trace = []
-        self.tabu = set()
+        self.trace, self.tabu = [], set()
         super().__init__(*args, **kwargs)
 
         self.shuffle_seed = kwargs.get('shuffle_seed', randint(2 ** 32 - 1))
