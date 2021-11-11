@@ -43,6 +43,7 @@ class Algorithm:
         self.output.debug(1, 1, f'Algorithm end process on {process_stamp}')
 
         # postprocess
+        self.method.executor.shutdown()
         _, postprocess_stamp = self.postprocess(solution), now()
         self.output.debug(1, 1, f'Algorithm end postprocess on {postprocess_stamp}')
 
