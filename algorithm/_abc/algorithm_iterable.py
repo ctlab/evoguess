@@ -3,7 +3,7 @@ from .algorithm_abc import *
 
 class AlgorithmIterable(AlgorithmABC):
     max_points = None
-    await_count = None
+    awaited_count = None
     name = 'Algorithm(Async)'
 
     def iteration(self, vector: Vector) -> Vector:

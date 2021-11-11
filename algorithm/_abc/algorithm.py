@@ -4,7 +4,7 @@ from method.typings.handle import Handle
 from instance.typings.variables import Backdoor
 
 from time import time as now
-from util.array import for_each
+from util.collection import for_each
 
 
 class Algorithm:

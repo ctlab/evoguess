@@ -7,11 +7,11 @@ def is_not_none(x):
 
 
 def smin(*args, key=None):
-    return min(*filter(is_not_none, args), key=key)
+    return min(filter(is_not_none, args), key=key)
 
 
 def smax(*args, key=None):
-    return max(*filter(is_not_none, args), key=key)
+    return max(filter(is_not_none, args), key=key)
 
 
 def sget(obj, key, default=None):

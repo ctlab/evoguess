@@ -1,6 +1,7 @@
 import threading
 
-from util.array import unzip, none, for_each
+from util.array import unzip, none
+from util.collection import for_each
 from util.error import AlreadyRunning, CancelledError
 
 [

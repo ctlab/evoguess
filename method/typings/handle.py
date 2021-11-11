@@ -1,6 +1,6 @@
 from .job import n_completed as nc
 
-from util.array import trim
+from util.collection import trim
 from util.error import CancelledError
 
 

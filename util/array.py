@@ -1,14 +1,14 @@
-def for_each(_list, fn):
-    for item in _list:
-        fn(item)
-
-
 def concat(*lists):
     return sum(lists, [])
 
 
-def slicer(size, _list):
+def slice_by_size(size, _list):
     return [_list[i:i + size] for i in range(0, len(_list), size)]
+
+
+def slice_by_count(count, _list):
+    size = len(_list) // count
+    return slice_by_size(len(_list) // count, _list)
 
 
 def none(dimension):
@@ -29,10 +29,6 @@ def side_trim(_list, at_start=True):
     i = first_non_zero_position(_list) if at_start else 0
     j = first_non_zero_position(_list, direction=False)
     return _list[i:j + 1]
-
-
-def trim(_list):
-    return [item for item in _list if item]
 
 
 def to_bit_string(_list):

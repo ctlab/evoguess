@@ -2,7 +2,7 @@ from .evolution import *
 
 
 class Genetic(Evolution):
-    min_await_count = 2
+    min_tweak_size = 2
     name = 'Algorithm(Async): Genetic'
 
     def __init__(self, crossover, *args, **kwargs):
