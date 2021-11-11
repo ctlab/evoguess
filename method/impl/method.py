@@ -115,6 +115,7 @@ class Method:
             'name': self.name,
             'seed': self.seed,
             'function': self.function.__info__(),
+            'executor': self.executor.__info__(),
             'sampling': self.sampling.__info__(),
             # 'observer': self.observer.__info__()
         }

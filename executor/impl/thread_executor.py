@@ -20,7 +20,7 @@ class ThreadExecutor(Executor):
         return self.executor.submit(fn, *args, **kwargs)
 
     def shutdown(self, wait=True):
-        self.executor.shutdown()
+        self.executor.shutdown(wait)
 
 
 __all__ = [

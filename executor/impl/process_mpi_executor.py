@@ -1,12 +1,16 @@
 from .._abc.executor import *
 
-from concurrent.futures import as_completed
-from concurrent.futures.process import ProcessPoolExecutor
+try:
+    from mpi4py import MPI
+    from mpi4py.futures import as_completed
+    from mpi4py.futures.pool import ProcessPoolExecutor
+except ModuleNotFoundError:
+    pass
 
 
-class ProcessExecutor(Executor):
-    slug = 'executor:process'
-    name = "Executor: Process"
+class ProcessMPIExecutor(Executor):
+    slug = 'executor:process:mpi'
+    name = "Executor: Process MPI"
 
     awaiter_dict = {
         'as_completed': as_completed,
@@ -14,6 +18,8 @@ class ProcessExecutor(Executor):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.mpi_size = MPI.COMM_WORLD.Get_size()
+        self.workers = max(1, self.mpi_size - 1)
         self.executor = ProcessPoolExecutor(max_workers=self.workers)
 
     def submit(self, fn, *args, **kwargs):
@@ -24,5 +30,5 @@ class ProcessExecutor(Executor):
 
 
 __all__ = [
-    'ProcessExecutor'
+    'ProcessMPIExecutor'
 ]
