@@ -13,7 +13,7 @@ if __name__ == '__main__':
         'algorithm': {
             'mu': 1, 'lmbda': 1,
             'size': 8, 'elites': 2,
-            'slug': 'iterable:elitism',
+            'slug': 'genetic:elitism',
             'limit': {
                 'value': '12:00:00',
                 'slug': 'limit:walltime',

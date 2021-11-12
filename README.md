@@ -79,7 +79,7 @@ python3 main2.py
 
 ```
 'algorithm': {
-    'slug': 'iterable:plus',
+    'slug': 'evolution:plus',
     'mu': <number>,
     'lmbda': <number>,
     'limit': <module>,
