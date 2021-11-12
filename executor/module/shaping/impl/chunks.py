@@ -1,6 +1,6 @@
 from ..shaping import *
 
-from util.array import slicer
+from util.array import slice_by_size
 from numpy.random.mtrand import RandomState
 
 
@@ -15,7 +15,7 @@ class Chunks(Shaping):
     def get(self, size, tasks):
         chunks_count = max(1, self.chunk_rate * size)
         chunk_size = max(1, int(len(tasks) // chunks_count))
-        return slicer(chunk_size, tasks)
+        return slice_by_size(chunk_size, tasks)
 
     def __info__(self):
         return {

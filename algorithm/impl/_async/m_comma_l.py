@@ -1,13 +1,18 @@
-from ..._abc.iterable.evolution import *
+from ..._abc._async.evolution import *
+
+from numpy import argsort
+from util.collection import get_by_indexes, trim_by_indexes
 
 
 class MuCommaLambda(Evolution):
-    slug = 'iterable:comma'
-    name = 'Algorithm(Iterable): Evolution (μ, λ)'
+    slug = 'evolution:comma'
+    name = 'Algorithm: Evolution (μ, λ)'
 
     def __init__(self, mu, lmbda, *args, **kwargs):
         self.population_size = lmbda
         self.mu, self.lmbda = mu, lmbda
+        # only in synchronous mode
+        del kwargs['awaited_count']
         super().__init__(*args, **kwargs)
 
     def tweak(self, selected: Population):
@@ -25,6 +30,5 @@ class MuCommaLambda(Evolution):
 
 
 __all__ = [
-    'Population',
     'MuCommaLambda'
 ]

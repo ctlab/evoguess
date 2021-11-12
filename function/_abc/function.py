@@ -1,4 +1,4 @@
-from util.array import concat, slicer
+from util.array import concat, slice_by_size
 from util.numeral import base_to_binary2, binary_to_base2
 
 BASIS = 8
@@ -20,7 +20,7 @@ def to_number(bits, basis=BASIS):
 
 
 def encode_bits(bits):
-    return bytes([to_number(chunk) for chunk in slicer(BASIS, bits)])
+    return bytes([to_number(chunk) for chunk in slice_by_size(BASIS, bits)])
 
 
 def decode_bits(data):

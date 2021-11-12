@@ -3,7 +3,7 @@ from .evolution import *
 
 class Genetic(Evolution):
     min_tweak_size = 2
-    name = 'Algorithm(Streaming): Genetic'
+    name = 'Algorithm(Async): Genetic'
 
     def __init__(self, crossover, *args, **kwargs):
         self.crossover = crossover

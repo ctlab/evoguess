@@ -2,7 +2,7 @@ import os
 import re
 import threading
 
-from util.array import trim
+from util.collection import trim
 from util.const import TEMPLATE_PATH
 
 cnf_clauses = {}

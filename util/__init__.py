@@ -36,6 +36,7 @@ __all__ = [
     'caster',
     'bitmask',
     'numeral',
+    'collection',
     #
     'build',
     'load_modules',

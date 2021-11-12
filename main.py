@@ -29,4 +29,4 @@ if __name__ == '__main__':
         algorithm.instance.get_backdoor(**backdoor)
         for backdoor in configuration['backdoors']
     ]
-    solution = algorithm.start(*backdoors)
+    solution = algorithm.start_from_backdoors(*backdoors)

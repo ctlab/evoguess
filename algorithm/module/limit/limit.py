@@ -8,7 +8,7 @@ class Limit:
             'time': 0,
             'restarts': 0,
             'iteration': 0,
-            'predictions': 0,
+            'stagnation': 0
         }
         self.limit = value
 

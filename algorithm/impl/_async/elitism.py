@@ -1,11 +1,13 @@
-from ..._abc.streaming.genetic import *
+from ..._abc._async.genetic import *
 
-from util.array import slicer
+from numpy import argsort
+from util.array import slice_by_size
+from util.collection import get_by_indexes, trim_by_indexes
 
 
 class Elitism(Genetic):
-    slug = 'streaming:elitism'
-    name = 'Algorithm(Streaming): Elitism'
+    slug = 'genetic:elitism'
+    name = 'Algorithm: Elitism'
 
     def __init__(self, size, elites, *args, **kwargs):
         self.population_size = size - elites
@@ -15,7 +17,7 @@ class Elitism(Genetic):
 
     def tweak(self, selected: Population):
         children = []
-        for chunk in slicer(self.min_tweak_size, selected):
+        for chunk in slice_by_size(self.min_tweak_size, selected):
             if len(chunk) == self.min_tweak_size:
                 chunk = self.crossover.cross(*chunk)
             mutated = map(self.mutation.mutate, chunk)
@@ -23,8 +25,10 @@ class Elitism(Genetic):
         return children
 
     def join(self, parents: Population, children: Population):
-        population = sorted(parents)[:self.size - len(children)]
-        return population + list(children)
+        elite_indexes = argsort(parents)[:self.elites]
+        filler_size = max(0, self.population_size - len(children))
+        lmbda_filler = trim_by_indexes(parents, elite_indexes)[:filler_size]
+        return [*get_by_indexes(parents, elite_indexes), *children, *lmbda_filler]
 
     def __info__(self):
         return {

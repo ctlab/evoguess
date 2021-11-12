@@ -1,13 +1,13 @@
+from ._async import *
 from .iterable import *
-from .streaming import *
-from . import iterable, streaming
+from . import _async, iterable
 
 algorithms = {
+    **_async.algorithms,
     **iterable.algorithms,
-    **streaming.algorithms
 }
 
 __all__ = [
+    *_async.__all__,
     *iterable.__all__,
-    *streaming.__all__
 ]

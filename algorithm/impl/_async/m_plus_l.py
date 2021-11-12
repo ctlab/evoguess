@@ -1,9 +1,12 @@
-from ..._abc.streaming.evolution import *
+from ..._abc._async.evolution import *
+
+from numpy import argsort
+from util.collection import get_by_indexes, trim_by_indexes
 
 
 class MuPlusLambda(Evolution):
-    slug = 'streaming:plus'
-    name = 'Algorithm(Streaming): Evolution (μ + λ)'
+    slug = 'evolution:plus'
+    name = 'Algorithm: Evolution (μ + λ)'
 
     def __init__(self, mu, lmbda, *args, **kwargs):
         self.population_size = lmbda
@@ -14,8 +17,10 @@ class MuPlusLambda(Evolution):
         return list(map(self.mutation.mutate, selected))
 
     def join(self, parents: Population, children: Population):
-        population = sorted(parents)[:self.mu + self.lmbda - len(children)]
-        return population + list(children)
+        mu_indexes = argsort(parents)[:self.mu]
+        filler_size = max(0, self.lmbda - len(children))
+        lmbda_filler = trim_by_indexes(parents, mu_indexes)[:filler_size]
+        return [*get_by_indexes(parents, mu_indexes), *children, *lmbda_filler]
 
     def __info__(self):
         return {
