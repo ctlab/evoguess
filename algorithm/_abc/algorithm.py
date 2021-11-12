@@ -49,9 +49,6 @@ class Algorithm:
     def start_from_vector(self, vector: Vector) -> Vector:
         return self.start(*vector)
 
-    def start_from_backdoor(self, backdoor: Backdoor) -> Vector:
-        return self.start(Point(backdoor))
-
     def start_from_backdoors(self, *backdoors: Backdoor) -> Vector:
         return self.start(*map(Point, backdoors))
 

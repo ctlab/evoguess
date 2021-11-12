@@ -5,9 +5,9 @@ class Uniform(Crossover):
     slug = 'crossover:uniform'
     name = 'Uniform(Crossover)'
 
-    def __init__(self, prob, **kwargs):
-        self.prob = prob
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.prob = kwargs.get('prob', 0.2)
 
     def cross(self, ind1: Point, ind2: Point):
         vbd, wbd = ind1.backdoor, ind2.backdoor

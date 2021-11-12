@@ -5,7 +5,7 @@ from numpy.random import randint, RandomState
 
 class TabuSearch(AlgorithmIterable):
     slug = 'iterable:tabu_search'
-    name = 'Algorithm(Iterable): Tabu Search'
+    name = 'Algorithm: Tabu Search'
 
     def __init__(self, *args, **kwargs):
         self.trace, self.tabu = [], set()
@@ -33,15 +33,15 @@ class TabuSearch(AlgorithmIterable):
         if next_center is not None:
             self.add_tabu(center)
             self.trace.append((center, next_center))
-            self.output.debug(4, 0, '[TABU] step forward: <%s> -> <%s>' % (center, next_center))  # debug
-            self.output.debug(4, 0, '[TABU] trace length: %d' % len(self.trace))  # debug
+            # self.output.debug(4, 0, '[TABU] step forward: <%s> -> <%s>' % (center, next_center))  # debug
+            # self.output.debug(4, 0, '[TABU] trace length: %d' % len(self.trace))  # debug
             return visited_points
 
         center, next_center = self.trace.pop()
         self.remove_tabu(center)
         self.add_tabu(next_center)
-        self.output.debug(4, 0, '[TABU] step backward: <%s> -> <%s>' % (next_center, center))  # debug
-        self.output.debug(4, 0, '[TABU] trace length: %d' % len(self.trace))  # debug
+        # self.output.debug(4, 0, '[TABU] step backward: <%s> -> <%s>' % (next_center, center))  # debug
+        # self.output.debug(4, 0, '[TABU] trace length: %d' % len(self.trace))  # debug
         return visited_points + [center]
 
     def is_tabu(self, point):

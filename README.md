@@ -54,30 +54,26 @@ python3 main2.py
 
 ### 1. Алгоритм
 
-```
-'algorithm': {
-    'slug': ...
-    'limit': ...
-    ...
-}
-```
+#### 1.1. Абстракция `Evolution`
 
-#### 1.1. Интерфейс `Iterable`
-
-Классическая итеративная схема оптимизации. На каждой итерации ожидается оценка всех точек для перехода к следующей
-итерации.
+Асинхронная версия эволюционного алгоритма.<br>
+Параметр ***awaited_count*** влияет на *степень асинхронности* алгоритма.
+От **1** (полная **а**синхронность) до **lmbda** (полная синхронность, по умолчанию).
+По сути, задает число точек, которого достаточно для обновления популяции.
 
 ##### 1.1.1. Реализация `(μ, λ)`
 
 ```
 'algorithm': {
-    'slug': 'iterable:comma',
+    'slug': 'evolution:comma',
     'mu': <number>,
     'lmbda': <number>,
+    'limit': <module>,
     'mutation': <module>,
     'selection': <module>
 }
 ```
+Доступна только синхронная версия стратегии `(μ, λ)` (параметр ***awaited_count*** залочен в **lmbda**).
 
 ##### 1.1.2. Реализация `(μ + λ)`
 
@@ -86,59 +82,51 @@ python3 main2.py
     'slug': 'iterable:plus',
     'mu': <number>,
     'lmbda': <number>,
-    'mutation': <module>,
-    'selection': <module>
-}
-```
-
-##### 1.1.2. Реализация `Elitism`
-
-```
-'algorithm': {
-    'slug': 'iterable:elitism',
-    'size': <number>,
-    'elites': <number>,
+    'limit': <module>,
     'mutation': <module>,
     'selection': <module>,
-    'crossover': <module>
+    'awaited_count': <optional number, default: lmbda>
 }
 ```
 
-#### 1.2. Интерфейс `Streaming` (**experimental**)
+#### 1.2. Абстракция `Genetic`
 
-На каждом шаге ожидается минимальное необходимое количество точек, после чего происходит обновление вектора
-потенциальных решений.
+Асинхронная версия генетического алгоритма.<br>
+Про параметр ***awaited_count*** см. выше. 
+Значение от **2** до **size - elites** (по умолчанию).
 
-##### 1.2.1. Реализация `(μ + λ)`
-
-```
-'algorithm': {
-    'slug': 'streaming:plus',
-    'mu': <number>,
-    'lmbda': <number>,
-    'mutation': <module>,
-    'selection': <module>
-}
-```
-
-##### 1.2.2. Реализация `Elitism`
+##### 1.2.1. Реализация `Elitism`
 
 ```
 'algorithm': {
-    'slug': 'streaming:elitism',
+    'slug': 'genetic:elitism',
     'size': <number>,
     'elites': <number>,
+    'limit': <module>,
     'mutation': <module>,
     'selection': <module>,
-    'crossover': <module>
+    'crossover': <module>,
+    'awaited_count': <optional number>
 }
 ```
 
-#### 1.3. Модули
+#### 1.3. Реализация `Tabu Search`
 
-##### 1.3.1. Ограничение ресурсов
+Итеративная жадная версия tabu search с возвратами.
 
-###### 1.3.1.1. Ограничение `WallTime`
+```
+'algorithm': {
+    'slug': 'iterative:tabu_search',
+    'limit': <module>,
+    'shuffle_seed': <optional number>
+}
+```
+
+#### 1.4. Модули
+
+##### 1.4.1. Ограничение ресурсов
+
+###### 1.4.1.1. Ограничение `WallTime`
 
 Ограничение по времени исполнения.
 
@@ -149,7 +137,7 @@ python3 main2.py
 }
 ```
 
-###### 1.3.1.2. Ограничение `Iteration`
+###### 1.4.1.2. Ограничение `Iteration`
 
 Ограничение по числу итераций.
 
@@ -160,57 +148,58 @@ python3 main2.py
 }
 ```
 
-###### 1.3.1.3. Ограничение `Stagnation`
+##### 1.4.2. Оператор мутации
 
-Ограничение по числу стагнаций.
+###### 1.4.2.1. `Uniform` mutation
 
-```
-'limit': {
-    'slug': 'limit:stagnation',
-    'value': <number>
-}
-```
-
-##### 1.3.2. Оператор мутации
-
-###### 1.3.2.1. `Uniform` mutation
+Вероятность мутации каждого бита вектора из **n** элементов равна **scale/n** (по умолчанию **1/n**).
 
 ```
 'mutation': {
     'slug': 'mutation:uniform',
-    'scale': <optional number>
+    'seed': <optional number>,
+    'scale': <optional float>
 }
 ```
 
-###### 1.3.2.2. `Doer` mutation
+###### 1.4.2.2. `Doer` mutation
+
+[comment]: <> (добавить ref)
 
 ```
 'mutation': {
     'slug': 'mutation:doer',
+    'seed': <optional number>,
     'beta': <optional number>
 }
 ```
 
-##### 1.3.3. Оператор селекции
+##### 1.4.3. Оператор селекции
 
-###### 1.3.3.1. `Best` selection
+###### 1.4.3.1. `Best` selection
+
+Выбирает среди ***number_of_bests*** лучших особей.
 
 ```
 'selection': {
     'slug': 'selection:best',
+    'seed': <optional number>,
     'number_of_bests': <number>
 }
 ```
 
-###### 1.3.3.2. `Roulette` selection
+###### 1.4.3.2. `Roulette` selection
+
+Вероятность, того что особь будет выбрана обратно пропорционально зависит от значения её фитнеса.
 
 ```
 'selection': {
     'slug': 'selection:roulette',
+    'seed': <optional number>,
 }
 ```
 
-[comment]: <> (###### 1.3.3.3. `Tournament` selection &#40;**еще не реализовано**&#41;)
+[comment]: <> (###### 1.4.3.3. `Tournament` selection &#40;**еще не реализовано**&#41;)
 
 [comment]: <> (```)
 
@@ -224,30 +213,35 @@ python3 main2.py
 
 [comment]: <> (```)
 
-##### 1.3.4. Оператор скрещивания
+##### 1.4.4. Оператор скрещивания
 
-###### 1.3.4.1. `One-point` crossover
+###### 1.4.4.1. `One-point` crossover
 
 ```
 'selection': {
     'slug': 'crossover:one-point',
+    'seed': <optional number>,
 }
 ```
 
-###### 1.3.4.2. `Two-point` crossover
+###### 1.4.4.2. `Two-point` crossover
 
 ```
 'selection': {
     'slug': 'crossover:two-point',
+    'seed': <optional number>,
 }
 ```
 
-###### 1.3.4.3. `Uniform` crossover
+###### 1.4.4.3. `Uniform` crossover
+
+Вероятность с которой биты будут поменяны местами ***prob*** (по умолчанию **0.2**).
 
 ```
 'selection': {
     'slug': 'crossover:uniform',
-    'prob': <number>
+    'seed': <optional number>,
+    'prob': <optional float>
 }
 ```
 
