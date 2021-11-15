@@ -64,7 +64,7 @@ class PySat(Solver):
             status = solver.solve_limited(assumptions, expect_interrupt)
             time = now() - timestamp
 
-        if expect_interrupt and status is None:
+        if status is None:
             solver.clear_interrupt()
 
         solution = solver.get_model() if status else None
