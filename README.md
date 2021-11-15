@@ -366,11 +366,26 @@ Orders: `random`, `direct`, `reversed`.
 }
 ```
 
-#### 4.3. Модули
+#### 4.3. Inverse Backdoor Set function
 
-##### 4.3.1. Solver
+Define **only** one of time_limit, conf_budget or prop_budget.
 
-##### 4.3.1.1. `PySat` solver
+```
+'function': {
+    'slug': 'function:ibs',
+    'solver': <module>,
+    'measure': <module>,
+    'time_limit': <float>,
+    'conf_budget': <number>,
+    'prop_budget': <number>,
+}
+```
+
+#### 4.4. Модули
+
+##### 4.4.1. Solver
+
+##### 4.4.1.1. `PySat` solver
 
 ```
 'solver': {
@@ -380,9 +395,9 @@ Orders: `random`, `direct`, `reversed`.
 
 Names: `cd`, `g3`, `g4`, `lgl`, `mcb`, `mcm`, `mpl`, `mc`, `m22`, `mgh`.
 
-##### 4.3.2. Measure
+##### 4.4.2. Measure
 
-##### 4.3.2.1. `Time` measure
+##### 4.4.2.1. `Time` measure
 
 ```
 'measure': {
@@ -390,7 +405,7 @@ Names: `cd`, `g3`, `g4`, `lgl`, `mcb`, `mcm`, `mpl`, `mc`, `m22`, `mgh`.
 }
 ```
 
-##### 4.3.2.2. `Conflicts` measure
+##### 4.4.2.2. `Conflicts` measure
 
 ```
 'measure': {
@@ -398,7 +413,7 @@ Names: `cd`, `g3`, `g4`, `lgl`, `mcb`, `mcm`, `mpl`, `mc`, `m22`, `mgh`.
 }
 ```
 
-##### 4.3.2.3. `Propagations` measure
+##### 4.4.2.3. `Propagations` measure
 
 ```
 'measure': {
@@ -406,7 +421,7 @@ Names: `cd`, `g3`, `g4`, `lgl`, `mcb`, `mcm`, `mpl`, `mc`, `m22`, `mgh`.
 }
 ```
 
-##### 4.3.2.4. `Learned literals` measure
+##### 4.4.2.4. `Learned literals` measure
 
 ```
 'measure': {
