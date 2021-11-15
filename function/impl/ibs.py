@@ -6,7 +6,7 @@ from numpy.random.mtrand import RandomState
 
 
 def ibs_function(common_data, tasks_data=None):
-    inst, slv, meas, tl, info = common_data
+    inst, slv, meas, limits, info = common_data
 
     results = []
     bits = decode_bits(info)
@@ -38,7 +38,7 @@ def ibs_function(common_data, tasks_data=None):
                 if abs(lit) in as_vars:
                     assumptions.append(lit)
 
-            kwargs = {'limit': tl}
+            kwargs = {'limits': limits}
             if inst.cnf.has_atmosts and inst.cnf.atmosts():
                 kwargs['atmosts'] = inst.cnf.atmosts()
             status, stats, _ = slv.solve(inst.clauses(), assumptions, **kwargs)
@@ -53,8 +53,20 @@ class InverseBackdoorSets(Function):
     slug = 'function:ibs'
     name = 'Function: Inverse Backdoor Sets'
 
-    def __init__(self, time_limit, *args, **kwargs):
-        self.time_limit = time_limit
+    def __init__(self, *args, **kwargs):
+        self.limits = {
+            'time_limit': kwargs.get('time_limit', 0),
+            'conf_budget': kwargs.get('conf_budget', 0),
+            'prop_budget': kwargs.get('prop_budget', 0)
+        }
+        assert sum(value != 0 for value in self.limits.values()) == 1, \
+            "Define ONLY one of time_limit, conf_budget or prop_budget"
+        for limit_key, limit_value in self.limits.items():
+            if limit_value != 0:
+                self.limit_key = limit_key
+                self.limit_value = limit_value
+                break
+
         super().__init__(*args, **kwargs)
 
     def get_function(self):
@@ -65,7 +77,7 @@ class InverseBackdoorSets(Function):
         assert instance.output_set is not None, "IBS method depends on instance output_set"
 
         bd_mask = instance.get_bd_mask(backdoor)
-        return instance, self.solver, self.measure, self.time_limit, encode_bits([
+        return instance, self.solver, self.measure, self.limits, encode_bits([
             *to_bits(dim_type, 1),
             *to_bits(backdoor.kind, 1),
             *to_bits(backdoor.base, 6),
@@ -74,27 +86,29 @@ class InverseBackdoorSets(Function):
         ])
 
     def calculate(self, backdoor, *cases):
+        process_time, time_sum = 0, 0
         statistic = {True: 0, False: 0, None: 0}
-        process_time, time_sum, value_sum = 0, 0, 0
 
         for case in cases:
             time_sum += case[3]
-            value_sum += case[2]
             process_time += case[5]
             statistic[case[4]] += 1
 
-        xi = float(statistic[True] + statistic[False]) / float(len(cases))
-        if xi != 0:
-            time = value = (2 ** len(backdoor)) * self.time_limit * (3 / xi)
-        else:
-            time = value = float('inf')
-            # value = (2 ** env.algorithm.secret_key_len) * self.time_limit
+        time, value, = None, None
+        if len(cases) > 0:
+            xi = float(statistic[True] + statistic[False]) / float(len(cases))
+            if xi != 0:
+                value = (2 ** len(backdoor)) * self.limit_value * (3 / xi)
+            else:
+                value = float('inf')
+            time = value if self.limit_key == 'time_limit' else None
 
         return {
             'time': time,
             'value': value,
             'count': len(cases),
             'statistic': statistic,
+            'limit_key': self.limit_key,
             'job_time': round(time_sum, 2),
             'process_time': round(process_time, 2),
         }

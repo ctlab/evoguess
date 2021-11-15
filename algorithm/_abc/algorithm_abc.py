@@ -47,12 +47,13 @@ class AlgorithmABC(Algorithm):
         return point.set(**handle.cancel_and_result())
 
     def _update_best(self, *points):
-        prev_best = self.best
-        self.best = min(self.best, *points)
-        if self.best != prev_best:
-            self.limit.set('stagnation', 0)
-        else:
-            self.limit.increase('stagnation')
+        if len(points) > 0:
+            prev_best = self.best
+            self.best = min(self.best, *points)
+            if self.best != prev_best:
+                self.limit.set('stagnation', 0)
+            else:
+                self.limit.increase('stagnation')
 
 
 __all__ = [

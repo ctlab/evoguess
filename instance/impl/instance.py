@@ -3,7 +3,6 @@ from ..typings.variables.impl import backdoors
 from os.path import isfile
 from util.array import side_trim
 from util.operator import attreq
-from util.numeral import binary_to_base
 
 
 class Instance:

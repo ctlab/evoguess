@@ -11,6 +11,7 @@ from algorithm import Algorithm
 if __name__ == '__main__':
     args = json.dumps({
         'algorithm': {
+            'awaited_count': 1,
             'mu': 1, 'lmbda': 1,
             'size': 8, 'elites': 2,
             'slug': 'genetic:elitism',

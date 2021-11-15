@@ -24,11 +24,16 @@ class PySat(Solver):
 
         return status, statistics, literals
 
-    def solve(self, clauses, assumptions, limit=0, **kwargs):
+    def solve(self, clauses, assumptions, limits=None, **kwargs):
         with self.constructor(bootstrap_with=clauses, use_timer=True) as solver:
             for [literals, rhs] in kwargs.get('atmosts', []):
                 solver.add_atmost(literals, rhs)
-            status, statistics, solution = self.solve_with(solver, assumptions, limit, **kwargs)
+
+            if limits and limits.get('conf_budget', 0) > 0:
+                solver.conf_budget(limits['conf_budget'])
+            if limits and limits.get('prop_budget', 0) > 0:
+                solver.prop_budget(limits['prop_budget'])
+            status, statistics, solution = self.solve_with(solver, assumptions, limits, **kwargs)
 
         return status, statistics, solution
 
@@ -42,9 +47,9 @@ class PySat(Solver):
         return status, statistics, literals
 
     @staticmethod
-    def solve_with(solver, assumptions, limit=0, expect_interrupt=False):
-        if limit > 0:
-            timer = Timer(limit, solver.interrupt, ())
+    def solve_with(solver, assumptions, limits, expect_interrupt=False):
+        if limits and limits.get('time_limit', 0) > 0:
+            timer = Timer(limits['time_limit'], solver.interrupt, ())
             timer.start()
 
             timestamp = now()
@@ -53,17 +58,14 @@ class PySat(Solver):
 
             if timer.is_alive():
                 timer.cancel()
-            else:
-                solver.clear_interrupt()
             del timer
         else:
-            if not expect_interrupt:
-                status = solver.solve(assumptions)
-                time = solver.time()
-            else:
-                timestamp = now()
-                status = solver.solve_limited(assumptions, expect_interrupt)
-                time = now() - timestamp
+            timestamp = now()
+            status = solver.solve_limited(assumptions, expect_interrupt)
+            time = now() - timestamp
+
+        if expect_interrupt and status is None:
+            solver.clear_interrupt()
 
         solution = solver.get_model() if status else None
         statistics = {**solver.accum_stats(), 'time': time}
