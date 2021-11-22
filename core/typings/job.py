@@ -85,16 +85,14 @@ def all_completed(jobs, timeout=None):
 
 class Job:
     def __init__(self, context, job_id):
+        self.job_id = job_id
+
         self._indexes = []
         self._futures = []
         self._handled = []
         self._results = []
         self._waiters = []
         self._state = PENDING
-        self.context = context
-
-        self.job_id = job_id
-
         self._condition = threading.Condition()
         self._processor = threading.Thread(
             name=f'JobManagerThread {job_id}',
@@ -109,6 +107,7 @@ class Job:
         ]
 
     def _get_completed_values(self):
+        # todo: avoid index getting
         return [result[2] for result in self._results if result]
 
     def _handle_future(self, future, i=None):
