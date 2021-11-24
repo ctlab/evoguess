@@ -1,9 +1,11 @@
-from .._abc.core import *
+from .._abc import Estimator
+
 from ..static import CACHE
-from algorithm.typings import *
+from ..typings.handle import JobHandle
+from algorithm.typings import Point, Vector
 
 
-class Optimization(Core):
+class Optimization(Estimator):
     slug = 'core:optimization'
     name = 'Optimization(Core)'
 
@@ -18,7 +20,9 @@ class Optimization(Core):
 
         self.optimization_trace = []
 
-    # def estimate(self, *points: Point, count: int, timeout: float = None) -> Vector:
+    def queue(self, point: Point) -> JobHandle:
+        return JobHandle(point, self.estimate(point.backdoor))
+
     #     not_estimated = collection.trim(points, lambda x: not x.estimate)
     #     count = max(0, (count or len(points)) - len(points) + len(not_estimated))
     #
@@ -28,6 +32,8 @@ class Optimization(Core):
     #     return points
 
     def launch(self, *points: Point):
+        # todo: space module
+
         # root = self.estimate(*points, timeout=self.limit.left().get('time'))
         pass
 

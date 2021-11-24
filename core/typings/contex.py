@@ -5,10 +5,10 @@ from util.collection import trim
 
 
 class Context:
-    def __init__(self, seeds, instance, backdoor, **kwargs):
+    def __init__(self, seeds, backdoor, instance, **kwargs):
         self.seeds = seeds
-        self.instance = instance
         self.backdoor = backdoor
+        self.instance = instance
 
         self.function = kwargs.get('function')
         self.sampling = kwargs.get('sampling')
