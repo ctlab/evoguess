@@ -6,6 +6,7 @@
 
 ```
 pip3 install numpy
+pip3 install mpi4py (для MPI)
 pip3 install python-sat
 pip3 install python-dotenv
 ```

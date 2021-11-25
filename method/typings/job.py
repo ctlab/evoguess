@@ -1,4 +1,5 @@
 import threading
+import traceback
 
 from util.array import unzip, none
 from util.collection import for_each
@@ -85,16 +86,15 @@ def all_completed(jobs, timeout=None):
 
 class Job:
     def __init__(self, context, job_id):
+        self.job_id = job_id
+        self.context = context
+
         self._indexes = []
         self._futures = []
         self._handled = []
         self._results = []
         self._waiters = []
         self._state = PENDING
-        self.context = context
-
-        self.job_id = job_id
-
         self._condition = threading.Condition()
         self._processor = threading.Thread(
             name=f'JobManagerThread {job_id}',
@@ -121,6 +121,7 @@ class Job:
             except Exception as e:
                 if type(e).__name__ != CANCELLED_ERROR:
                     print(f'Exception in task {i}: ', repr(e))
+                    print(traceback.format_exc())
 
             self._handled[i] = True
 

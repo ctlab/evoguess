@@ -1,6 +1,5 @@
 import sys
 import json
-from util import build
 
 from output import Output
 from method import Method
@@ -10,6 +9,8 @@ from instance import Instance
 from algorithm import Algorithm
 
 if __name__ == '__main__':
+    from util import build
+
     assert len(sys.argv) == 2, f'Invalid number of input args {len(sys.argv)}'
     configuration = json.loads(sys.argv[1])
 

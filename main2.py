@@ -1,6 +1,5 @@
 import json
 
-from util import build
 from output import Output
 from method import Method
 from executor import Executor
@@ -9,6 +8,8 @@ from instance import Instance
 from algorithm import Algorithm
 
 if __name__ == '__main__':
+    from util import build
+
     args = json.dumps({
         'algorithm': {
             'awaited_count': 1,
@@ -70,7 +71,7 @@ if __name__ == '__main__':
         },
         'executor': {
             'workers': 4,
-            'slug': 'executor:process',
+            'slug': 'executor:process:mpi',
             'shaping': {
                 'slug': 'shaping:chunks',
                 'chunk_rate': 4

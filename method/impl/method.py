@@ -1,7 +1,6 @@
 from ..typings.job import Job
 from ..typings.handle import VoidHandle, JobHandle
 
-import pylru
 from util.bitmask import to_bit
 from collections import namedtuple
 from numpy.random import randint, RandomState
@@ -72,8 +71,7 @@ class Method:
         # self.observer = observer
 
         self.last_job_id = 0
-        cache_size = kwargs.get('cache_size', 100_000)
-        self._cache = Cache({}, {}, pylru.lrucache(cache_size))
+        self._cache = Cache({}, {}, {})
         self.seed = kwargs.get('seed', randint(2 ** 32 - 1))
         self.random_state = RandomState(seed=self.seed)
 
