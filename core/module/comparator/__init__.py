@@ -1,6 +1,6 @@
 from .impl import *
 from . import impl
 
-samplings = impl.samplings
+impls = impl.comparators
 
 __all__ = impl.__all__

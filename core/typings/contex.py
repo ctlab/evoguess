@@ -34,7 +34,8 @@ class Context:
 
     def get_tasks(self, results):
         tasks, offset = [], len(results)
-        count = self.sampling.get_count(self.backdoor, results)
+        values = self.sampling.get_values(results)
+        count = self.sampling.get_count(self.backdoor, values)
 
         if count > 0:
             if self.dim_type:

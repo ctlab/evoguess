@@ -1,7 +1,7 @@
 from .impl import *
 from . import tools, impl
 
-limits = {
+impls = {
     **impl.limits,
     **tools.limits
 }

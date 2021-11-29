@@ -13,7 +13,7 @@ class Sampling:
     def report(self, values):
         raise NotImplementedError
 
-    def get_count(self, backdoor, results=()):
+    def get_count(self, backdoor, values):
         raise NotImplementedError
 
     def __info__(self):

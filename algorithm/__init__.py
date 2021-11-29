@@ -1,5 +1,5 @@
 from .impl import algorithms
-from .module import modules, limit, evolution
+from .module import modules, evolution
 
 from util import load_modules
 
@@ -11,7 +11,7 @@ def Algorithm(configuration, **kwargs):
 
 
 __all__ = [
-    'limit',
-    'evolution',
-    'Algorithm'
+    'Algorithm',
+    # modules
+    'evolution'
 ]
