@@ -7,6 +7,7 @@ def load_modules(modules=(()), **kwargs):
     for key, value in kwargs.items():
         if isinstance(value, dict):
             slug = value.pop('slug')
+            print(f'load: {key} with {value}')
             value = modules[slug](**load_modules(modules, **value))
         if isinstance(value, str) and '@' in value:
             references = value[1:].split('.')

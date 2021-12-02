@@ -5,7 +5,7 @@ try:
     from mpi4py.futures import as_completed
     from mpi4py.futures.pool import ProcessPoolExecutor
 except ModuleNotFoundError:
-    pass
+    as_completed = None
 
 
 class ProcessMPIExecutor(Executor):

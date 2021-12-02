@@ -18,6 +18,8 @@ class AlgorithmAsync(AlgorithmABC):
         p_handles, vector = [], estimated
         while not self.limit.exhausted():
             index = self.limit.increase('index')
+            if self.tuner:
+                self.tuner.tune(self.limit, method=self.method, output=self.output)
             if self.max_points > len(p_handles):
                 count = self.max_points - len(p_handles)
                 p_handles.extend(map(self._queue, self.get_points(vector, count)))

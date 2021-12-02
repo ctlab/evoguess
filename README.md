@@ -71,7 +71,8 @@ python3 main2.py
     'lmbda': <number>,
     'limit': <module>,
     'mutation': <module>,
-    'selection': <module>
+    'selection': <module>,
+    'tuner': <optional module>,
 }
 ```
 Доступна только синхронная версия стратегии `(μ, λ)` (параметр ***awaited_count*** залочен в **lmbda**).
@@ -244,6 +245,24 @@ python3 main2.py
     'seed': <optional number>,
     'prob': <optional float>
 }
+```
+
+##### 1.4.5. Тюнер параметров
+
+###### 1.4.5.1. `IBS` Тюнер
+
+```
+'selection': {
+    'slug': 'tuner:ibs',
+    'limit_key': <limit key>,
+    'levels': <list of objects>,
+    'save_mode': <optional bool>,
+    'reset_after_increase': <optional bool>,
+}
+```
+
+```
+level template: {'bound': <limit value>, 'value': <ibs budget>},
 ```
 
 ### 2. Instance

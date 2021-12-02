@@ -16,6 +16,8 @@ class Algorithm:
         self.output = output
         self.method = method
         self.instance = instance
+
+        self.tuner = kwargs.get('tuner')
         self.start_stamp = None
 
     def preprocess(self, *points: Point) -> Vector:
@@ -41,7 +43,7 @@ class Algorithm:
         solution, process_stamp = self.process(vector), now()
         self.output.debug(1, 1, f'Found solution with {len(solution)} point(s):')
         for_each(solution, lambda point: self.output.debug(1, 2, point.to_dict()))
-        self.output.debug(1, 1, f'Algorithm end process on {process_stamp}')
+        self.output.debug(1, 0, f'Algorithm end process on {process_stamp}')
 
         self.method.executor.shutdown()
         self.output.close()

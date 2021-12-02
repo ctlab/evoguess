@@ -54,14 +54,14 @@ class InverseBackdoorSets(Function):
     name = 'Function: Inverse Backdoor Sets'
 
     def __init__(self, *args, **kwargs):
-        self.limits = {
+        limits = {
             'time_limit': kwargs.get('time_limit', 0),
             'conf_budget': kwargs.get('conf_budget', 0),
             'prop_budget': kwargs.get('prop_budget', 0)
         }
-        assert sum(value != 0 for value in self.limits.values()) == 1, \
+        assert sum(value != 0 for value in limits.values()) == 1, \
             "Define ONLY one of time_limit, conf_budget or prop_budget"
-        for limit_key, limit_value in self.limits.items():
+        for limit_key, limit_value in limits.items():
             if limit_value != 0:
                 self.limit_key = limit_key
                 self.limit_value = limit_value
@@ -77,7 +77,9 @@ class InverseBackdoorSets(Function):
         assert instance.output_set is not None, "IBS method depends on instance output_set"
 
         bd_mask = instance.get_bd_mask(backdoor)
-        return instance, self.solver, self.measure, self.limits, encode_bits([
+        return instance, self.solver, self.measure, {
+            self.limit_key: self.limit_value
+        }, encode_bits([
             *to_bits(dim_type, 1),
             *to_bits(backdoor.kind, 1),
             *to_bits(backdoor.base, 6),
@@ -110,5 +112,6 @@ class InverseBackdoorSets(Function):
             'statistic': statistic,
             'limit_key': self.limit_key,
             'job_time': round(time_sum, 2),
+            'limit_value': self.limit_value,
             'process_time': round(process_time, 2),
         }
