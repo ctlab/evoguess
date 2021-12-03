@@ -1,4 +1,4 @@
-# EvoGuess
+# EvoGuess v1
 
 ## About
 
