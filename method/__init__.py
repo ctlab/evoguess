@@ -1,16 +1,9 @@
-from .impl import methods
-from .module import modules, sampling
-
-from util import load_modules
-
-
-def Method(configuration, **kwargs):
-    slug = configuration.pop('slug')
-    loaded_modules = load_modules(modules, **configuration)
-    return methods.get(slug)(**kwargs, **loaded_modules)
-
+from .method import Method
+from . import solver, function, sampling
 
 __all__ = [
     'Method',
-    'sampling',
+    'solver',
+    'function',
+    'sampling'
 ]

@@ -1,2 +1,5 @@
-.env
-test.py
+# Python Byte-compiled
+*.pyc
+
+# Log files
+output/_*

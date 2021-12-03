@@ -1,17 +1,21 @@
-from .impl import algorithms
-from .module import modules, limit, evolution
-
-from util import load_modules
+from . import limit, evolution
+from .tabu_search import TabuSearch
 
 
-def Algorithm(configuration, **kwargs):
-    slug = configuration.pop('slug')
-    loaded_modules = load_modules(modules, **configuration)
-    return algorithms.get(slug)(**kwargs, **loaded_modules)
+def get_algorithm(params):
+    impl, kwargs = evolution.get_ea(params)
+    if impl is not None:
+        return impl, kwargs
+
+    kwargs = TabuSearch.parse(params)
+    if kwargs is not None:
+        return TabuSearch, kwargs
+    else:
+        return None, {}
 
 
 __all__ = [
     'limit',
     'evolution',
-    'Algorithm'
+    'get_algorithm'
 ]
