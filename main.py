@@ -1,5 +1,6 @@
 import sys
 import json
+import argparse
 
 from output import Output
 from method import Method
@@ -11,18 +12,28 @@ from algorithm import Algorithm
 if __name__ == '__main__':
     from util import build
 
-    assert len(sys.argv) == 2, f'Invalid number of input args {len(sys.argv)}'
-    configuration = json.loads(sys.argv[1])
+    parser = argparse.ArgumentParser(description='EvoGuess v2')
+    parser.add_argument('-f', '--file', metavar='<configuration file>', type=str)
+    parser.add_argument('-l', '--line', metavar='<configuration line>', type=str)
 
-    _, algorithm = build({
-        Algorithm: [
+    args, _ = parser.parse_known_args()
+
+    assert args.file or args.line, 'Specify one of the arguments -f or -l'
+
+    if args.file:
+        with open(args.file, 'r') as handle:
+            configuration = json.load(handle)
+    else:
+        configuration = json.loads(args.line)
+
+    _, algorithm = build(
+        {Algorithm: [
             Output,
             Instance,
-            {
-                Method: [
-                    Function,
-                    Executor
-                ]},
+            {Method: [
+                Function,
+                Executor
+            ]},
         ]}, **configuration
     )
 

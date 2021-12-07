@@ -26,7 +26,7 @@ class Instance:
     def check(self):
         return isfile(self.cnf.path)
 
-    def get_backdoor(self, slug, **kwargs):
+    def get_backdoor(self, slug='backdoor:base', **kwargs):
         if '_list' not in kwargs:
             return backdoors[slug](_list=self.input_set, **kwargs)
         else:

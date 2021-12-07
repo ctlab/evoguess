@@ -16,7 +16,7 @@ class ThreadExecutor(Executor):
         super().__init__(*args, **kwargs)
         self.executor = ThreadPoolExecutor(max_workers=self.workers)
 
-    def submit(self, fn, *args, **kwargs):
+    def submit(self, fn: Callable, *args, **kwargs):
         return self.executor.submit(fn, *args, **kwargs)
 
     def shutdown(self, wait=True):

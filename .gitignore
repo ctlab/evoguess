@@ -1,2 +1,8 @@
-.env
+# Builded documentation
+docs/build
+
+# Local scripts
 test.py
+
+# Environment
+.env

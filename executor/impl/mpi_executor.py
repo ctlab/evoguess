@@ -22,7 +22,7 @@ class MPIExecutor(Executor):
         self.workers = max(1, self.mpi_size - 1)
         self.executor = MPIPoolExecutor(max_workers=self.workers)
 
-    def submit(self, fn, *args, **kwargs):
+    def submit(self, fn: Callable, *args, **kwargs):
         return self.executor.submit(fn, *args, **kwargs)
 
     def shutdown(self, wait=True):

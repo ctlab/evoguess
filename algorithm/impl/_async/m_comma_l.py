@@ -1,8 +1,5 @@
 from ..._abc._async.evolution import *
 
-from numpy import argsort
-from util.collection import get_by_indexes, trim_by_indexes
-
 
 class MuCommaLambda(Evolution):
     slug = 'evolution:comma'

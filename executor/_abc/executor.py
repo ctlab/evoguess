@@ -1,4 +1,6 @@
 from os import cpu_count
+from typing import Callable
+
 from numpy.random import randint, RandomState
 
 
@@ -14,7 +16,7 @@ class Executor:
         self.workers = kwargs.get('workers', cpu_count())
         self.random_state = RandomState(seed=self.seed)
 
-    def submit(self, fn, *args, **kwargs):
+    def submit(self, fn: Callable, *args, **kwargs):
         raise NotImplementedError
 
     def submit_all(self, fn, data, *tasks):
@@ -28,7 +30,7 @@ class Executor:
     def get_awaiter(self, key='as_completed'):
         return self.awaiter_dict.get(key)
 
-    def shutdown(self, wait=True):
+    def shutdown(self, wait: bool = True):
         raise NotImplementedError
 
     def __str__(self):
@@ -48,5 +50,6 @@ class Executor:
 
 
 __all__ = [
-    'Executor'
+    'Callable',
+    'Executor',
 ]

@@ -12,5 +12,7 @@ functions = {
 
 __all__ = [
     'GuessAndDetermine',
-    'UPGuessAndDetermine'
+    'InverseBackdoorSets',
+    'UPGuessAndDetermine',
+    'IncrGuessAndDetermine'
 ]

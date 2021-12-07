@@ -1,19 +1,11 @@
-import json
+Example configuration
+=====================
 
-from output import Output
-from method import Method
-from executor import Executor
-from function import Function
-from instance import Instance
-from algorithm import Algorithm
+.. code-block:: none
 
-if __name__ == '__main__':
-    from util import build
-
-    args = json.dumps({
+    {
         'algorithm': {
             'awaited_count': 1,
-            'mu': 1, 'lmbda': 1,
             'size': 8, 'elites': 2,
             'slug': 'genetic:elitism',
             'limit': {
@@ -80,25 +72,7 @@ if __name__ == '__main__':
         'backdoors': [
             {
                 'slug': 'backdoor:base',
-                # "_list": [132, 239, 355, 613, 620, 706, 1064, 1142, 1753, 1884, 2948, 2975]
+                # "_list": []
             }
         ],
-    })
-    configuration = json.loads(args)
-
-    _, algorithm = build(
-        {Algorithm: [
-            Output,
-            Instance,
-            {Method: [
-                Function,
-                Executor
-            ]},
-        ]}, **configuration
-    )
-
-    backdoors = [
-        algorithm.instance.get_backdoor(**backdoor)
-        for backdoor in configuration['backdoors']
-    ]
-    solution = algorithm.start_from_backdoors(*backdoors)
+    }
