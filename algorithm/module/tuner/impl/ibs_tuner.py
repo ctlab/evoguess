@@ -28,7 +28,7 @@ class IBSTuner(Tuner):
                 self.value_bound = 2 * next_level['value']
         self.last_limit = limit_value
 
-        print('stagnation count:', limit_value, 'of', next_level['bound'])
+        # print('stagnation count:', limit_value, 'of', next_level['bound'])
         if limit_value >= next_level['bound']:
             value = next_level['value']
             if value < self.value_bound:
@@ -43,6 +43,8 @@ class IBSTuner(Tuner):
         return {
             'slug': self.slug,
             'name': self.name,
+            'levels': self.levels,
+            'limit_key': self.limit_key,
             'save_mode': self.save_mode,
             'reset_after_increase': self.reset_after_increase
         }

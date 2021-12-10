@@ -65,6 +65,7 @@ class InverseBackdoorSets(Function):
                 self.limit_value = limit_value
                 break
 
+        self.min_xi = kwargs.get('min_xi', 0)
         super().__init__(*args, **kwargs)
 
     def get_function(self):
@@ -97,7 +98,7 @@ class InverseBackdoorSets(Function):
         time, value, = None, None
         if len(cases) > 0:
             xi = float(statistic[True] + statistic[False]) / float(len(cases))
-            if xi != 0:
+            if xi > self.min_xi:
                 value = (2 ** len(backdoor)) * self.limit_value * (3 / xi)
             else:
                 value = float('inf')

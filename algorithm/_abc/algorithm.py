@@ -72,7 +72,8 @@ class Algorithm:
             'name': self.name,
             'limit': self.limit.__info__(),
             'method': self.method.__info__(),
-            'instance': self.instance.__info__()
+            'instance': self.instance.__info__(),
+            'tuner': self.tuner and self.tuner.__info__()
         }
 
     def __str__(self):
