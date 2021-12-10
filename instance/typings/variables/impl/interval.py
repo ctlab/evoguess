@@ -24,8 +24,9 @@ class Interval(Variables):
     def __info__(self):
         return {
             **super().__info__(),
-            'start': self.start,
             'end': self.end,
+            'start': self.start,
+            'length': self.length,
         }
 
 

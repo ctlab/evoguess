@@ -17,7 +17,8 @@ def ibs_function(common_data, tasks_data=None):
 
     supbs_vars = inst.supbs.variables()
     backdoor = inst.get_backdoor2(bd_type, bd_base, bd_mask)
-    as_vars = backdoor.variables() + inst.output_set.variables()
+    assumption_vars = backdoor.variables() + inst.output_set.variables()
+    assumption_vars += inst.extra_set.variables() if inst.extra_set else []
 
     with slv.prototype(inst.clauses()) as propagator:
         for task_data in tasks_data:
@@ -25,17 +26,14 @@ def ibs_function(common_data, tasks_data=None):
             task_i, task_value = task_data
 
             # todo: provide uniq seed
-            supbs_vars = inst.supbs.variables()
             state = RandomState(seed=task_value)
-
             i_values = state.randint(0, bd_base, size=len(supbs_vars))
             i_assumptions = [x if i_values[i] else -x for i, x in enumerate(supbs_vars)]
             _, _, literals = propagator.propagate(i_assumptions)
 
             assumptions = []
-            bd_vars = backdoor.variables()
             for lit in literals:
-                if abs(lit) in as_vars:
+                if abs(lit) in assumption_vars:
                     assumptions.append(lit)
 
             kwargs = {'limits': limits}

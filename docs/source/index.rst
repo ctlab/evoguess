@@ -4,6 +4,36 @@ Welcome to EvoGuess's documentation!
 ====================================
 
 Framework for hardness estimating of SAT instances by decomposition set searching.
+Some Boolean formula is estimated in the following way:
+
+1. the algorithm **chooses** decomposition set of some variables of the Boolean formula;
+2. the original formula is **splits** into a number of simpler formulas using chosen decomposition set;
+3. the resulting simpler formulas are **solved** and statistics of measures are collected;
+4. the hardness is **estimated** hardness using special function.
+
+Now more about each stage.
+
+Choosing
+--------
+
+Metaheuristic algorithms, in particular evolutionary ones, are used to choose decomposition sets.
+While working algorithm builds new decomposition sets based on previously estimated decomposition sets.
+Special functions are used to estimate them.
+
+Splitting
+---------
+
+To split original formula into a number of simpler formulas, the values of variables from decomposition set are fixed.
+Each fixed value of variable *x* splits the original formula in two: the case of the positive literal of *x* and the case of the negative literal *¬x*.
+
+Solving
+-------
+
+
+
+Estimating
+----------
+
 
 .. toctree::
     :maxdepth: 1
@@ -28,7 +58,7 @@ Framework for hardness estimating of SAT instances by decomposition set searchin
 
 .. toctree::
     :maxdepth: 1
-    :caption: Advanced using
+    :caption: Advanced usage
 
     advanced_usage/preliminaries
     advanced_usage/algorithm.abstract

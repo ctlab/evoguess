@@ -11,8 +11,8 @@ class Instance:
 
     def __init__(self, cnf, input_set, *args, **kwargs):
         self.cnf = cnf
-        self.supbs = kwargs.get('supbs')
         self.input_set = input_set
+        self.extra_set = kwargs.get('extra_set')
 
     def __str__(self):
         return self.name
@@ -77,8 +77,8 @@ class Instance:
             'slug': self.slug,
             'name': self.name,
             'cnf': self.cnf.__info__(),
-            # 'supbs': self.supbs.__info__(),
-            'input_set': self.input_set.__info__()
+            'input_set': self.input_set.__info__(),
+            'extra_set': self.extra_set and self.extra_set.__info__()
         }
 
 

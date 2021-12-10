@@ -10,11 +10,11 @@ Initial list of backdoors.
 Base backdoor
 -------------
 
-Если параметр _list не указан, то в качестве набора переменных будет использоваться input_set текущего Instance.
+If the **_list** parameter is not specified, then the **input_set** of the current instance will be used as a set of variables.
 
 .. code-block:: none
 
     {
         'slug': 'backdoor:base',
-        '_list': <optional number list>
+        '_list': <optional list of numbers>
     }

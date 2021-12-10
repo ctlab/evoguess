@@ -2,17 +2,17 @@ from ..variables import Variables
 
 
 class VariablesList(Variables):
-    slug = 'VariablesList'
+    slug = 'variables:list'
     name = 'VariablesList'
 
     def __init__(self, _list):
         super().__init__(_list)
 
     def __str__(self):
-        return "%s" % _list
+        return "%s" % self._list
 
     def __copy__(self):
-        return Interval(self.start, self.length)
+        return VariablesList(self._list)
 
     def variables(self):
         return self._list

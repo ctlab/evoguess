@@ -9,11 +9,8 @@ Instance
             'slug': 'cnf',
             'path': <relative to TEMPLATE_PATH from .env file>
         },
-        'input_set': {
-            'slug': 'interval',
-            'start': <number>,
-            'length': <number>,
-        }
+        'input_set': <interval>,
+        'extra_set': <optional interval>
     }
 
 Cipher
@@ -27,15 +24,16 @@ Cipher
             'slug': 'cnf',
             'path': <relative to TEMPLATE_PATH from .env file>
         },
-        'supbs': <optional interval>
-        'input_set': {
-            'slug': 'interval',
-            'start': <number>,
-            'length': <number>,
-        },
-        'output_set': {
-            'slug': 'interval',
-            'start': <number>,
-            'length': <number>,
-        }
+        'supbs': <interval>
+        'input_set': <interval>,
+        'output_set': <interval>,
+        'extra_set': <optional interval>
     }
+
+Instance modules
+----------------
+
+.. toctree::
+    :maxdepth: 1
+
+    instance_modules/interval.module
