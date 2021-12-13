@@ -1,7 +1,8 @@
 Selection
 =========
 
-Selection operator.
+In evolutionary and genetic algorithms, the selection operator is used to select individuals from the current population to which the mutation (and crossover, for ha) operators will be applied.
+The resulting estimated set of individuals will participate in the formation of a new population.
 
 Best selection
 --------------

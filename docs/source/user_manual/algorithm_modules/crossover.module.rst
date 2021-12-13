@@ -1,12 +1,12 @@
 Crossover
 =========
 
-Crossover operator.
+In evolutionary and genetic algorithms, the crossing operator is used to swap bits between two vectors specifying the corresponding decomposition sets.
 
 Uniform crossover
 -----------------
 
-The probability of bits swap is **prob** (default **0.2**).
+Each bit can be swapped with a probability of **prob** (default **0.2**).
 
 .. code-block:: none
 

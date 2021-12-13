@@ -1,12 +1,12 @@
 Limit
 =====
 
-Resource limitation.
+Limits the resources used by algorithms in the optimization process.
 
 WallTime limit
 --------------
 
-Execution time limit.
+Limits execution time.
 
 .. code-block:: none
 
@@ -18,7 +18,7 @@ Execution time limit.
 Iteration limit
 ---------------
 
-Limit on the number of iterations.
+Limits the number of algorithm iterations.
 
 .. code-block:: none
 

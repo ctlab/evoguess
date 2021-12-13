@@ -1,6 +1,9 @@
 Algorithm
 =========
 
+This module defines a metaheuristic algorithm that will be used to optimize the scoring function.
+All the necessary and optional parameters that determine the behavior of the algorithm are also set here.
+
 .. toctree::
     :maxdepth: 1
     :caption: Evolution

@@ -1,7 +1,7 @@
 Mutation
 ========
 
-Mutation operator.
+In evolutionary and genetic algorithms, the mutation operator is used to modify the vector specifying the decomposition set (one to one).
 
 Uniform mutation
 ----------------

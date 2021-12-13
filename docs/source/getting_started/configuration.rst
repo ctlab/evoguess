@@ -1,7 +1,7 @@
 Configuration
 =============
 
-The configuration presents as a `json <https://www.ecma-international.org/publications-and-standards/standards/ecma-404/>`_ file and divides into 7 major components.
+The configuration presents in `json <https://www.ecma-international.org/publications-and-standards/standards/ecma-404/>`_ format and divides into 7 major components.
 
 .. code-block:: none
 

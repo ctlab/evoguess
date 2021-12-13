@@ -1,17 +1,15 @@
 Evolution Algorithms
 ====================
 
-An asynchronous version of an evolutionary algorithm.
-The **awaited_count** parameter affects how much the algorithm is asynchronous.
-From **1** (full asynchronous) to **lambda** (full synchronous, default).
-Essentially, it sets the number of points that are sufficient to update the population.
+| An asynchronous version of an evolutionary algorithm.
+| The **awaited_count** parameter affects how much the algorithm is asynchronous.
+| From **1** (full asynchronous) to **population_size** (full synchronous, default).
+| Essentially, it sets the number of points that are sufficient to update the population.
 
 .. code-block:: none
 
     'algorithm': {
         'slug': ...,
-        'mu': <number>,
-        'lmbda': <number>,
         'limit': <module>,
         'mutation': <module>,
         'selection': <module>,
@@ -22,16 +20,49 @@ Essentially, it sets the number of points that are sufficient to update the popu
 Strategy (μ, λ)
 ---------------
 
-Only the synchronous version of the strategy (μ, λ) is available (the **awaited_count** parameter is always **lmbda**).
+Only the synchronous version of (μ, λ) strategy is available (the **awaited_count** parameter is always **lmbda**).
 
 .. code-block:: none
 
-    'slug': 'evolution:comma'
+    'algorithm': {
+        'slug': 'evolution:comma'
+        'mu': <number>,
+        'lmbda': <number>,
+        'limit': <module>,
+        'mutation': <module>,
+        'selection': <module>,
+        'tuner': <optional module>,
+        'awaited_count': <optional number>,
+    }
 
 
 Strategy (μ + λ)
 ----------------
 
+For (μ + λ) strategy **population_size** is **lmbda**.
+
 .. code-block:: none
 
-    'slug': 'evolution:plus'
+    'algorithm': {
+        'slug': 'evolution:plus'
+        'mu': <number>,
+        'lmbda': <number>,
+        'limit': <module>,
+        'mutation': <module>,
+        'selection': <module>,
+        'tuner': <optional module>,
+        'awaited_count': <optional number>,
+    }
+
+
+Algorithm modules
+-----------------
+
+.. toctree::
+    :maxdepth: 1
+
+    algorithm_modules/limit.module
+    algorithm_modules/mutation.module
+    algorithm_modules/crossover.module
+    algorithm_modules/selection.module
+    algorithm_modules/tuner.module

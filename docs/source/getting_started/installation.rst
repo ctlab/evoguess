@@ -8,7 +8,7 @@ First clone the repository:
 .. code-block:: console
 
     $ mkdir evoguess-fw && cd evoguess-fw
-    $ git clone git@github.com:alpavlenko/evoguess.git
+    $ git clone git@github.com:ctlab/evoguess.git
     $ git clone git@github.com:alpavlenko/evoguess_data.git
 
 Dependencies
