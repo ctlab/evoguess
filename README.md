@@ -9,9 +9,7 @@ Metaheuristic algorithms, in particular evolutionary ones, are used for optimiza
 At the moment, only manual installation is available.
 
 ```
-$ mkdir evoguess-fw && cd evoguess-fw
 $ git clone git@github.com:ctlab/evoguess.git
-$ git clone git@github.com:alpavlenko/evoguess_data.git
 ```
 
 ### Dependencies
@@ -33,6 +31,7 @@ $ pip install mpi4py
 Create **.env** file using **create_env_file.sh** script
 
 ```
+$ cd evoguess
 $ ./create_env_file.sh
 ```
 

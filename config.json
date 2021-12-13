@@ -4,7 +4,7 @@
     "elites": 2,
     "slug": "genetic:elitism",
     "limit": {
-      "value": "12:00:00",
+      "value": "00:05:00",
       "slug": "limit:walltime"
     },
     "selection": {
@@ -26,7 +26,7 @@
     "slug": "instance",
     "cnf": {
       "slug": "cnf",
-      "path": "sorting/pancake_vs_selection/pancake_vs_selection_7_4.cnf"
+      "path": "sorting/PvS_4_7.cnf"
     },
     "supbs": {
       "slug": "interval",

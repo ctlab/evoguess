@@ -1,5 +1,6 @@
 # Builded documentation
 docs/build
+data/experiments
 
 # Local scripts
 test.py

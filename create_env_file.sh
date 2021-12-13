@@ -1,7 +1,5 @@
-cd ..
-printf "# Node settings\nROOT_PATH=" > "evoguess/.env"
-pwd >> "evoguess/.env"
-printf "MAIN_PATH=\${ROOT_PATH}/evoguess\n" >> "evoguess/.env"
-printf "DATA_PATH=\${ROOT_PATH}/evoguess_data\n" >> "evoguess/.env"
-printf "TEMPLATE_PATH=\${DATA_PATH}/templates\n" >> "evoguess/.env"
-printf "EXPERIMENT_PATH=\${DATA_PATH}/experiments\n" >> "evoguess/.env"
+printf "# Node settings\nMAIN_PATH=" > ".env"
+pwd >> ".env"
+printf "DATA_PATH=\${MAIN_PATH}/data\n" >> ".env"
+printf "TEMPLATE_PATH=\${DATA_PATH}/templates\n" >> ".env"
+printf "EXPERIMENT_PATH=\${DATA_PATH}/experiments\n" >> ".env"

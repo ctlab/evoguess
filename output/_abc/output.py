@@ -26,9 +26,10 @@ class Output:
     name = 'Output'
 
     def __init__(self, path, *args, **kwargs):
-        self.name = None
         self.path = path
+        self._path = path
         self.scheme = None
+        self.dir_name = None
         self.status = CREATED
         self.debug_verb = kwargs.get('debug_verb', 0)
 
@@ -53,7 +54,7 @@ class Output:
                 name = f'{dt_name()}-?'
                 path = os.path.join(self.path, name)
 
-        self.path, self.name = path, name
+        self.path, self.dir_name = path, name
         self.status = OPENED
         self.scheme = scheme
         return self
@@ -62,11 +63,11 @@ class Output:
         if self.status != OPENED:
             raise AlreadyClosedError()
 
-        name = self.name.replace('?', dt_name())
-        path = self.path.replace(self.name, name)
+        name = self.dir_name.replace('?', dt_name())
+        path = self.path.replace(self.dir_name, name)
         os.rename(self.path, path)
 
-        self.path, self.name = path, name
+        self.path, self.dir_name = path, name
         self.status = CLOSED
         return self
 
@@ -108,7 +109,7 @@ class Output:
         return {
             'slug': self.slug,
             'name': self.name,
-            'path': self.path,
+            'path': self._path,
             'scheme': self.scheme,
             'debug_verb': self.debug_verb
         }

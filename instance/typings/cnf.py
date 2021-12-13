@@ -17,6 +17,7 @@ class CNF:
     has_atmosts = False
 
     def __init__(self, path):
+        self._path = path
         self.path = os.path.join(TEMPLATE_PATH, path)
 
     def _parse(self):
@@ -54,7 +55,7 @@ class CNF:
         return {
             'slug': self.slug,
             'name': self.name,
-            'path': self.path,
+            'path': self._path,
         }
 
 

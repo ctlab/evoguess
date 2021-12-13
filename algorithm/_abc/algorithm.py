@@ -71,6 +71,7 @@ class Algorithm:
             'slug': self.slug,
             'name': self.name,
             'limit': self.limit.__info__(),
+            'output': self.output.__info__(),
             'method': self.method.__info__(),
             'instance': self.instance.__info__(),
             'tuner': self.tuner and self.tuner.__info__()

@@ -41,7 +41,7 @@ Estimating
 | The measures collected in the previous step are used to calculate the estimation.
 | For this one of the functions can be used:
 
-1. **Guess-and-Determine** (G-a-D), which proposed in ...
+1. **Guess-and-Determine** (G-a-D)
 2. G-a-D based on **Inverse Backdoor Sets** (IBS), which proposed in [AAAI2018]_
 3. G-a-D based on **ρ-backdoors**, which proposed in [AAAI2022]_
 

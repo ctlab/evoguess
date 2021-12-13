@@ -48,21 +48,7 @@ class Instance:
     def get_assumptions(self, backdoor, values):
         variables = backdoor.variables()
 
-        if backdoor.base > 2:
-            raise Exception('Haven\'t realised')
-        #     assumptions, x_map = [], XMAP.parse(self.x_path, self.key)
-        #     domain_masks = domain_masks or [[1] * self.base] * len(values)
-        #     for mask, var, value in zip(domain_masks, variables, values):
-        #         if value >= 0:
-        #             assumptions.append(x_map.get_cnf_var(var, value))
-        #         else:
-        #             zero_values = [i for i, bit in enumerate(mask[::-1]) if bit]
-        #             zero_vars = [x_map.get_cnf_var(var, z_value) for z_value in zero_values]
-        #             assumptions.extend([-var for var in zero_vars])
-        else:
-            assumptions = [x if values[i] else -x for i, x in enumerate(variables)]
-
-        # todo: add intervals to assumptions
+        assumptions = [x if values[i] else -x for i, x in enumerate(variables)]
         return assumptions
 
     @staticmethod
