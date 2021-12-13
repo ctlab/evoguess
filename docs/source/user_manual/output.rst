@@ -10,5 +10,5 @@ JSON output
 
     'output': {
         'slug': 'output:json',
-        'path': <относительно EXPERIMENT_PATH из .env файла>
+        'path': <relative to EXPERIMENT_PATH from .env file>
     }
