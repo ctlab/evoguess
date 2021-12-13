@@ -34,6 +34,36 @@ Create **.env** file using **create_env_file.sh** script
 $ ./create_env_file.sh
 ```
 
+### How use
+
+Run **main.py** using configuration file.
+
+```
+$ python3 main.py -f <configuration file>
+```
+
+Or use configuration json-string.
+
+```
+$ python3 main.py -l <configuration json-string>
+```
+
+### MPI use
+
+The EvoGuess can be run in MPI mode as follows:
+
+```
+$ mpiexec -n <workers> -perhost <perhost> python3 -m mpi4py.futures main.py -f <configuration file>
+```
+
+### Example
+
+Run on standard configuration **config.json**
+
+```
+$ python3 main.py -f config.json
+```
+
 ### Documentation
 
 Documentation is available [here](https://evoguess.readthedocs.io/) and includes installation instructions, base and advanced usage manual.

@@ -42,8 +42,8 @@ Estimating
 | For this one of the functions can be used:
 
 1. **Guess-and-Determine** (G-a-D), which proposed in ...
-2. G-a-D based on **Inverse Backdoor Sets** (IBS), which proposed in [AAAI2018SEMENOV]_
-3. G-a-D based on **ρ-backdoors**, which proposed in [AAAI2021SEMENOV]_
+2. G-a-D based on **Inverse Backdoor Sets** (IBS), which proposed in [AAAI2018]_
+3. G-a-D based on **ρ-backdoors**, which proposed in [AAAI2022]_
 
 .. toctree::
     :maxdepth: 1

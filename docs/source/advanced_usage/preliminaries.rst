@@ -6,7 +6,7 @@ This will allow you to write your own implementations for components and modules
 
 .. code-block:: none
 
-        # main3.py
+        # advanced.py
 
         algorithm = Elitism(
             awaited_count=2,
