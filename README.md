@@ -1,8 +1,10 @@
 # EvoGuess
 
 EvoGuess is a python framework for hardness estimating of SAT instances by decomposition set searching.
+Decomposition set searching is based on the optimization of hardness estimation of such sets.
+Metaheuristic algorithms, in particular evolutionary ones, are used for optimization.
 
-### Installation
+## Installation
 
 At the moment, only manual installation is available.
 
@@ -34,7 +36,7 @@ Create **.env** file using **create_env_file.sh** script
 $ ./create_env_file.sh
 ```
 
-### How use
+## How use
 
 Run **main.py** using configuration file.
 
@@ -58,12 +60,12 @@ $ mpiexec -n <workers> -perhost <perhost> python3 -m mpi4py.futures main.py -f <
 
 ### Example
 
-Run on standard configuration **config.json**
+Run on example configuration **config.json**.
 
 ```
 $ python3 main.py -f config.json
 ```
 
-### Documentation
+## Documentation
 
 Documentation is available [here](https://evoguess.readthedocs.io/) and includes installation instructions, base and advanced usage manual.
