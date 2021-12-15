@@ -1,1 +1,1 @@
-Default directory for cnf templates
+Default directory for experimental results

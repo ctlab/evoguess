@@ -42,9 +42,9 @@ if __name__ == '__main__':
         ),
         instance=Instance(
             input_set=Interval(start=1, length=3244),
-            cnf=CNF(path='sorting/pancake_vs_selection/pancake_vs_selection_7_4.cnf'),
+            cnf=CNF(path='sort/pvs_4_7.cnf'),
         ),
-        output=JSONOut(path='test/pvs_7_4'),
+        output=JSONOut(path='test/pvs/4_7'),
     )
 
     backdoor = algorithm.instance.get_backdoor()

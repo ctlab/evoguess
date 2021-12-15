@@ -47,7 +47,7 @@ def gad_function(common_data, tasks_data=None):
 
 class UPGuessAndDetermine(Function):
     type = 'gad'
-    slug = 'function:upgad'
+    slug = 'function:up_gad'
     name = 'Function: UP Guess-and-Determine'
 
     def __init__(self, max_n, *args, **kwargs):

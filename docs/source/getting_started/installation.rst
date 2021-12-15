@@ -7,9 +7,7 @@ First clone the repository:
 
 .. code-block:: console
 
-    $ mkdir evoguess-fw && cd evoguess-fw
     $ git clone git@github.com:ctlab/evoguess.git
-    $ git clone git@github.com:alpavlenko/evoguess_data.git
 
 Dependencies
 ------------
@@ -32,9 +30,10 @@ To use the EvoGuess in MPI mode, you also need to install:
 Environment
 -----------
 
-Create **.env** file using **create_env_file.sh** script
+Create **.env** file using **create_env.sh** script
 
 .. code-block:: console
 
-    $ ./create_env_file.sh
+    $ cd evoguess
+    $ ./create_env.sh
 
