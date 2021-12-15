@@ -61,7 +61,10 @@ class PySat(Solver):
             del timer
         else:
             timestamp = now()
-            status = solver.solve_limited(assumptions, expect_interrupt)
+            if not expect_interrupt:
+                status = solver.solve(assumptions)
+            else:
+                status = solver.solve_limited(assumptions, True)
             time = now() - timestamp
 
         if status is None:
