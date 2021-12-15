@@ -1,8 +1,11 @@
 # EvoGuess
 
-Framework for decomposition set searching and hardness estimating of SAT instances.
-Decomposition set searching is based on the optimization of the estimation value (or hardness, in some cases) of such sets.
-Metaheuristic algorithms, in particular evolutionary ones, are used for optimization.
+Framework for finding decomposition sets and estimating hardness of SAT instances.
+The search for decomposition sets is realized via the optimization of the special 
+pseudo-Boolean black-box functions that estimate the hardness of the decomposition 
+corresponding to the employed decomposition method and the considered set. To
+optimize the value of such functions the framework uses metaheuristic algorithms, 
+in particular, the evolutionary ones.
 
 ## Installation
 
@@ -20,7 +23,7 @@ $ pip install python-sat
 $ pip install python-dotenv
 ```
 
-To use the EvoGuess in MPI mode, you also need to install:
+To use EvoGuess in MPI mode, you also need to install:
 
 ```shell script
 $ pip install mpi4py
@@ -35,7 +38,7 @@ $ cd evoguess
 $ ./create_env.sh
 ```
 
-## How use
+## How to use
 
 Run **main.py** using configuration file.
 
@@ -49,7 +52,7 @@ Or use configuration json-string.
 $ python3 main.py -l <configuration json-string>
 ```
 
-### MPI use
+### MPI mode
 
 The EvoGuess can be run in MPI mode as follows:
 
