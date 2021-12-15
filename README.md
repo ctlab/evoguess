@@ -32,7 +32,7 @@ Create **.env** file using **create_env.sh** script
 
 ```shell script
 $ cd evoguess
-$ ./create_env_file.sh
+$ ./create_env.sh
 ```
 
 ## How use
