@@ -22,11 +22,10 @@ class Estimator(Core):
         raise NotImplementedError
 
     def estimate(self, backdoor):
-        point = FACTORY.produce(backdoor)
-
         if backdoor in CACHE.active:
             return CACHE.active[backdoor]
 
+        point = FACTORY.produce(backdoor)
         if backdoor in CACHE.canceled:
             _, estimation = CACHE.canceled[backdoor]
             return VoidHandle(point.set(**estimation))

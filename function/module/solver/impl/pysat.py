@@ -109,60 +109,80 @@ class _IPySat:
 class Cadical(PySat):
     slug = 'solver:pysat:cd'
     name = 'Solver: Cadical'
+
+    can_propagate = False
     constructor = solvers.Cadical
 
 
 class Glucose3(PySat):
     slug = 'solver:pysat:g3'
     name = 'Solver: Glucose3'
+
+    can_propagate = True
     constructor = solvers.Glucose3
 
 
 class Glucose4(PySat):
     slug = 'solver:pysat:g4'
     name = 'Solver: Glucose4'
+
+    can_propagate = True
     constructor = solvers.Glucose4
 
 
 class Lingeling(PySat):
     slug = 'solver:pysat:lgl'
     name = 'Solver: Lingeling'
+
+    can_propagate = False
     constructor = solvers.Lingeling
 
 
 class MapleChrono(PySat):
     slug = 'solver:pysat:mcb'
     name = 'Solver: MapleChrono'
+
+    can_propagate = True
     constructor = solvers.MapleChrono
 
 
 class MapleCM(PySat):
     slug = 'solver:pysat:mcm'
     name = 'Solver: MapleCM'
+
+    can_propagate = True
     constructor = solvers.MapleCM
 
 
 class MapleSAT(PySat):
     slug = 'solver:pysat:mpl'
     name = 'Solver: MapleSAT'
+
+    can_propagate = True
     constructor = solvers.Maplesat
 
 
 class Minicard(PySat):
     slug = 'solver:pysat:mc'
     name = 'Solver: Minicard'
+
+    can_propagate = True
     constructor = solvers.Minicard
 
 
 class Minisat22(PySat):
     slug = 'solver:pysat:m22'
     name = 'Solver: Minisat22'
+
+    can_propagate = True
     constructor = solvers.Minisat22
 
 
 class MinisatGH(PySat):
     slug = 'solver:pysat:mgh'
     name = 'Solver: MinisatGH'
+
+    can_propagate = True
     constructor = solvers.MinisatGH
 
 

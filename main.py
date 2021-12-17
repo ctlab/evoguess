@@ -13,15 +13,14 @@ if __name__ == '__main__':
     assert len(sys.argv) == 2, f'Invalid number of input args {len(sys.argv)}'
     configuration = json.loads(sys.argv[1])
 
-    _, algorithm = build({
-        Algorithm: [
+    _, algorithm = build(
+        {Algorithm: [
             Output,
             Instance,
-            {
-                Method: [
-                    Function,
-                    Executor
-                ]},
+            {Method: [
+                Function,
+                Executor
+            ]},
         ]}, **configuration
     )
 

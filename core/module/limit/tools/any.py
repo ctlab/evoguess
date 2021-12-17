@@ -2,7 +2,7 @@ from ..limit import *
 
 
 class Any(Limit):
-    slug = 'any'
+    slug = 'limit:any'
     name = 'Limit: Any'
 
     def __init__(self, **kwargs):

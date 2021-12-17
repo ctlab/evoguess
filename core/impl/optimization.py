@@ -1,7 +1,8 @@
 from .._abc import Estimator
 
-from ..typings.handle import JobHandle
+from ..typings.handle import Handle
 from algorithm.typings import Point, Vector
+from instance.typings.variables import Backdoor
 
 
 class Optimization(Estimator):
@@ -15,8 +16,8 @@ class Optimization(Estimator):
 
         self.optimization_trace = []
 
-    def queue(self, point: Point) -> JobHandle:
-        return JobHandle(point, self.estimate(point.backdoor))
+    def queue(self, backdoor: Backdoor) -> Handle:
+        return self.estimate(backdoor)
 
     #     not_estimated = collection.trim(points, lambda x: not x.estimate)
     #     count = max(0, (count or len(points)) - len(points) + len(not_estimated))
