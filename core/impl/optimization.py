@@ -1,6 +1,5 @@
 from .._abc import Estimator
 
-from ..static import CACHE
 from ..typings.handle import JobHandle
 from algorithm.typings import Point, Vector
 
@@ -13,10 +12,6 @@ class Optimization(Estimator):
         self.sampling = sampling
         self.algorithm = algorithm
         super().__init__(*args, **kwargs)
-
-        CACHE.canceled = {}
-        CACHE.estimated = {}
-        CACHE.estimating = {}
 
         self.optimization_trace = []
 

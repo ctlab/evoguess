@@ -20,8 +20,8 @@ class _Waiter(object):
         self.finished_jobs = []
         self.event = threading.Event()
 
-    def add_result(self, future):
-        self.finished_jobs.append(future)
+    def add_result(self, job):
+        self.finished_jobs.append(job)
 
 
 class _NCompletedWaiter(_Waiter):
