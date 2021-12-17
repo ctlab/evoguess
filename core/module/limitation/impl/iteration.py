@@ -1,10 +1,10 @@
-from ..limit import *
+from ..limitation import *
 
 
-class Iteration(Limit):
+class Iteration(Limitation):
     key = 'iteration'
-    slug = 'limit:iteration'
-    name = 'Iteration(Limit)'
+    slug = 'limitation:iteration'
+    name = 'Iteration(Limitation)'
 
     def __init__(self, value: int):
         super().__init__(value)

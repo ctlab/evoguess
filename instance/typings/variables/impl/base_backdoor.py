@@ -4,9 +4,10 @@ from instance.typings.variables.backdoor import Backdoor
 class BaseBackdoor(Backdoor):
     slug = 'backdoor:base'
 
-    def __init__(self, base=2, _list=()):
+    def __init__(self, variables, mask, base=2):
         self.base = base
-        super().__init__(_list)
+        super().__init__(variables)
+        self._set_mask(mask)
 
     def get_copy(self, mask):
         backdoor = BaseBackdoor(self.base, self._list)

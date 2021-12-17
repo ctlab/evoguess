@@ -1,46 +1,62 @@
 from .._abc import Estimator
+from ..static import CACHE
 
-from ..typings.handle import Handle
-from algorithm.typings import Point, Vector
-from instance.typings.variables import Backdoor
+from ..typings.handle import n_completed
+
+from time import time as now
+from util.operator import smin
 
 
 class Optimization(Estimator):
     slug = 'core:optimization'
     name = 'Optimization(Core)'
 
-    def __init__(self, algorithm, sampling, *args, **kwargs):
+    def __init__(self, algorithm, sampling, space, *args, **kwargs):
+        self.space = space
         self.sampling = sampling
         self.algorithm = algorithm
         super().__init__(*args, **kwargs)
 
+        CACHE.best = None
         self.optimization_trace = []
 
-    def queue(self, backdoor: Backdoor) -> Handle:
-        return self.estimate(backdoor)
+    def launch(self):
+        self.start_stamp = now()
+        # todo: provide cache
+        handles = []
+        awaited = self.algorithm.awaited_count
+        backdoor = self.space.get(self.instance)
+        point = self._await(self.estimate(backdoor))
+        with self.algorithm.start(point) as algorithm:
+            while not self.limitation.exhausted():
+                backdoors = algorithm.get_backdoors()
+                handles.extend(map(self.estimate, backdoors))
+                estimated, handles = self._await(handles, awaited)
+                algorithm.update_vector(estimated)
 
-    #     not_estimated = collection.trim(points, lambda x: not x.estimate)
-    #     count = max(0, (count or len(points)) - len(points) + len(not_estimated))
-    #
-    #     p_handles = [self._queue(p) for p in points if not p.estimated]
-    #     estimated, _ = self._await(*p_handles, count=len(p_handles))
-    #
-    #     return points
+                spent_time = now() - self.start_stamp
+                self.limitation.set('time', spent_time)
+                # self.limitation.update(algorithm)
 
-    def launch(self, *points: Point):
-        # todo: space module
+            solution = algorithm.solution()
 
-        # root = self.estimate(*points, timeout=self.limit.left().get('time'))
-        pass
+        return solution
 
-    def launch_from_vector(self, vector: Vector):
-        return self.launch(*vector)
+    def _await(self, *handles, count=None):
+        timeout = self.limitation.left()
+        count = smin(count, len(handles))
+        done = n_completed(handles, count, timeout)
 
-    def launch_from_backdoors(self, *backdoors):
-        return self.launch(*map(Point, backdoors))
+        estimated, left_handles = [], []
+        for handle in handles:
+            if handle not in done:
+                left_handles.append(handle)
+            else:
+                estimated.append(handle.result())
+
+        return estimated, left_handles
 
 
 __all__ = [
-    'Point',
     'Optimization'
 ]

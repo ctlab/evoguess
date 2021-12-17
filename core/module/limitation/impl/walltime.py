@@ -1,10 +1,10 @@
-from ..limit import *
+from ..limitation import *
 
 
-class WallTime(Limit):
+class WallTime(Limitation):
     key = 'time'
-    slug = 'limit:walltime'
-    name = 'WallTime(Limit)'
+    slug = 'limitation:time'
+    name = 'WallTime(Limitation)'
     time_scale = [1, 60, 60, 24]
 
     def __init__(self, value: str):

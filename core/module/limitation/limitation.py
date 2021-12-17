@@ -1,7 +1,10 @@
-class Limit:
+from typing import Optional
+
+
+class Limitation:
     key = None
     slug = None
-    name = 'Limit'
+    name = 'Limitation'
 
     def __init__(self, value):
         self.limits = {
@@ -26,8 +29,9 @@ class Limit:
     def exhausted(self) -> bool:
         return self.get(self.key) > self.limit
 
-    def left(self) -> dict:
-        return {self.key: max(0, self.limit - self.get(self.key))}
+    def left(self) -> Optional[float]:
+        return None if self.key != 'time' else \
+            max(0, self.limit - self.get('time'))
 
     def __info__(self):
         return {
@@ -42,5 +46,5 @@ class Limit:
 
 
 __all__ = [
-    'Limit'
+    'Limitation'
 ]

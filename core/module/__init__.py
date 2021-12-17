@@ -1,7 +1,7 @@
-from . import limit, sampling, comparator
+from . import limitation, sampling, comparator
 
 modules = {
-    **limit.impls,
     **sampling.impls,
     **comparator.impls,
+    **limitation.impls,
 }

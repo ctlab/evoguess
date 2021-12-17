@@ -1,5 +1,5 @@
 from .impl import cores
-from .module import modules, limit, sampling, comparator
+from .module import modules, limitation, sampling, comparator
 
 from util import load_modules
 

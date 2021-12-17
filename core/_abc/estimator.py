@@ -4,7 +4,7 @@ from ..static.point_factory import FACTORY
 
 from ..typings.job import Job
 from ..typings.contex import Context
-from ..typings.handle import VoidHandle, JobHandle
+from ..typings.handle import VoidHandle, JobHandle, Handle
 
 
 class Estimator(Core):
@@ -21,7 +21,7 @@ class Estimator(Core):
     def launch(self, *args, **kwargs):
         raise NotImplementedError
 
-    def estimate(self, backdoor):
+    def estimate(self, backdoor) -> Handle:
         if backdoor in CACHE.active:
             return CACHE.active[backdoor]
 

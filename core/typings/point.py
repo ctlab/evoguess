@@ -1,5 +1,3 @@
-from typing import Collection
-
 from util.comparable import Comparable
 
 
@@ -26,7 +24,7 @@ class Point(Comparable):
         return len(self.backdoor)
 
 
-Vector = Collection[Point]
+Vector = [Point]
 
 __all__ = [
     'Point',
