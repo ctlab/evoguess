@@ -1,5 +1,43 @@
+from typing import Optional, ParamSpec
+from collections.abc import Callable
+
+from instance.impl.instance import Instance
+from function.module.solver.solver import Solver
+from function.module.measure.measure import Measure
+
 from util.array import concat, slice_by_size
 from util.numeral import base_to_binary2, binary_to_base2
+
+ProcessId = int
+ProcessTime = float
+
+TaskIndex = int
+TaskTime = float
+TaskValue = float
+TaskStatus = Optional[bool]
+
+Tasks = list[TaskIndex]
+Payload = tuple[
+    Solver,
+    Measure,
+    Instance,  # instance = cnf
+    # BackdoorBits, # todo: create BackdoorBits
+    # todo: parse cnf intervals in process runtime
+]
+
+Result = tuple[
+    ProcessId,
+    ProcessTime,
+    TaskIndex,
+    TaskTime,
+    TaskValue,
+    TaskStatus
+]
+
+WorkerCallable = Callable[
+    [Tasks, Payload],
+    list[Result]
+]
 
 BASIS = 8
 
@@ -48,10 +86,10 @@ class Function:
         self.solver = solver
         self.measure = measure
 
-    def get_function(self):
+    def get_function(self) -> WorkerCallable:
         raise NotImplementedError
 
-    def prepare_data(self, state, instance, backdoor, dim_type):
+    def prepare_data(self, instance, backdoor, dim_type):
         raise NotImplementedError
 
     def calculate(self, backdoor, *cases):

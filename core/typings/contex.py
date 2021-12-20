@@ -1,7 +1,8 @@
 from numpy.random import RandomState
 
+from core.static import CACHE
 from util.bitmask import to_bit
-from util.collection import trim
+from util.collection import pick_by
 
 
 class Context:
@@ -10,6 +11,7 @@ class Context:
         self.backdoor = backdoor
         self.instance = instance
 
+        self.space = kwargs.get('space')
         self.function = kwargs.get('function')
         self.sampling = kwargs.get('sampling')
         self.executor = kwargs.get('executor')
@@ -47,13 +49,18 @@ class Context:
         return tasks
 
     def get_estimation(self, results=None):
-        trimmed = trim(results)
-        return {
-            'list_seed': self.seeds['list_seed'],
-            'func_seed': self.seeds['func_seed'],
-            'accuracy': len(trimmed) / len(results),
-            **self.function.calculate(self.backdoor, *trimmed),
+        del CACHE.estimating[self.backdoor]
+        if results is None:
+            CACHE.canceled[self.backdoor] = self.seeds
+            return {**self.seeds, 'canceled': True}
+
+        picked = pick_by(results)
+        estimation = CACHE.estimated[self.backdoor] = {
+            **self.seeds,
+            'accuracy': len(picked) / len(results),
+            **self.function.calculate(self.backdoor, *picked),
         }
+        return estimation
 
     def get_limits(self, values, offset):
         return 0, None

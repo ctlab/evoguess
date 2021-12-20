@@ -2,7 +2,7 @@ import os
 import re
 import threading
 
-from util.collection import trim
+from util.collection import pick_by
 from util.const import TEMPLATE_PATH
 
 cnf_clauses = {}
@@ -31,7 +31,7 @@ class CNF:
                 if line[0] in ['p', 'c']:
                     continue
 
-                clause = trim([int(n) for n in line.split()])
+                clause = pick_by([int(n) for n in line.split()])
                 variables.update(map(abs, clause))
                 clauses.append(clause)
 

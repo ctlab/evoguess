@@ -30,6 +30,7 @@ class JobHandle(Handle):
     def __init__(self, point, job):
         self.job = job
         self.point = point
+        self.context = job.context
 
     def done(self):
         return self.job.done()
@@ -38,11 +39,14 @@ class JobHandle(Handle):
         return self.job.cancel()
 
     def result(self, timeout=None):
+        results = None
         try:
-            estimation = self.job.result(timeout)
-            return self.point.set(**estimation)
+            results = self.job.result(timeout)
         except CancelledError:
-            return self.point
+            pass
+        finally:
+            estimation = self.context.get_estimation(results)
+            return self.point.set(**estimation)
 
 
 class VoidHandle(Handle):

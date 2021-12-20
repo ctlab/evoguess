@@ -1,8 +1,6 @@
-from typing import Collection, Callable
+from .base import identity
 
-
-def identity(_object):
-    return _object
+from typing import Collection, Callable, Any
 
 
 def for_each(_collection: Collection, fn: Callable):
@@ -10,13 +8,26 @@ def for_each(_collection: Collection, fn: Callable):
         fn(item)
 
 
-def get_by_indexes(_collection: Collection, indexes: Collection):
-    return [item for i, item in enumerate(_collection) if i in indexes]
+def pick_by(_collection: Collection, predicate: Any = identity):
+    if isinstance(predicate, Callable):
+        return [item for item in _collection if predicate(item)]
+    elif isinstance(predicate, Collection):
+        return [item for i, item in enumerate(_collection) if i in predicate]
 
 
-def trim(_collection: Collection, condition: Callable = identity):
-    return [item for item in _collection if condition(item)]
+def omit_by(_collection: Collection, predicate: Any = identity):
+    if isinstance(predicate, Callable):
+        return [item for item in _collection if not predicate(item)]
+    elif isinstance(predicate, Collection):
+        return [item for i, item in enumerate(_collection) if i not in predicate]
 
 
-def trim_by_indexes(_collection: Collection, indexes: Collection):
-    return [item for i, item in enumerate(_collection) if i not in indexes]
+def split_by(_collection: Collection, predicate: Any = identity):
+    left, right = [], []
+    for i, item in enumerate(_collection):
+        if isinstance(predicate, Callable):
+            (left if predicate(item) else right).append(item)
+        elif isinstance(predicate, Collection):
+            (left if i in predicate else right).append(item)
+
+    return left, right

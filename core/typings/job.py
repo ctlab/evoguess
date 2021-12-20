@@ -86,6 +86,7 @@ def all_completed(jobs, timeout=None):
 class Job:
     def __init__(self, context, job_id):
         self.job_id = job_id
+        self.context = context
 
         self._indexes = []
         self._futures = []
@@ -192,17 +193,17 @@ class Job:
 
         return True
 
-    def cancelled(self):
+    def done(self):
         with self._condition:
-            return self._state == CANCELLED
+            return self._state > RUNNING
 
     def running(self):
         with self._condition:
             return self._state == RUNNING
 
-    def done(self):
+    def cancelled(self):
         with self._condition:
-            return self._state > RUNNING
+            return self._state == CANCELLED
 
     def result(self, timeout):
         with self._condition:
@@ -219,3 +220,12 @@ class Job:
                 return self._results
             else:
                 raise TimeoutError()
+
+
+__all__ = [
+    'Job',
+    #
+    'n_completed',
+    'all_completed',
+    'first_completed',
+]

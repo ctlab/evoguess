@@ -33,7 +33,6 @@ __all__ = [
     'array',
     'const',
     'error',
-    'caster',
     'bitmask',
     'numeral',
     'collection',

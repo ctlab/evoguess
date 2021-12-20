@@ -2,7 +2,7 @@ from ..._abc._async.genetic import *
 
 from numpy import argsort
 from util.array import slice_by_size
-from util.collection import get_by_indexes, trim_by_indexes
+from util.collection import pick_by, omit_by
 
 
 class Elitism(Genetic):
@@ -27,8 +27,8 @@ class Elitism(Genetic):
     def join(self, parents: Population, children: Population):
         elite_indexes = argsort(parents)[:self.elites]
         filler_size = max(0, self.population_size - len(children))
-        lmbda_filler = trim_by_indexes(parents, elite_indexes)[:filler_size]
-        return [*get_by_indexes(parents, elite_indexes), *children, *lmbda_filler]
+        lmbda_filler = omit_by(parents, elite_indexes)[:filler_size]
+        return [*pick_by(parents, elite_indexes), *children, *lmbda_filler]
 
     def __info__(self):
         return {

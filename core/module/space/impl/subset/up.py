@@ -13,7 +13,7 @@ class UPSubset(Space):
         self.variables = None
         super().__init__(*args, **kwargs)
 
-    def get(self, instance: Instance) -> [int]:
+    def get_root(self, instance: Instance):
         if not self.variables:
             solver = pysat.Glucose3()
             clauses = instance.cnf.clauses()

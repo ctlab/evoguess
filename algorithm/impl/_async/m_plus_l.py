@@ -1,7 +1,7 @@
 from ..._abc._async.evolution import *
 
 from numpy import argsort
-from util.collection import get_by_indexes, trim_by_indexes
+from util.collection import pick_by, omit_by
 
 
 class MuPlusLambda(Evolution):
@@ -19,8 +19,8 @@ class MuPlusLambda(Evolution):
     def join(self, parents: Population, children: Population):
         mu_indexes = argsort(parents)[:self.mu]
         filler_size = max(0, self.lmbda - len(children))
-        lmbda_filler = trim_by_indexes(parents, mu_indexes)[:filler_size]
-        return [*get_by_indexes(parents, mu_indexes), *children, *lmbda_filler]
+        lmbda_filler = omit_by(parents, mu_indexes)[:filler_size]
+        return [*pick_by(parents, mu_indexes), *children, *lmbda_filler]
 
     def __info__(self):
         return {

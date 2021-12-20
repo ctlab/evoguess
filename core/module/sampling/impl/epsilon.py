@@ -1,7 +1,7 @@
 from ..sampling import *
 
 from math import sqrt
-from util.collection import trim
+from util.collection import pick_by
 
 
 class Epsilon(Sampling):
@@ -32,7 +32,7 @@ class Epsilon(Sampling):
         if count == 0:
             return min(self.min, bd_count)
         elif count < bd_count and count < self.max:
-            if self._get_eps(trim(values)) > self.epsilon:
+            if self._get_eps(pick_by(values)) > self.epsilon:
                 bound = min(count + self.step, self.max, bd_count)
                 return max(0, bound - count)
         return 0

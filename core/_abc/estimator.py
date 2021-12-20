@@ -1,6 +1,5 @@
 from .._abc.core import *
-from ..static import CACHE
-from ..static.point_factory import FACTORY
+from ..static import CACHE, FACTORY
 
 from ..typings.job import Job
 from ..typings.contex import Context
@@ -8,7 +7,8 @@ from ..typings.handle import VoidHandle, JobHandle, Handle
 
 
 class Estimator(Core):
-    def __init__(self, sampling, function, comparator, *args, **kwargs):
+    def __init__(self, space, sampling, function, comparator, *args, **kwargs):
+        self.space = space
         self.sampling = sampling
         self.function = function
         super().__init__(*args, **kwargs)
@@ -22,9 +22,10 @@ class Estimator(Core):
         raise NotImplementedError
 
     def estimate(self, backdoor) -> Handle:
-        if backdoor in CACHE.active:
-            return CACHE.active[backdoor]
+        if backdoor in CACHE.estimating:
+            return CACHE.estimating[backdoor]
 
+        # todo: is singleton justified?
         point = FACTORY.produce(backdoor)
         if backdoor in CACHE.canceled:
             _, estimation = CACHE.canceled[backdoor]
@@ -44,6 +45,7 @@ class Estimator(Core):
             seeds,
             backdoor,
             self.instance,
+            space=self.space,
             function=self.function,
             sampling=self.sampling,
             executor=self.executor,
