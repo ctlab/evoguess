@@ -1,12 +1,10 @@
-from typing import Optional, ParamSpec
+from typing import Optional
 from collections.abc import Callable
 
 from instance.impl.instance import Instance
 from function.module.solver.solver import Solver
 from function.module.measure.measure import Measure
-
-from util.array import concat, slice_by_size
-from util.numeral import base_to_binary2, binary_to_base2
+from instance.typings.variables.backdoor import Backdoor
 
 ProcessId = int
 ProcessTime = float
@@ -16,12 +14,14 @@ TaskTime = float
 TaskValue = float
 TaskStatus = Optional[bool]
 
+BackdoorBytes = bytes
+
 Tasks = list[TaskIndex]
 Payload = tuple[
+    Instance,  # instance = cnf
     Solver,
     Measure,
-    Instance,  # instance = cnf
-    # BackdoorBits, # todo: create BackdoorBits
+    BackdoorBytes,
     # todo: parse cnf intervals in process runtime
 ]
 
@@ -33,48 +33,14 @@ Result = tuple[
     TaskValue,
     TaskStatus
 ]
+Results = list[Result]
 
 WorkerCallable = Callable[
     [Tasks, Payload],
-    list[Result]
+    Results
 ]
 
-BASIS = 8
-
-[
-    PERMUTATION,
-    NUMBERS
-] = range(2)
-
-
-def to_bits(number, basis=BASIS):
-    assert number < 1 << basis
-    return base_to_binary2(basis, number)
-
-
-def to_number(bits, basis=BASIS):
-    assert len(bits) <= basis
-    return binary_to_base2(basis, bits)
-
-
-def encode_bits(bits):
-    return bytes([to_number(chunk) for chunk in slice_by_size(BASIS, bits)])
-
-
-def decode_bits(data):
-    return concat(*(to_bits(number) for number in data))
-
-
-def decimal_to_base(number, bases):
-    values = []
-    for base in bases[::-1]:
-        number, value = divmod(number, base)
-        values.insert(0, value)
-    return values
-
-
-def map_values(values, mappers):
-    return [mappers[i][value] for i, value in enumerate(values)]
+Estimation = dict
 
 
 class Function:
@@ -86,13 +52,18 @@ class Function:
         self.solver = solver
         self.measure = measure
 
+    def get_payload(self, instance: Instance, backdoor: Backdoor) -> Payload:
+        return (
+            instance,
+            self.solver,
+            self.measure,
+            backdoor.pack()
+        )
+
+    def calculate(self, backdoor: Backdoor, results: Results) -> Estimation:
+        raise NotImplementedError
+
     def get_function(self) -> WorkerCallable:
-        raise NotImplementedError
-
-    def prepare_data(self, instance, backdoor, dim_type):
-        raise NotImplementedError
-
-    def calculate(self, backdoor, *cases):
         raise NotImplementedError
 
     def __str__(self):
@@ -109,14 +80,12 @@ class Function:
 
 __all__ = [
     'Function',
-    # bits
-    'to_bits',
-    'to_number',
-    'encode_bits',
-    'decode_bits',
-    # dimension
-    'NUMBERS',
-    'PERMUTATION',
-    'map_values',
-    'decimal_to_base',
+    # types
+    'Tasks',
+    'Payload',
+    'Results',
+    'Instance',
+    'Backdoor',
+    'Estimation',
+    'WorkerCallable',
 ]

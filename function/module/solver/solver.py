@@ -8,14 +8,14 @@ class Solver:
     def propagate(self, clauses, assumptions, **kwargs):
         raise NotImplementedError
 
+    def __str__(self):
+        return self.name
+
     def __info__(self):
         return {
             'slug': self.slug,
             'name': self.name
         }
-
-    def str(self):
-        return self.name
 
 
 __all__ = [

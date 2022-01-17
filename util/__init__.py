@@ -36,6 +36,7 @@ __all__ = [
     'bitmask',
     'numeral',
     'collection',
+    'comparable',
     #
     'build',
     'load_modules',
