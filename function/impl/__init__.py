@@ -1,16 +1,15 @@
-from .gad import *
-from .ibs import *
-from .up_gad import *
-from .incr_gad import *
+from .function_rho import RhoFunction
+from .function_gad import GuessAndDetermine
+from .function_ibs import InverseBackdoorSets
 
 functions = {
+    RhoFunction.slug: RhoFunction,
     GuessAndDetermine.slug: GuessAndDetermine,
     InverseBackdoorSets.slug: InverseBackdoorSets,
-    UPGuessAndDetermine.slug: UPGuessAndDetermine,
-    IncrGuessAndDetermine.slug: IncrGuessAndDetermine
 }
 
 __all__ = [
+    'RhoFunction',
     'GuessAndDetermine',
-    'UPGuessAndDetermine'
+    'InverseBackdoorSets'
 ]

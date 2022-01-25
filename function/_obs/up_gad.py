@@ -1,4 +1,4 @@
-from .._abc.function import *
+from function._abc.function import *
 
 from os import getpid
 from math import log2
