@@ -5,7 +5,7 @@ class PointFactory:
     def __init__(self):
         self.comparator = None
 
-    def set(self, comparator):
+    def configure(self, comparator):
         self.comparator = comparator
 
     def produce(self, backdoor):

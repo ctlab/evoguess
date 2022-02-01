@@ -16,7 +16,7 @@ class Estimator(Core):
         CACHE.canceled = {}
         CACHE.estimated = {}
         CACHE.estimating = {}
-        FACTORY.set(comparator)
+        FACTORY.configure(comparator)
 
     def launch(self, *args, **kwargs):
         raise NotImplementedError

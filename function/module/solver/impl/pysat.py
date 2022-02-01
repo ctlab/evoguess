@@ -87,8 +87,8 @@ class _IPySat:
                 self.stat[key] = value
         return stat
 
-    def solve(self, assumptions, limit=0, **kwargs):
-        st, stat, sol = PySat.solve_with(self.solver, assumptions, limit, **kwargs)
+    def solve(self, assumptions, limits=None, **kwargs):
+        st, stat, sol = PySat.solve_with(self.solver, assumptions, limits, **kwargs)
         return st, self._fix_stat(stat), sol
 
     def propagate(self, assumptions, **kwargs):

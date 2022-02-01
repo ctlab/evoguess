@@ -17,7 +17,7 @@ class Optimization(Estimator):
         self.algorithm = algorithm
         super().__init__(*args, **kwargs)
 
-        CACHE.best = None
+        CACHE.best_point = None
         self.optimization_trace = []
 
     def launch(self, *args, **kwargs):
@@ -25,7 +25,7 @@ class Optimization(Estimator):
 
         awaited = self.algorithm.awaited_count
         backdoor = self.space.get_root(self.instance)
-        point, handles = self._await(self.estimate(backdoor)), []
+        point, handles = self._await(self.estimate(backdoor))
         with self.algorithm.start(point) as algorithm:
             while not self.limitation.exhausted():
                 if len(handles) > algorithm.max_points:
@@ -40,13 +40,11 @@ class Optimization(Estimator):
                 self.limitation.set('time', spent_time)
                 # self.limitation.update(algorithm)
 
-            solution = algorithm.solution()
-
-        return solution
+            return algorithm.solution()
 
     def _await(self, *handles, count=None):
-        timeout = self.limitation.left()
         count = smin(count, len(handles))
+        timeout = self.limitation.left()
         done = n_completed(handles, count, timeout)
         not_done = omit_by(handles, lambda h: h in done)
         return [h.result() for h in done], not_done
