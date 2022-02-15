@@ -1,8 +1,5 @@
 from ..._abc._async.evolution import *
 
-from numpy import argsort
-from util.collection import get_by_indexes, trim_by_indexes
-
 
 class MuPlusLambda(Evolution):
     slug = 'evolution:plus'
@@ -17,10 +14,7 @@ class MuPlusLambda(Evolution):
         return list(map(self.mutation.mutate, selected))
 
     def join(self, parents: Population, children: Population):
-        mu_indexes = argsort(parents)[:self.mu]
-        filler_size = max(0, self.lmbda - len(children))
-        lmbda_filler = trim_by_indexes(parents, mu_indexes)[:filler_size]
-        return [*get_by_indexes(parents, mu_indexes), *children, *lmbda_filler]
+        return sorted([*parents, *children])[:self.mu]
 
     def __info__(self):
         return {

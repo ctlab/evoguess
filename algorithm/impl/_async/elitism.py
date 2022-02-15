@@ -27,8 +27,8 @@ class Elitism(Genetic):
     def join(self, parents: Population, children: Population):
         elite_indexes = argsort(parents)[:self.elites]
         filler_size = max(0, self.population_size - len(children))
-        lmbda_filler = trim_by_indexes(parents, elite_indexes)[:filler_size]
-        return [*get_by_indexes(parents, elite_indexes), *children, *lmbda_filler]
+        elite_filler = trim_by_indexes(parents, elite_indexes)[:filler_size]
+        return [*get_by_indexes(parents, elite_indexes), *children, *elite_filler]
 
     def __info__(self):
         return {

@@ -8,6 +8,7 @@ Population = Vector
 class Evolution(AlgorithmAsync):
     min_tweak_size = 1
     population_size = None
+    # todo: rename population_size to queue_size (or another)
     name = 'Algorithm(Async): Evolution'
 
     def __init__(self, mutation, selection, *args, **kwargs):
