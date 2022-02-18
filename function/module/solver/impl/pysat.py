@@ -10,22 +10,22 @@ class PySat(Solver):
     slug = 'solver:pysat'
     name = 'Solver: PySat'
 
-    def prototype(self, clauses, **kwargs):
-        solver = self.constructor(bootstrap_with=clauses, use_timer=True)
+    def prototype(self, instance, **kwargs):
+        solver = self.constructor(instance.clauses, use_timer=True)
         for [literals, rhs] in kwargs.get('atmosts', []):
             solver.add_atmost(literals, rhs)
         return _IPySat(solver)
 
-    def propagate(self, clauses, assumptions, **kwargs):
-        with self.constructor(bootstrap_with=clauses, use_timer=True) as solver:
+    def propagate(self, instance, assumptions, **kwargs):
+        with self.constructor(instance.clauses, use_timer=True) as solver:
             for [literals, rhs] in kwargs.get('atmosts', []):
                 solver.add_atmost(literals, rhs)
             status, statistics, literals = self.propagate_with(solver, assumptions, **kwargs)
 
         return status, statistics, literals
 
-    def solve(self, clauses, assumptions, limits=None, **kwargs):
-        with self.constructor(bootstrap_with=clauses, use_timer=True) as solver:
+    def solve(self, instance, assumptions, limits=None, **kwargs):
+        with self.constructor(instance.clauses, use_timer=True) as solver:
             for [literals, rhs] in kwargs.get('atmosts', []):
                 solver.add_atmost(literals, rhs)
 

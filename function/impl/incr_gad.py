@@ -21,7 +21,7 @@ def gad_function(common_data, tasks_data=None):
     kwargs = {}
     if inst.cnf.has_atmosts and inst.cnf.atmosts():
         kwargs['atmosts'] = inst.cnf.atmosts()
-    with slv.prototype(inst.clauses(), **kwargs) as solver:
+    with slv.prototype(inst, **kwargs) as solver:
         for task_data in tasks_data:
             st_timestamp = now()
             task_i, task_value = task_data

@@ -1,26 +1,36 @@
-from pydash import now
-
 from ..solver import *
 
+import re
 from os.path import join
+from time import time as now
+from util.array import concat
 from util.const import SOLVER_PATH
 from subprocess import Popen, TimeoutExpired, PIPE
+
+STATUSES = {
+    10: True,
+    20: False
+}
 
 
 class Native(Solver):
     file = None
     budget = None
+    statistic = {}
     stdin_file = None
     stdout_file = None
     slug = 'solver:native'
     name = 'Solver: Native'
 
-    def propagate(self, clauses, assumptions, **kwargs):
+    solution = re.compile(r'^v ([-\d ]*)', re.MULTILINE)
+
+    def propagate(self, instance, assumptions, **kwargs):
         raise NotImplementedError
 
-    def solve(self, clauses, assumptions, limits=None, **kwargs):
+    def solve(self, instance, assumptions, limits=None, **kwargs):
         launch_args = [join(SOLVER_PATH, self.file)]
 
+        clauses = instance.cnf.source(assumptions)
         if self.stdin_file is not None:
             # create input temp file
             launch_args.append(self.stdin_file % '<filepath>')
@@ -29,24 +39,35 @@ class Native(Solver):
             # create output temp file
             launch_args.append(self.stdout_file % '<filepath>')
 
+        timeout = limits.get('time_limit')
         for key in self.budget.keys():
-            if limits and limits.get(key, 0) > 0 and self.budget['time']:
+            if limits and limits.get(key, 0) > 0 and self.budget[key]:
                 launch_args.append(self.budget[key] % limits[key])
 
         timestamp = now()
+        timeout = timeout and timeout + 1
         process = Popen(launch_args, stdin=PIPE, stdout=PIPE, stderr=PIPE)
         try:
-            output, error = process.communicate(timeout=limits.get('time_limit'))
-            status, statistics, solution = self.parse(output)
+            output, error = process.communicate(clauses.encode(), timeout)
+            statistics, solution = self.parse(output.decode())
+            status = STATUSES.get(process.returncode)
         except TimeoutExpired:
-            process.kill()
+            process.terminate()
             status, statistics, solution = None, {}, []
 
         statistics = {**statistics, 'time': now() - timestamp}
         return status, statistics, solution
 
-    def parse_output(self):
-        raise NotImplementedError
+    def parse(self, output):
+        statistics = {}
+        for key, pattern in self.statistic.items():
+            result = pattern.search(output)
+            statistics[key] = result and int(result.group(1))
+
+        return statistics, concat(*[
+            [int(var) for var in line.split()]
+            for line in self.solution.findall(output)
+        ])
 
 
 class Rokk(Native):
@@ -60,27 +81,29 @@ class Rokk(Native):
         'time_limit': '-cpu-lim=%d',
         'conf_budget': None,
         'prop_budget': None,
+        'decs_budget': None,
     }
-
-    def parse_output(self):
-        pass
 
 
 class Kissat(Native):
-    file = 'kissat'
     slug = 'solver:native:kissat'
     name = 'Solver: Native(Kissat)'
+    file = 'kissat-sc2021/build/kissat'
 
     stdin_file = None
     stdout_file = None
     budget = {
-        'time_limit': None,
-        'conf_budget': None,
-        'prop_budget': None,
+        'time_limit': '--time=%d',
+        'conf_budget': '--conflicts=%d',
+        'decs_budget': '--decisions=%d',
     }
-
-    def parse_output(self):
-        pass
+    statistic = {
+        'restarts': re.compile(r'^c restarts:\s+(\d+)', re.MULTILINE),
+        'conflicts': re.compile(r'^c conflicts:\s+(\d+)', re.MULTILINE),
+        'decisions': re.compile(r'^c decisions:\s+(\d+)', re.MULTILINE),
+        'propagations': re.compile(r'^c propagations:\s+(\d+)', re.MULTILINE),
+        'learned_literals': re.compile(r'^c clauses_learned:\s+(\d+)', re.MULTILINE),
+    }
 
 
 __all__ = [

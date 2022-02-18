@@ -34,7 +34,7 @@ def gad_function(common_data, tasks_data=None):
         if inst.cnf.has_atmosts and inst.cnf.atmosts():
             kwargs['atmosts'] = inst.cnf.atmosts()
         assumptions = inst.get_assumptions(backdoor, values)
-        status, stats, _ = slv.solve(inst.clauses(), assumptions, **kwargs)
+        status, stats, _ = slv.solve(inst, assumptions, **kwargs)
         time, value = stats['time'], meas.get(stats)
         results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
     return results
