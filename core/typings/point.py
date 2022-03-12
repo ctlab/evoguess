@@ -4,7 +4,7 @@ from util.comparable import Comparable
 class Point(Comparable):
     def __init__(self, comparator, backdoor):
         self.backdoor = backdoor
-        self.comparator = comparator
+        super().__init__(comparator)
 
         self.estimation = None
 
@@ -16,9 +16,6 @@ class Point(Comparable):
 
     def value(self):
         return self.estimation.get('value', None)
-
-    def compare(self, other):
-        return self.comparator.compare(self, other)
 
     def __len__(self):
         return len(self.backdoor)

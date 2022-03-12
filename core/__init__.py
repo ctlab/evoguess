@@ -13,7 +13,7 @@ def Core(configuration, **kwargs):
 __all__ = [
     'Core',
     # modules
-    'limit',
     'sampling',
     'comparator',
+    'limitation',
 ]

@@ -1,6 +1,9 @@
 class Comparable:
+    def __init__(self, comparator):
+        self.comparator = comparator
+
     def compare(self, other):
-        raise NotImplementedError
+        return self.comparator.compare(self, other)
 
     def __lt__(self, other):
         return self.compare(other) < 0

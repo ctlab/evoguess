@@ -1,5 +1,9 @@
-from functools import reduce
 from operator import getitem
+from functools import reduce
+
+
+def _key(function):
+    return str(function).split()[1].lower()
 
 
 def load_modules(modules=(()), **kwargs):
@@ -15,17 +19,12 @@ def load_modules(modules=(()), **kwargs):
     return loaded_kwargs
 
 
-def _key(function):
-    return str(function).split()[1].lower()
-
-
 def build(structure, **kwargs):
-    constructor, dependencies = list(structure.items())[0]
+    constructor, deps = list(structure.items())[0]
     key = _key(constructor)
     return key, constructor(kwargs[key], **dict([
-        build(dependency, **kwargs) if isinstance(dependency, dict) else
-        (_key(dependency), dependency(kwargs[_key(dependency)]))
-        for dependency in dependencies
+        build(dep, **kwargs) if isinstance(dep, dict) else
+        (_key(dep), dep(kwargs[_key(dep)])) for dep in deps
     ]))
 
 
