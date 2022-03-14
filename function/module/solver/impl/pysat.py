@@ -11,13 +11,13 @@ class PySat(Solver):
     name = 'Solver: PySat'
 
     def prototype(self, instance, **kwargs):
-        solver = self.constructor(instance.clauses, use_timer=True)
+        solver = self.constructor(instance.clauses(), use_timer=True)
         for [literals, rhs] in kwargs.get('atmosts', []):
             solver.add_atmost(literals, rhs)
         return _IPySat(solver)
 
     def propagate(self, instance, assumptions, **kwargs):
-        with self.constructor(instance.clauses, use_timer=True) as solver:
+        with self.constructor(instance.clauses(), use_timer=True) as solver:
             for [literals, rhs] in kwargs.get('atmosts', []):
                 solver.add_atmost(literals, rhs)
             status, statistics, literals = self.propagate_with(solver, assumptions, **kwargs)
@@ -25,7 +25,7 @@ class PySat(Solver):
         return status, statistics, literals
 
     def solve(self, instance, assumptions, limits=None, **kwargs):
-        with self.constructor(instance.clauses, use_timer=True) as solver:
+        with self.constructor(instance.clauses(), use_timer=True) as solver:
             for [literals, rhs] in kwargs.get('atmosts', []):
                 solver.add_atmost(literals, rhs)
 
