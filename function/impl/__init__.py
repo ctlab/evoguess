@@ -1,21 +1,24 @@
-from .gad import *
 from .ibs import *
+from .gad import *
 from .up_gad import *
-from .ibs_rho import *
-from .incr_gad import *
+from .gad_bounded import *
+from .gad_incremental import *
+
 
 functions = {
     GuessAndDetermine.slug: GuessAndDetermine,
-    InverseBackdoorSets.slug: InverseBackdoorSets,
     UPGuessAndDetermine.slug: UPGuessAndDetermine,
     IncrGuessAndDetermine.slug: IncrGuessAndDetermine,
-    RhoInverseBackdoorSets.slug: RhoInverseBackdoorSets,
+    BoundedGuessAndDetermine.slug: BoundedGuessAndDetermine,
+    #
+    InverseBackdoorSets.slug: InverseBackdoorSets,
 }
 
 __all__ = [
     'GuessAndDetermine',
-    'InverseBackdoorSets',
     'UPGuessAndDetermine',
     'IncrGuessAndDetermine',
-    'RhoInverseBackdoorSets'
+    'BoundedGuessAndDetermine',
+    #
+    'InverseBackdoorSets'
 ]

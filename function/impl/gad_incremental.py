@@ -45,7 +45,7 @@ def gad_function(common_data, tasks_data=None):
 
 class IncrGuessAndDetermine(Function):
     type = 'gad'
-    slug = 'function:incrgad'
+    slug = 'function:gad_incremental'
     name = 'Function: Incr Guess-and-Determine'
 
     def get_function(self):

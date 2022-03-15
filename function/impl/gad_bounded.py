@@ -46,10 +46,10 @@ def ibs_function(common_data, tasks_data=None):
     return results
 
 
-class RhoInverseBackdoorSets(Function):
-    type = 'ibs'
-    slug = 'function:ibs_rho'
-    name = 'Function: Rho Inverse Backdoor Sets'
+class BoundedGuessAndDetermine(Function):
+    type = 'gad'
+    slug = 'function:gad_bounded'
+    name = 'Function: Bounded Guess-and-Determine'
 
     def __init__(self, alpha_n, *args, **kwargs):
         limits = {
@@ -75,9 +75,6 @@ class RhoInverseBackdoorSets(Function):
         return ibs_function
 
     def prepare_data(self, state, instance, backdoor, dim_type):
-        assert instance.supbs is not None, "IBS method depends on instance supbs"
-        assert instance.output_set is not None, "IBS method depends on instance output_set"
-
         bd_mask = instance.get_bd_mask(backdoor)
         return instance, self.solver, self.measure, {
             self.limit_key: self.limit_value
@@ -124,5 +121,5 @@ class RhoInverseBackdoorSets(Function):
 
 
 __all__ = [
-    'RhoInverseBackdoorSets'
+    'BoundedGuessAndDetermine'
 ]
