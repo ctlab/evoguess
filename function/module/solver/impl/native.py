@@ -1,11 +1,15 @@
 from ..solver import *
 
 import re
+from os import remove
 from os.path import join
 from time import time as now
+from tempfile import NamedTemporaryFile
+from subprocess import Popen, TimeoutExpired, PIPE
+
 from util.array import concat
 from util.const import SOLVER_PATH
-from subprocess import Popen, TimeoutExpired, PIPE
+from util.collection import for_each
 
 STATUSES = {
     10: True,
@@ -28,16 +32,19 @@ class Native(Solver):
         raise NotImplementedError
 
     def solve(self, instance, assumptions, limits=None, **kwargs):
-        launch_args = [join(SOLVER_PATH, self.file)]
+        files, launch_args = [], [join(SOLVER_PATH, self.file)]
 
-        clauses = instance.cnf.source(assumptions)
+        source = instance.cnf.source(assumptions)
         if self.stdin_file is not None:
-            # create input temp file
-            launch_args.append(self.stdin_file % '<filepath>')
+            with NamedTemporaryFile(delete=False) as handle:
+                handle.write(source)
+                files.append(handle.name)
+                launch_args.append(self.stdin_file % handle.name)
 
         if self.stdout_file is not None:
-            # create output temp file
-            launch_args.append(self.stdout_file % '<filepath>')
+            with NamedTemporaryFile(delete=False) as handle:
+                files.append(handle.name)
+                launch_args.append(self.stdout_file % handle.name)
 
         timeout = limits.get('time_limit')
         for key in self.budget.keys():
@@ -48,12 +55,21 @@ class Native(Solver):
         timeout = timeout and timeout + 1
         process = Popen(launch_args, stdin=PIPE, stdout=PIPE, stderr=PIPE)
         try:
-            output, error = process.communicate(clauses.encode(), timeout)
-            statistics, solution = self.parse(output.decode())
+            data = None if self.stdin_file else source.encode()
+            output, error = process.communicate(data, timeout)
+
+            if self.stdout_file is not None:
+                with open(files[-1], 'r+') as handle:
+                    statistics, solution = self.parse(handle.read())
+            else:
+                statistics, solution = self.parse(output.decode())
+
             status = STATUSES.get(process.returncode)
         except TimeoutExpired:
             process.terminate()
             status, statistics, solution = None, {}, []
+        finally:
+            for_each(files, remove)
 
         statistics = {**statistics, 'time': now() - timestamp}
         return status, statistics, solution
@@ -68,21 +84,6 @@ class Native(Solver):
             [int(var) for var in line.split()]
             for line in self.solution.findall(output)
         ])
-
-
-class Rokk(Native):
-    file = 'rokk'
-    slug = 'solver:native:rokk'
-    name = 'Solver: Native(ROKK)'
-
-    stdin_file = None
-    stdout_file = None
-    budget = {
-        'time_limit': '-cpu-lim=%d',
-        'conf_budget': None,
-        'prop_budget': None,
-        'decs_budget': None,
-    }
 
 
 class Kissat(Native):
@@ -106,7 +107,22 @@ class Kissat(Native):
     }
 
 
+# class Rokk(Native):
+#     file = 'rokk'
+#     slug = 'solver:native:rokk'
+#     name = 'Solver: Native(ROKK)'
+#
+#     stdin_file = None
+#     stdout_file = None
+#     budget = {
+#         'time_limit': '-cpu-lim=%d',
+#         'conf_budget': None,
+#         'prop_budget': None,
+#         'decs_budget': None,
+#     }
+
+
 __all__ = [
-    'Rokk',
+    # 'Rokk',
     'Kissat'
 ]
