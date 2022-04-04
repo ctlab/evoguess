@@ -45,42 +45,15 @@ class _AcquireJobs(object):
     def __init__(self, jobs):
         self.jobs = sorted(jobs, key=id)
 
+    # noinspection PyProtectedMember
     def __enter__(self):
         for job in self.jobs:
             job._condition.acquire()
 
+    # noinspection PyProtectedMember
     def __exit__(self, *args):
         for job in self.jobs:
             job._condition.release()
-
-
-def n_completed(jobs, count, timeout=None):
-    with _AcquireJobs(jobs):
-        done = set(j for j in jobs if j._state > RUNNING)
-        not_done = set(jobs) - done
-        count = min(count - len(done), len(not_done))
-
-        if count > 0:
-            waiter = _NCompletedWaiter(count)
-            for_each(not_done, lambda j: j._waiters.append(waiter))
-        else:
-            return done
-
-    waiter.event.wait(timeout)
-    for job in not_done:
-        with job._condition:
-            job._waiters.remove(waiter)
-
-    done.update(waiter.finished_jobs)
-    return done
-
-
-def first_completed(jobs, timeout=None):
-    return n_completed(jobs, 1, timeout)
-
-
-def all_completed(jobs, timeout=None):
-    return n_completed(jobs, len(jobs), timeout)
 
 
 class Job:
@@ -168,7 +141,7 @@ class Job:
                 waiter.add_result(self)
             self._condition.notify_all()
 
-    def start(self):
+    def start(self) -> 'Job':
         if self._state != PENDING:
             raise AlreadyRunning()
 
@@ -176,7 +149,7 @@ class Job:
         self._processor.start()
         return self
 
-    def cancel(self):
+    def cancel(self) -> bool:
         with self._condition:
             if self._state == FINISHED:
                 return False
@@ -193,19 +166,19 @@ class Job:
 
         return True
 
-    def done(self):
+    def done(self) -> bool:
         with self._condition:
             return self._state > RUNNING
 
-    def running(self):
+    def running(self) -> bool:
         with self._condition:
             return self._state == RUNNING
 
-    def cancelled(self):
+    def cancelled(self) -> bool:
         with self._condition:
             return self._state == CANCELLED
 
-    def result(self, timeout):
+    def result(self, timeout) -> object:
         with self._condition:
             if self._state == CANCELLED:
                 raise CancelledError()
@@ -220,6 +193,36 @@ class Job:
                 return self._results
             else:
                 raise TimeoutError()
+
+
+# noinspection PyProtectedMember
+def n_completed(jobs: list[Job], count: int, timeout=None) -> list[Job]:
+    with _AcquireJobs(jobs):
+        done = set(j for j in jobs if j._state > RUNNING)
+        not_done = set(jobs) - done
+        count = min(count - len(done), len(not_done))
+
+        if count > 0:
+            waiter = _NCompletedWaiter(count)
+            for_each(not_done, lambda j: j._waiters.append(waiter))
+        else:
+            return list(done)
+
+    waiter.event.wait(timeout)
+    for job in not_done:
+        with job._condition:
+            job._waiters.remove(waiter)
+
+    done.update(waiter.finished_jobs)
+    return list(done)
+
+
+def first_completed(jobs: list[Job], timeout=None) -> list[Job]:
+    return n_completed(jobs, 1, timeout)
+
+
+def all_completed(jobs: list[Job], timeout=None) -> list[Job]:
+    return n_completed(jobs, len(jobs), timeout)
 
 
 __all__ = [

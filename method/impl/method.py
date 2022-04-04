@@ -9,58 +9,6 @@ from numpy.random import randint, RandomState
 Cache = namedtuple('Cache', 'active canceled estimated')
 
 
-class Context:
-    def __init__(self, seeds, instance, backdoor, cache, **context):
-        self.cache = cache
-        self.sequence = None
-        self.instance = instance
-        self.backdoor = backdoor
-
-        self.function = context.get('function')
-        self.sampling = context.get('sampling')
-        self.executor = context.get('executor')
-        # self.observer = context.get('observer')
-
-        self.state = {
-            **seeds,
-            'base': backdoor.base,
-            'size': len(backdoor),
-            'power': backdoor.task_count(),
-        }
-
-        self.dim_type = to_bit(self.state['power'] > self.sampling.max_size)
-
-    def _get_sequence(self):
-        if self.sequence is None:
-            if self.sampling.order == self.sampling.RANDOM:
-                rs = RandomState(seed=self.state['list_seed'])
-                self.sequence = rs.permutation(self.state['power'])
-            elif self.sampling.order == self.sampling.DIRECT:
-                self.sequence = list(range(self.state['power']))
-            elif self.sampling.order == self.sampling.REVERSED:
-                self.sequence = list(range(self.state['power']))[::-1]
-        return self.sequence
-
-    def get_tasks(self, results):
-        tasks, offset = [], len(results)
-        count = self.sampling.get_count(self.backdoor, results)
-
-        if count > 0:
-            if self.dim_type:
-                value = self.state['list_seed']
-                tasks = [(i, value + i) for i in range(offset, offset + count)]
-            else:
-                values = self._get_sequence()
-                tasks = [(i, values[i]) for i in range(offset, offset + count)]
-        return tasks
-
-    def get_limits(self, values, offset):
-        return 0, None
-
-    def is_reasonably(self, futures, values):
-        return True
-
-
 class Method:
     slug = 'method'
     name = 'Method'

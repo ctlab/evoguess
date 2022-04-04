@@ -1,7 +1,7 @@
 from .._abc.function import *
 
 
-def gad_function(tasks: Tasks, payload: Payload) -> Results:
+def gad_function(tasks: list[TaskId], payload: Payload) -> list[Result]:
     instance, solver, measure, _bytes = payload
     backdoor = Backdoor.unpack(_bytes)
 
@@ -15,7 +15,7 @@ class GuessAndDetermine(Function):
     def get_function(self) -> WorkerCallable:
         return gad_function
 
-    def calculate(self, backdoor: Backdoor, results: Results) -> Estimation:
+    def calculate(self, backdoor: Backdoor, results: list[Result]) -> Estimation:
         time, value, task_count = None, None, backdoor.task_count()
         ptime_sum, time_sum, value_sum, status_map = self._aggregate(results)
 
@@ -39,9 +39,9 @@ class GuessAndDetermine(Function):
 __all__ = [
     'GuessAndDetermine',
     # types
-    'Tasks',
+    'TaskId',
+    'Result',
     'Payload',
-    'Results',
     'Instance',
     'Backdoor',
     'Estimation',

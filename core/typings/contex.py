@@ -1,8 +1,12 @@
+from typing import NamedTuple
 from numpy.random import RandomState
 
 from core.static import CACHE
 from util.bitmask import to_bit
 from util.collection import pick_by
+from function.typings import TaskId, Result, Estimation
+
+JobTask = NamedTuple('JobTask', [('index', int), ('id', TaskId)])
 
 
 class Context:
@@ -34,7 +38,7 @@ class Context:
                 self.sequence = list(range(self.power))[::-1]
         return self.sequence
 
-    def get_tasks(self, results):
+    def get_tasks(self, results: list[Result]) -> list[JobTask]:
         tasks, offset = [], len(results)
         values = self.sampling.get_values(results)
         count = self.sampling.get_count(self.backdoor, values)
@@ -42,13 +46,13 @@ class Context:
         if count > 0:
             if self.dim_type:
                 value = self.seeds['list_seed']
-                tasks = [(i, value + i) for i in range(offset, offset + count)]
+                tasks = [JobTask(i, value + i) for i in range(offset, offset + count)]
             else:
                 values = self._get_sequence()
-                tasks = [(i, values[i]) for i in range(offset, offset + count)]
+                tasks = [JobTask(i, values[i]) for i in range(offset, offset + count)]
         return tasks
 
-    def get_estimation(self, results=None):
+    def get_estimation(self, results: list[Result] = None) -> Estimation:
         del CACHE.estimating[self.backdoor]
         if results is None:
             CACHE.canceled[self.backdoor] = self.seeds
@@ -70,5 +74,6 @@ class Context:
 
 
 __all__ = [
-    'Context'
+    'JobTask',
+    'Context',
 ]

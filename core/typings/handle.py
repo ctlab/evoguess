@@ -1,4 +1,5 @@
-from .job import n_completed as nc
+from .point import Point
+from .job import Job, n_completed as nc
 
 from util.error import CancelledError
 
@@ -16,29 +17,29 @@ def n_completed(handles, count, timeout=None):
 
 
 class Handle:
-    def done(self):
+    def done(self) -> bool:
         raise NotImplementedError
 
-    def cancel(self):
+    def cancel(self) -> bool:
         raise NotImplementedError
 
-    def result(self, timeout=None):
+    def result(self, timeout=None) -> object:
         raise NotImplementedError
 
 
 class JobHandle(Handle):
-    def __init__(self, point, job):
+    def __init__(self, point: Point, job: Job):
         self.job = job
         self.point = point
         self.context = job.context
 
-    def done(self):
+    def done(self) -> bool:
         return self.job.done()
 
-    def cancel(self):
+    def cancel(self) -> bool:
         return self.job.cancel()
 
-    def result(self, timeout=None):
+    def result(self, timeout=None) -> Point:
         results = None
         try:
             results = self.job.result(timeout)
@@ -50,16 +51,16 @@ class JobHandle(Handle):
 
 
 class VoidHandle(Handle):
-    def __init__(self, estimated):
+    def __init__(self, estimated: Point):
         self.estimated = estimated
 
-    def done(self):
+    def done(self) -> bool:
         return True
 
-    def cancel(self):
+    def cancel(self) -> bool:
         return False
 
-    def result(self, timeout=None):
+    def result(self, timeout=None) -> Point:
         return self.estimated
 
 

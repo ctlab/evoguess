@@ -1,7 +1,7 @@
 from function.impl.function_gad import *
 
 
-def rho_function(tasks: Tasks, payload: Payload) -> Results:
+def rho_function(tasks: list[TaskId], payload: Payload) -> list[Result]:
     instance, solver, measure, _bytes = payload
     backdoor = Backdoor.unpack(_bytes)
 

@@ -1,7 +1,7 @@
 from .._abc.function import *
 
 
-def ibs_function(tasks: Tasks, payload: Payload) -> Results:
+def ibs_function(tasks: list[TaskId], payload: Payload) -> list[Result]:
     instance, solver, measure, _bytes = payload
     backdoor = Backdoor.unpack(_bytes)
 
@@ -15,7 +15,7 @@ class InverseBackdoorSets(Function):
     def get_function(self) -> WorkerCallable:
         return ibs_function
 
-    def calculate(self, backdoor: Backdoor, results: Results) -> Estimation:
+    def calculate(self, backdoor: Backdoor, results: list[Result]) -> Estimation:
         time, value, task_count = None, None, backdoor.task_count()
         ptime_sum, time_sum, value_sum, status_map = self._aggregate(results)
 
@@ -41,9 +41,9 @@ class InverseBackdoorSets(Function):
 __all__ = [
     'InverseBackdoorSets',
     # types
-    'Tasks',
+    'TaskId',
+    'Result',
     'Payload',
-    'Results',
     'Instance',
     'Backdoor',
     'Estimation',

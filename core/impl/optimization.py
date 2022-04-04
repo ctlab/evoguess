@@ -42,7 +42,7 @@ class Optimization(Estimator):
 
             return algorithm.solution()
 
-    def _await(self, *handles, count=None):
+    def _await(self, *handles, count=None) -> (Point, Handles):
         count = smin(count, len(handles))
         timeout = self.limitation.left()
         done = n_completed(handles, count, timeout)

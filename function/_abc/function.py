@@ -1,46 +1,9 @@
-from typing import Optional
-from collections.abc import Callable
+from ..typings import *
 
 from instance.impl.instance import Instance
 from function.module.solver.solver import Solver
 from function.module.measure.measure import Measure
 from instance.typings.variables.backdoor import Backdoor
-
-ProcessId = int
-ProcessTime = float
-
-TaskIndex = int
-TaskTime = float
-TaskValue = float
-TaskStatus = Optional[bool]
-
-BackdoorBytes = bytes
-
-Tasks = list[TaskIndex]
-Payload = tuple[
-    Instance,  # instance = cnf
-    Solver,
-    Measure,
-    BackdoorBytes,
-    # todo: parse cnf intervals in process runtime
-]
-
-Result = tuple[
-    ProcessId,
-    ProcessTime,
-    TaskIndex,
-    TaskTime,
-    TaskValue,
-    TaskStatus
-]
-Results = list[Result]
-
-WorkerCallable = Callable[
-    [Tasks, Payload],
-    Results
-]
-
-Estimation = dict
 
 
 class Function:
@@ -59,7 +22,7 @@ class Function:
             backdoor.pack()
         )
 
-    def _aggregate(self, results: Results) -> tuple[float, float, float, dict]:
+    def _aggregate(self, results: list[Result]) -> tuple[float, float, float, dict]:
         status_map = {True: 0, False: 0, None: 0}
         ptime_sum, time_sum, value_sum = 0, 0, 0
         for result in results:
@@ -71,7 +34,7 @@ class Function:
 
         return ptime_sum, time_sum, value_sum, status_map
 
-    def calculate(self, backdoor: Backdoor, results: Results) -> Estimation:
+    def calculate(self, backdoor: Backdoor, results: list[Result]) -> Estimation:
         raise NotImplementedError
 
     def get_function(self) -> WorkerCallable:
@@ -92,9 +55,9 @@ class Function:
 __all__ = [
     'Function',
     # types
-    'Tasks',
+    'TaskId',
+    'Result',
     'Payload',
-    'Results',
     'Instance',
     'Backdoor',
     'Estimation',

@@ -20,7 +20,7 @@ class Executor:
     def submit_all(self, fn, data, *tasks):
         index_futures = []
         for shape in self.shaping.get(self.workers, tasks):
-            index = [task[0] for task in shape]
+            index = [task.index for task in shape]
             future = self.submit(fn, data, shape)
             index_futures.append((index, future))
         return index_futures
