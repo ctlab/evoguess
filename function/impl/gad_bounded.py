@@ -5,7 +5,7 @@ from time import time as now
 from numpy.random.mtrand import RandomState
 
 
-def ibs_function(common_data, tasks_data=None):
+def gad_function(common_data, tasks_data=None):
     inst, slv, meas, limits, info = common_data
 
     results = []
@@ -15,34 +15,28 @@ def ibs_function(common_data, tasks_data=None):
     mask_len = to_number(bits[8:24], 16)
     bd_mask = bits[24:mask_len + 24]
 
-    supbs_vars = inst.supbs.variables()
     backdoor = inst.get_backdoor2(bd_type, bd_base, bd_mask)
-    assumption_vars = backdoor.variables() + inst.output_set.variables()
-    assumption_vars += inst.extra_set.variables() if inst.extra_set else []
+    bases = backdoor.get_bases()
 
-    with slv.prototype(inst.clauses()) as propagator:
-        for task_data in tasks_data:
-            st_timestamp = now()
-            task_i, task_value = task_data
+    for task_data in tasks_data:
+        st_timestamp = now()
+        task_i, task_value = task_data
 
-            # todo: provide uniq seed
+        if dim_type == NUMBERS:
             state = RandomState(seed=task_value)
-            i_values = state.randint(0, bd_base, size=len(supbs_vars))
-            i_assumptions = [x if i_values[i] else -x for i, x in enumerate(supbs_vars)]
-            _, _, literals = propagator.propagate(i_assumptions)
+            values = state.randint(0, bd_base, size=len(backdoor))
+            # todo: apply backdoor.get_masks() to values
+        else:
+            values = decimal_to_base(task_value, bases)
+            # todo: map values using backdoor.get_mappers()
 
-            assumptions = []
-            for lit in literals:
-                if abs(lit) in assumption_vars:
-                    assumptions.append(lit)
-
-            kwargs = {'limits': limits}
-            if inst.cnf.has_atmosts and inst.cnf.atmosts():
-                kwargs['atmosts'] = inst.cnf.atmosts()
-            status, stats, _ = slv.solve(inst, assumptions, **kwargs)
-            time, value = stats['time'], meas.get(stats)
-            results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
-
+        kwargs = {'limits': limits}
+        if inst.cnf.has_atmosts and inst.cnf.atmosts():
+            kwargs['atmosts'] = inst.cnf.atmosts()
+        assumptions = inst.get_assumptions(backdoor, values)
+        status, stats, _ = slv.solve(inst, assumptions, **kwargs)
+        time, value = stats['time'], meas.get(stats)
+        results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
     return results
 
 
@@ -72,7 +66,7 @@ class BoundedGuessAndDetermine(Function):
         super().__init__(*args, **kwargs)
 
     def get_function(self):
-        return ibs_function
+        return gad_function
 
     def prepare_data(self, state, instance, backdoor, dim_type):
         bd_mask = instance.get_bd_mask(backdoor)

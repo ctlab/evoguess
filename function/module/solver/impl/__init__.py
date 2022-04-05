@@ -1,7 +1,10 @@
 from . import pysat
 from .pysat import *
+from .native import *
 
 solvers = {
+    Kissat.slug: Kissat,
+    # pysat
     Cadical.slug: Cadical,
     Glucose3.slug: Glucose3,
     Glucose4.slug: Glucose4,
