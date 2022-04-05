@@ -1,3 +1,4 @@
+from .. import typings
 from ..typings import *
 
 from instance.impl.instance import Instance
@@ -53,13 +54,7 @@ class Function:
 
 
 __all__ = [
+    'typings',
     'Function',
-    # types
-    'TaskId',
-    'Result',
-    'Payload',
-    'Instance',
-    'Backdoor',
-    'Estimation',
-    'WorkerCallable',
+    *typings.__all__
 ]

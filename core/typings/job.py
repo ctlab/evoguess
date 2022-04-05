@@ -88,9 +88,9 @@ class Job:
         with self._condition:
             i = i or self._futures.index(future)
             try:
-                result = future.result(timeout=0)
+                results = future.result(timeout=0)
                 for j, index in enumerate(self._indexes[i]):
-                    self._results[index] = result[j]
+                    self._results[index] = results[j]
             except Exception as e:
                 if type(e).__name__ != CANCELLED_ERROR:
                     print(f'Exception in task {i}: ', repr(e))
@@ -99,18 +99,15 @@ class Job:
 
     def _process(self, context):
         fn = context.function.get_function()
-        data = context.function.prepare_data(
-            context.state,
-            context.instance,
-            context.backdoor,
-            context.dim_type,
-        )
         awaiter = context.executor.get_awaiter()
+        payload = context.function.get_payload(
+            context.instance, context.backdoor
+        )
 
         completed = []
         tasks = context.get_tasks(self._results)
         while self.running() and len(tasks) > 0:
-            index_futures = context.executor.submit_all(fn, data, *tasks)
+            index_futures = context.executor.submit_all(fn, payload, tasks)
             indexes, futures = unzip(index_futures)
 
             is_reasonably = True

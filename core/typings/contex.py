@@ -1,17 +1,17 @@
-from typing import NamedTuple
-from numpy.random import RandomState
+from ..static import CORE_CACHE
+from typing import Optional, NamedTuple
 
-from core.static import CACHE
-from util.bitmask import to_bit
 from util.collection import pick_by
-from function.typings import TaskId, Result, Estimation
+from function.typings import TaskId, TaskResult, Estimation
 
-JobTask = NamedTuple('JobTask', [('index', int), ('id', TaskId)])
+
+class JobTask(NamedTuple):
+    id: TaskId
+    index: int
 
 
 class Context:
-    def __init__(self, seeds, backdoor, instance, **kwargs):
-        self.seeds = seeds
+    def __init__(self, backdoor, instance, **kwargs):
         self.backdoor = backdoor
         self.instance = instance
 
@@ -19,54 +19,43 @@ class Context:
         self.function = kwargs.get('function')
         self.sampling = kwargs.get('sampling')
         self.executor = kwargs.get('executor')
+        self.job_seed = kwargs.get('job_seed')
         # self.observer = kwargs.get('observer')
 
         self.sequence = None
         self.size = len(backdoor)
         self.base = backdoor.base
         self.power = backdoor.task_count()
-        self.dim_type = to_bit(self.power > self.sampling.max_size)
 
-    def _get_sequence(self):
-        if self.sequence is None:
-            if self.sampling.order == self.sampling.RANDOM:
-                rs = RandomState(seed=self.seeds['list_seed'])
-                self.sequence = rs.permutation(self.power)
-            elif self.sampling.order == self.sampling.DIRECT:
-                self.sequence = list(range(self.power))
-            elif self.sampling.order == self.sampling.REVERSED:
-                self.sequence = list(range(self.power))[::-1]
-        return self.sequence
-
-    def get_tasks(self, results: list[Result]) -> list[JobTask]:
+    def get_tasks(self, results: list[TaskResult]) -> list[JobTask]:
         tasks, offset = [], len(results)
-        values = self.sampling.get_values(results)
-        count = self.sampling.get_count(self.backdoor, values)
+        count = self.sampling.get_count(self.backdoor, results)
 
         if count > 0:
-            if self.dim_type:
-                value = self.seeds['list_seed']
+            if self.power > self.sampling.max_size:
+                value = self.job_seed
                 tasks = [JobTask(i, value + i) for i in range(offset, offset + count)]
             else:
                 values = self._get_sequence()
                 tasks = [JobTask(i, values[i]) for i in range(offset, offset + count)]
         return tasks
 
-    def get_estimation(self, results: list[Result] = None) -> Estimation:
-        del CACHE.estimating[self.backdoor]
+    def get_estimation(self, results: list[TaskResult] = None) -> Estimation:
+        del CORE_CACHE.estimating[self.backdoor]
         if results is None:
-            CACHE.canceled[self.backdoor] = self.seeds
-            return {**self.seeds, 'canceled': True}
+            CORE_CACHE.canceled[self.backdoor] = self.job_seed
+            return {'job_seed': self.job_seed, 'canceled': True}
 
         picked = pick_by(results)
-        estimation = CACHE.estimated[self.backdoor] = {
-            **self.seeds,
+        estimation = CORE_CACHE.estimated[self.backdoor] = {
+            'job_seed': self.job_seed,
             'accuracy': len(picked) / len(results),
-            **self.function.calculate(self.backdoor, *picked),
+            **self.sampling.summarize(picked),
+            **self.function.calculate(self.backdoor, picked),
         }
         return estimation
 
-    def get_limits(self, values, offset):
+    def get_limits(self, results: list[TaskResult]) -> tuple[int, Optional[int]]:
         return 0, None
 
     def is_reasonably(self, futures, values):

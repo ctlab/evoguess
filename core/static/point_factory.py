@@ -13,8 +13,8 @@ class PointFactory:
         return Point(self.comparator, backdoor)
 
 
-FACTORY = PointFactory()
+POINT_FACTORY = PointFactory()
 
 __all__ = [
-    'FACTORY',
+    'POINT_FACTORY',
 ]

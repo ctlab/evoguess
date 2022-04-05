@@ -1,4 +1,4 @@
-class Cache:
+class CoreCache:
     def __getattr__(self, key):
         return self.__dict__.get(key)
 
@@ -6,8 +6,8 @@ class Cache:
         self.__dict__[key] = value
 
 
-CACHE = Cache()
+CORE_CACHE = CoreCache()
 
 __all__ = [
-    'CACHE'
+    'CORE_CACHE'
 ]

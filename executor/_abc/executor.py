@@ -17,11 +17,11 @@ class Executor:
     def submit(self, fn, *args, **kwargs):
         raise NotImplementedError
 
-    def submit_all(self, fn, data, *tasks):
+    def submit_all(self, fn, payload, tasks):
         index_futures = []
         for shape in self.shaping.get(self.workers, tasks):
             index = [task.index for task in shape]
-            future = self.submit(fn, data, shape)
+            future = self.submit(fn, payload, shape)
             index_futures.append((index, future))
         return index_futures
 

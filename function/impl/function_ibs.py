@@ -40,12 +40,5 @@ class InverseBackdoorSets(Function):
 
 __all__ = [
     'InverseBackdoorSets',
-    # types
-    'TaskId',
-    'Result',
-    'Payload',
-    'Instance',
-    'Backdoor',
-    'Estimation',
-    'WorkerCallable',
+    *typings.__all__,
 ]
