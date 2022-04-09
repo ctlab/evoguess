@@ -46,7 +46,7 @@ class Native(Solver):
                 files.append(handle.name)
                 launch_args.append(self.stdout_file % handle.name)
 
-        timeout = limits.get('time_limit')
+        timeout = limits and limits.get('time_limit')
         for key in self.budget.keys():
             if limits and limits.get(key, 0) > 0 and self.budget[key]:
                 launch_args.append(self.budget[key] % limits[key])

@@ -20,7 +20,7 @@ def ibs_function(common_data, tasks_data=None):
     assumption_vars = backdoor.variables() + inst.output_set.variables()
     assumption_vars += inst.extra_set.variables() if inst.extra_set else []
 
-    with slv.prototype(inst.clauses()) as propagator:
+    with slv.prototype(inst) as propagator:
         for task_data in tasks_data:
             st_timestamp = now()
             task_i, task_value = task_data
