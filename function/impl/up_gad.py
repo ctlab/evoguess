@@ -16,12 +16,26 @@ def gad_function(common_data, tasks_data=None):
     mask_len = to_number(bits[8:24], 16)
     bd_mask = bits[24:mask_len + 24]
 
-    backdoor = inst.get_backdoor2(bd_type, bd_base, bd_mask)
-    bases = backdoor.get_bases()
-
     kwargs = {}
     if inst.cnf.has_atmosts and inst.cnf.atmosts():
         kwargs['atmosts'] = inst.cnf.atmosts()
+
+    backdoor = inst.get_backdoor2(bd_type, bd_base, bd_mask)
+    bases = backdoor.get_bases()
+
+    extra_assumptions = []
+    if inst.has_intervals():
+        state = RandomState()
+        supbs_vars = inst.supbs.variables()
+        output_vars = inst.output_set.variables()
+        supbs_values = state.randint(0, bd_base, size=len(supbs_vars))
+        supbs_assumptions = [x if supbs_values[i] else -x for i, x in enumerate(supbs_vars)]
+        _, _, solution = slv.propagate(inst, supbs_assumptions, **kwargs)
+
+        for lit in solution:
+            if abs(lit) in output_vars:
+                extra_assumptions.append(lit)
+
     with slv.prototype(inst, **kwargs) as solver:
         for task_data in tasks_data:
             st_timestamp = now()
@@ -60,10 +74,6 @@ class UPGuessAndDetermine(Function):
         return gad_function
 
     def prepare_data(self, state, instance, backdoor, dim_type):
-        if instance.has_intervals():
-            # todo: add intervals bits to data
-            pass
-
         bd_mask = instance.get_bd_mask(backdoor)
         return instance, self.solver, self.measure, encode_bits([
             *to_bits(dim_type, 1),

@@ -30,8 +30,10 @@ class PySat(Solver):
                 solver.add_atmost(literals, rhs)
 
             if limits and limits.get('conf_budget', 0) > 0:
+                kwargs['expect_interrupt'] = True
                 solver.conf_budget(limits['conf_budget'])
             if limits and limits.get('prop_budget', 0) > 0:
+                kwargs['expect_interrupt'] = True
                 solver.prop_budget(limits['prop_budget'])
             status, statistics, solution = self.solve_with(solver, assumptions, limits, **kwargs)
 

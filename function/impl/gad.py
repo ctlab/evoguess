@@ -15,8 +15,27 @@ def gad_function(common_data, tasks_data=None):
     mask_len = to_number(bits[8:24], 16)
     bd_mask = bits[24:mask_len + 24]
 
+    kwargs = {}
+    if inst.cnf.has_atmosts and inst.cnf.atmosts():
+        kwargs['atmosts'] = inst.cnf.atmosts()
+
     backdoor = inst.get_backdoor2(bd_type, bd_base, bd_mask)
     bases = backdoor.get_bases()
+
+    extra_assumptions = []
+    if inst.has_intervals():
+        state = RandomState()
+        supbs_vars = inst.supbs.variables()
+        output_vars = inst.output_set.variables()
+        supbs_values = state.randint(0, bd_base, size=len(supbs_vars))
+        supbs_assumptions = [x if supbs_values[i] else -x for i, x in enumerate(supbs_vars)]
+        _, _, solution = slv.solve(inst, supbs_assumptions, **kwargs)
+
+        for lit in solution:
+            if abs(lit) in output_vars:
+                extra_assumptions.append(lit)
+
+        assert len(extra_assumptions) == len(output_vars)
 
     for task_data in tasks_data:
         st_timestamp = now()
@@ -30,11 +49,8 @@ def gad_function(common_data, tasks_data=None):
             values = decimal_to_base(task_value, bases)
             # todo: map values using backdoor.get_mappers()
 
-        kwargs = {}
-        if inst.cnf.has_atmosts and inst.cnf.atmosts():
-            kwargs['atmosts'] = inst.cnf.atmosts()
         assumptions = inst.get_assumptions(backdoor, values)
-        status, stats, _ = slv.solve(inst, assumptions, **kwargs)
+        status, stats, _ = slv.solve(inst, assumptions + extra_assumptions, **kwargs)
         time, value = stats['time'], meas.get(stats)
         results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
     return results
