@@ -1,15 +1,22 @@
 import threading
+from enum import Enum
+from typing import Optional
 
 from util.array import unzip, none
 from util.collection import for_each
 from util.error import AlreadyRunning, CancelledError
 
-[
-    PENDING,
-    RUNNING,
-    FINISHED,
-    CANCELLED
-] = range(4)
+Timeout = Optional[int]
+
+
+class JobState(Enum):
+    [
+        PENDING,
+        RUNNING,
+        FINISHED,
+        CANCELLED
+    ] = range(4)
+
 
 TIMEOUT_ERROR = 'TimeoutError'
 CANCELLED_ERROR = 'CancelledError'
@@ -66,7 +73,7 @@ class Job:
         self._handled = []
         self._results = []
         self._waiters = []
-        self._state = PENDING
+        self._state = JobState.PENDING
         self._condition = threading.Condition()
         self._processor = threading.Thread(
             name=f'JobManagerThread {job_id}',
@@ -131,28 +138,28 @@ class Job:
             tasks = context.get_tasks(self._results)
 
         with self._condition:
-            if self._state == RUNNING:
-                self._state = FINISHED
+            if self._state == JobState.RUNNING:
+                self._state = JobState.FINISHED
 
             for waiter in self._waiters:
                 waiter.add_result(self)
             self._condition.notify_all()
 
     def start(self) -> 'Job':
-        if self._state != PENDING:
+        if self._state != JobState.PENDING:
             raise AlreadyRunning()
 
-        self._state = RUNNING
+        self._state = JobState.RUNNING
         self._processor.start()
         return self
 
     def cancel(self) -> bool:
         with self._condition:
-            if self._state == FINISHED:
+            if self._state == JobState.FINISHED:
                 return False
 
-            if self._state == RUNNING:
-                self._state = CANCELLED
+            if self._state == JobState.RUNNING:
+                self._state = JobState.CANCELLED
                 for future in self._futures:
                     future.cancel()
                 self._condition.notify_all()
@@ -165,37 +172,37 @@ class Job:
 
     def done(self) -> bool:
         with self._condition:
-            return self._state > RUNNING
+            return self._state > JobState.RUNNING
 
     def running(self) -> bool:
         with self._condition:
-            return self._state == RUNNING
+            return self._state == JobState.RUNNING
 
     def cancelled(self) -> bool:
         with self._condition:
-            return self._state == CANCELLED
+            return self._state == JobState.CANCELLED
 
-    def result(self, timeout) -> object:
+    def result(self, timeout: Timeout) -> object:
         with self._condition:
-            if self._state == CANCELLED:
+            if self._state == JobState.CANCELLED:
                 raise CancelledError()
-            elif self._state == FINISHED:
+            elif self._state == JobState.FINISHED:
                 return self._results
 
             self._condition.wait(timeout)
 
-            if self._state == CANCELLED:
+            if self._state == JobState.CANCELLED:
                 raise CancelledError()
-            elif self._state == FINISHED:
+            elif self._state == JobState.FINISHED:
                 return self._results
             else:
                 raise TimeoutError()
 
 
 # noinspection PyProtectedMember
-def n_completed(jobs: list[Job], count: int, timeout=None) -> list[Job]:
+def n_completed(jobs: list[Job], count: int, timeout: Timeout = None) -> list[Job]:
     with _AcquireJobs(jobs):
-        done = set(j for j in jobs if j._state > RUNNING)
+        done = set(j for j in jobs if j._state > JobState.RUNNING)
         not_done = set(jobs) - done
         count = min(count - len(done), len(not_done))
 
@@ -214,12 +221,12 @@ def n_completed(jobs: list[Job], count: int, timeout=None) -> list[Job]:
     return list(done)
 
 
-def first_completed(jobs: list[Job], timeout=None) -> list[Job]:
-    return n_completed(jobs, 1, timeout)
-
-
-def all_completed(jobs: list[Job], timeout=None) -> list[Job]:
+def all_completed(jobs: list[Job], timeout: Timeout = None) -> list[Job]:
     return n_completed(jobs, len(jobs), timeout)
+
+
+def first_completed(jobs: list[Job], timeout: Timeout = None) -> list[Job]:
+    return n_completed(jobs, 1, timeout)
 
 
 __all__ = [

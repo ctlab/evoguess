@@ -1,6 +1,6 @@
-from ..static import CORE_CACHE
 from typing import Optional, NamedTuple
 
+from ..static import CORE_CACHE
 from util.collection import pick_by
 from function.typings import TaskId, TaskResult, Estimation
 

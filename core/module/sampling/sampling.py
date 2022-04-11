@@ -1,34 +1,41 @@
 from enum import Enum
+from typing import NamedTuple
 
-from function.typings import TaskResult
+from numpy.random import RandomState
 
 
-class SamplingOrder(Enum):
-    RANDOM = 0
-    DIRECT = 1
-    REVERSED = 2
+# todo: is it needed at all?
+# class SamplingOrder(Enum):
+#     [
+#         RANDOM,
+#         DIRECT,
+#         REVERSED
+#     ] = range(3)
+
+
+class SamplingState(NamedTuple):
+    seed: int
+    power: int
+    sequence: list[int]
 
 
 class Sampling:
     slug = 'sampling'
     name = 'Sampling'
 
-    def __init__(self, max_size: int, order: SamplingOrder = SamplingOrder.RANDOM, *args, **kwargs):
-        self.order = order
+    def __init__(self, max_size: int, *args, **kwargs):
+        # self.order = order
+        self.regions = 1024
         self.max_size = max_size
+        # todo: regions settings
 
-        self.
-
-    def _get_sequence(self):
-        if self.sequence is None:
-            if self.sampling.order == self.sampling.RANDOM:
-                rs = RandomState(seed=self.job_seed)
-                self.sequence = rs.permutation(self.power)
-            elif self.sampling.order == self.sampling.DIRECT:
-                self.sequence = list(range(self.power))
-            elif self.sampling.order == self.sampling.REVERSED:
-                self.sequence = list(range(self.power))[::-1]
-        return self.sequence
+    def get_state(self, seed: int, power: int) -> SamplingState:
+        random_state = RandomState(seed=seed)
+        if power > self.max_size:
+            sequence = random_state.randint(0, self.regions, self.max_size)
+        else:
+            sequence = random_state.permutation(power)
+        return SamplingState(seed, power, list(sequence))
 
     def generate(self, power: int, values: list[float]):
         raise NotImplementedError

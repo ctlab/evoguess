@@ -1,7 +1,6 @@
 from .._abc import Estimator
-from ..static import CACHE
-
-from ..typings.handle import n_completed
+from ..static import CORE_CACHE
+from ..typings.handle import *
 
 from time import time as now
 from util.operator import smin
@@ -17,7 +16,7 @@ class Optimization(Estimator):
         self.algorithm = algorithm
         super().__init__(*args, **kwargs)
 
-        CACHE.best_point = None
+        CORE_CACHE.best_point = None
         self.optimization_trace = []
 
     def launch(self, *args, **kwargs):

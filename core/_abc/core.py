@@ -13,8 +13,8 @@ class Core:
 
         self.job_counter = 0
         self.start_stamp = None
-        self.seed = kwargs.get('seed', randint(2 ** 32 - 1))
-        self.random_state = RandomState(seed=self.seed)
+        self.random_seed = kwargs.get('seed', randint(2 ** 32 - 1))
+        self.random_state = RandomState(seed=self.random_seed)
         super().__init__(*args, **kwargs)
 
     def launch(self, *args, **kwargs):
