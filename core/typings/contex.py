@@ -20,12 +20,9 @@ class Context:
         self.sampling = kwargs.get('sampling')
         self.executor = kwargs.get('executor')
         self.job_seed = kwargs.get('job_seed')
-        # self.observer = kwargs.get('observer')
-
-        self.sequence = None
-        self.size = len(backdoor)
-        self.base = backdoor.base
-        self.power = backdoor.task_count()
+        self.state = self.sampling.get_state(
+            self.job_seed, backdoor.task_count()
+        )
 
     def get_tasks(self, results: list[TaskResult]) -> list[JobTask]:
         tasks, offset = [], len(results)
