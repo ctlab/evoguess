@@ -96,7 +96,7 @@ class BoundedGuessAndDetermine(Function):
         ])
 
     def calculate(self, backdoor, *cases):
-        rho_cases = len(cases)
+        rho_cases = 0
         process_time, time_sum = 0, 0
         statistic = {True: 0, False: 0, None: 0}
 
@@ -105,8 +105,8 @@ class BoundedGuessAndDetermine(Function):
             process_time += case[5]
             statistic[case[4]] += 1
 
-            if case[4] is None or self.min_limit > case[2]:
-                rho_cases -= 1
+            if case[4] is False and case[2] >= self.min_limit:
+                rho_cases += 1
 
         if rho_cases > 0:
             count = backdoor.task_count()
