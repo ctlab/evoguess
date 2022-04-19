@@ -1,8 +1,10 @@
 from . import pysat
 from .pysat import *
+from .linear import *
 from .native import *
 
 solvers = {
+    Linear.slug: Linear,
     Kissat.slug: Kissat,
     # pysat
     Cadical.slug: Cadical,

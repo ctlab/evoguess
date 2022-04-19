@@ -61,7 +61,7 @@ class CNF:
             return cnf_max_literal[self.path]
 
     def __copy__(self):
-        return CNF(self.path)
+        return CNF(self._path)
 
     def __info__(self):
         return {

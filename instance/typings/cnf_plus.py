@@ -42,7 +42,7 @@ class CNFPlus:
             return cnf_instance[self.path].nv
 
     def __copy__(self):
-        return CNFPlus(self.path)
+        return CNFPlus(self._path)
 
     def __info__(self):
         return {
