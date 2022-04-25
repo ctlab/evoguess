@@ -1,6 +1,7 @@
 from .ibs import *
 from .gad import *
 from .up_gad import *
+from .ibs_linear import *
 from .gad_bounded import *
 
 functions = {
@@ -9,6 +10,7 @@ functions = {
     BoundedGuessAndDetermine.slug: BoundedGuessAndDetermine,
     #
     InverseBackdoorSets.slug: InverseBackdoorSets,
+    LinearInverseBackdoorSets.slug: LinearInverseBackdoorSets,
 }
 
 __all__ = [

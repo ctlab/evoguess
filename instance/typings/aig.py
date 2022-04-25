@@ -29,7 +29,7 @@ class AIG:
             self._parse_aig()
             return ''.join([
                 f'{aig_source[self.path]}\n',
-                *(f'{2 * abs(x) + (x < 0)}\n' for x in assumptions)
+                *(f'{x}\n' for x in assumptions)
             ])
 
     def __copy__(self):
