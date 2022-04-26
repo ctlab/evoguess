@@ -51,7 +51,7 @@ Default value of **min_p** is **0**. Backdoors with **p < min_p** will be ignore
 .. code-block:: none
 
     'function': {
-        'slug': 'function:ibs',
+        'slug': 'function:ibs_linear',
         'solver': <module>,
         'measure': <module>,
         'min_p': <optional float>,

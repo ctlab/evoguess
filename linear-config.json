@@ -63,7 +63,7 @@
     "slug": "method",
     "sampling": {
       "slug": "sampling:const",
-      "count": 100
+      "count": 1024
     },
     "observer": {
       "slug": "observer:timeout"
