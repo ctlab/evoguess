@@ -4,11 +4,18 @@ class Measure:
     name = 'Measure'
 
     def __init__(self, *args, **kwargs):
+        self.least = kwargs.get('least')
         self.budget = kwargs.get('budget')
+        # status for over budget case
+        self.over = kwargs.get('over', 'OVER')
+        # status for under least case
+        self.under = kwargs.get('under', 'UNDER')
 
-    def get(self, stats, status):
-        # todo: check lower bound and change status!
-        return stats.get(self.key, 0), status
+    def check_and_get(self, stats, status):
+        value = stats.get(self.key, 0)
+        if self.least and value < self.least:
+            status = self.over
+        return value, status or self.under
 
     def limits(self):
         return {self.key: self.budget} if self.budget else {}
@@ -21,7 +28,10 @@ class Measure:
             'key': self.key,
             'slug': self.slug,
             'name': self.name,
-            'budget': self.budget
+            'over': self.over,
+            'under': self.under,
+            'least': self.least,
+            'budget': self.budget,
         }
 
 
