@@ -1,21 +1,27 @@
 from .._abc.function import *
 
+from os import getpid
+from time import time as now
 
-def ibs_function(tasks: list[TaskId], payload: Payload) -> list[Result]:
-    instance, solver, measure, _bytes = payload
-    backdoor = Backdoor.unpack(_bytes)
 
-    return []
+def ibs_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
+    solver, measure, instance, _bytes = payload
+    sample_seed, sample_size, offset, length = args
+    timestamp, backdoor = now(), Backdoor.unpack(_bytes)
+
+    times, values, statuses = {}, {}, {}
+    return times, values, statuses, args, getpid(), timestamp - now()
 
 
 class InverseBackdoorSets(Function):
     slug = 'function:ibs'
     name = 'Function: Inverse Backdoor Sets'
+    supbs_required = True
 
-    def get_function(self) -> WorkerCallable:
-        return ibs_function
+    def get_worker_fn(self) -> WorkerCallable:
+        return ibs_worker_fn
 
-    def calculate(self, backdoor: Backdoor, results: list[Result]) -> Estimation:
+    def calculate(self, backdoor: Backdoor, results: Results) -> Estimation:
         time, value, task_count = None, None, backdoor.task_count()
         ptime_sum, time_sum, value_sum, status_map = self._aggregate(results)
 

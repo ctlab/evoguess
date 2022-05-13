@@ -1,7 +1,7 @@
-from . import task_result
-from .task_result import *
-from collections.abc import Callable
+from . import worker_t
+from .worker_t import *
 
+from typing import Any, Callable
 from instance.impl.instance import Instance
 from function.module.solver.solver import Solver
 from function.module.measure.measure import Measure
@@ -10,23 +10,25 @@ from function.module.measure.measure import Measure
 BackdoorBytes = bytes
 
 Payload = tuple[
-    Instance,  # instance = cnf
     Solver,
     Measure,
+    Instance,  # instance = cnf
     BackdoorBytes,
     # todo: parse cnf intervals in process runtime
 ]
 
 WorkerCallable = Callable[
-    [list[TaskId], Payload],
-    list[Result]
+    [WorkerArgs, Payload],
+    WorkerResults
 ]
 
-Estimation = dict
+Results = list[ChunkResults]
+Estimation = dict[str, Any]
 
 __all__ = [
+    'Results',
     'Payload',
     'Estimation',
     'WorkerCallable',
-    *task_result.__all__,
+    *worker_t.__all__,
 ]

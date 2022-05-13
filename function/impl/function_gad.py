@@ -1,21 +1,47 @@
 from .._abc.function import *
 
+from os import getpid
+from time import time as now
+from numpy.random import RandomState
 
-def gad_function(tasks: list[TaskId], payload: Payload) -> list[Result]:
-    instance, solver, measure, _bytes = payload
-    backdoor = Backdoor.unpack(_bytes)
 
-    return []
+def gad_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
+    solver, measure, instance, _bytes = payload
+    sample_seed, sample_size, offset, length = args
+    timestamp, backdoor = now(), Backdoor.unpack(_bytes)
+
+    state = RandomState(sample_seed)
+
+    if backdoor.task_count() == sample_size:
+        sequence = state.permutation(sample_size)
+        sequence = sequence[offset:offset + length]
+        assumption_set = decimal_to_base(sequence, backdoor)
+    else:
+        # todo: make to chunk random sampling module?
+        assumption_set = []
+
+    times, values, statuses = {}, {}, {}
+    for assumption_bits in assumption_set:
+        assumptions = get_assumptions(backdoor, assumption_bits)
+        status, stats, _ = solver.solve(instance, assumptions, limit=measure.limits())
+        time, (value, status) = stats['time'], measure.check_and_get(stats, status)
+
+        times[status] = times.get(status, 0.) + time
+        values[status] = values.get(status, 0.) + value
+        statuses[status] = statuses.get(status, 0) + 1
+
+    # todo: (optimize) dumps dict to str?
+    return times, values, statuses, args, getpid(), timestamp - now()
 
 
 class GuessAndDetermine(Function):
     slug = 'function:gad'
     name = 'Function: Guess-and-Determine'
 
-    def get_function(self) -> WorkerCallable:
-        return gad_function
+    def get_worker_fn(self) -> WorkerCallable:
+        return gad_worker_fn
 
-    def calculate(self, backdoor: Backdoor, results: list[Result]) -> Estimation:
+    def calculate(self, backdoor: Backdoor, results: Results) -> Estimation:
         time, value, task_count = None, None, backdoor.task_count()
         ptime_sum, time_sum, value_sum, status_map = self._aggregate(results)
 

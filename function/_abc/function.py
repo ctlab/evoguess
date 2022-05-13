@@ -10,36 +10,20 @@ from instance.typings.variables.backdoor import Backdoor
 class Function:
     slug = 'function'
     name = 'Function'
+    supbs_required = False
 
     def __init__(self, solver: Solver, measure: Measure, *args, **kwargs):
         self.solver = solver
         self.measure = measure
 
+    def get_worker_fn(self) -> WorkerCallable:
+        raise NotImplementedError
+
+    def calculate(self, backdoor: Backdoor, results: Results) -> Estimation:
+        raise NotImplementedError
+
     def get_payload(self, instance: Instance, backdoor: Backdoor) -> Payload:
-        return (
-            instance,
-            self.solver,
-            self.measure,
-            backdoor.pack()
-        )
-
-    def _aggregate(self, results: list[Result]) -> tuple[float, float, float, dict]:
-        status_map = {True: 0, False: 0, None: 0}
-        ptime_sum, time_sum, value_sum = 0, 0, 0
-        for result in results:
-            _, ptime, _, time, value, status = result
-            time_sum += time
-            ptime_sum += ptime
-            value_sum += value
-            status_map[status] += 1
-
-        return ptime_sum, time_sum, value_sum, status_map
-
-    def calculate(self, backdoor: Backdoor, results: list[Result]) -> Estimation:
-        raise NotImplementedError
-
-    def get_function(self) -> WorkerCallable:
-        raise NotImplementedError
+        return self.solver, self.measure, instance, backdoor.pack()
 
     def __str__(self):
         return self.name

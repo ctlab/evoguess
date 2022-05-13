@@ -6,10 +6,11 @@ class Measure:
     def __init__(self, *args, **kwargs):
         self.budget = kwargs.get('budget')
 
-    def get(self, stats):
-        return stats.get(self.key, 0)
+    def get(self, stats, status):
+        # todo: check lower bound and change status!
+        return stats.get(self.key, 0), status
 
-    def limit(self):
+    def limits(self):
         return {self.key: self.budget} if self.budget else {}
 
     def __str__(self):
