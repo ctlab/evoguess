@@ -1,5 +1,4 @@
 from os import cpu_count
-from numpy.random import randint, RandomState
 
 
 class Executor:
@@ -7,22 +6,20 @@ class Executor:
     name = 'Executor'
     awaiter_dict = {}
 
-    def __init__(self, shaping, **kwargs):
-        self.shaping = shaping
-
-        self.seed = kwargs.get('seed', randint(2 ** 32 - 1))
+    def __init__(self, *args, **kwargs):
         self.workers = kwargs.get('workers', cpu_count())
-        self.random_state = RandomState(seed=self.seed)
+        # todo: add executor.free()
 
     def submit(self, fn, *args, **kwargs):
         raise NotImplementedError
 
-    def submit_all(self, fn, payload, tasks):
+    def submit_all(self, fn, tasks, payload):
+        # todo: rewrite this method
         index_futures = []
-        for shape in self.shaping.get(self.workers, tasks):
-            index = [task.index for task in shape]
-            future = self.submit(fn, payload, shape)
-            index_futures.append((index, future))
+        # for shape in self.shaping.get(self.workers, tasks):
+        #     index = [task.index for task in shape]
+        #     future = self.submit(fn, payload, shape)
+        #     index_futures.append((index, future))
         return index_futures
 
     def get_awaiter(self, key='as_completed'):
@@ -41,9 +38,7 @@ class Executor:
         return {
             'slug': self.slug,
             'name': self.name,
-            'seed': self.seed,
             'workers': self.workers,
-            'shaping': self.shaping.__info__(),
         }
 
 
