@@ -1,6 +1,8 @@
-from ..model import *
+from ..model import FutureAll
 
 from os import cpu_count
+from typing import Callable
+from typings.future import Future
 
 
 class Executor:
@@ -9,21 +11,23 @@ class Executor:
 
     def __init__(self, *args, **kwargs):
         self.workers = kwargs.get('workers', cpu_count())
-        # todo: add executor.free()
+        # using only for submit_all utilisation tracking
+        self._trackers = []
 
-    def submit(self, fn, *args, **kwargs):
+    def submit(self, fn: Callable, *args, **kwargs) -> Future:
         raise NotImplementedError
 
-    # def submit_all(self, fn, *args, **kwargs) -> FutureAll:
-    #     # todo: rewrite this method
-    #     futures = []
-    #     for args, kwargs in argslist:
-    #         #     index = [task.index for task in shape]
-    #         future = self.submit(fn, *args, *gargs, **gkwargs, **kwargs)
-    #     #     index_futures.append((index, future))
-    #     return FutureAll(futures)
+    def submit_all(self, fn: Callable, *iterables) -> FutureAll:
+        return FutureAll([
+            self.submit(fn, *args)
+            for args in zip(*iterables)
+        ]).append_tracker_to(self._trackers)
 
-    def shutdown(self, wait=True):
+    # todo: implement executor.free()
+    # def free(self):
+    #     raise NotImplementedError
+
+    def shutdown(self, wait: bool = True):
         raise NotImplementedError
 
     def __str__(self):
@@ -41,6 +45,8 @@ class Executor:
 
 
 __all__ = [
+    'Future',
+    'Callable',
     'Executor',
-    'FutureAll'
+    'FutureAll',
 ]

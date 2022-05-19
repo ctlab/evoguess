@@ -72,7 +72,7 @@ class FutureAll:
         self._futures = set(futures)
         self._tracker = _Tracker(futures)
 
-    def _release_futures(self):
+    def _release_futures(self) -> list[Future]:
         with self._tracker.lock:
             finished = self._tracker.finished_futures
             self._tracker.finished_futures = []
@@ -85,7 +85,7 @@ class FutureAll:
         return finished
 
     # noinspection PyProtectedMember
-    def as_complete(self, count: Uint = None, timeout: Float = None):
+    def as_complete(self, count: Uint = None, timeout: Float = None) -> list[Future]:
         assert self._tracker.event is None, "not thread safety!"
         assert count is None or count >= 0, "not uint!"
         count = count or len(self._futures)
@@ -110,6 +110,10 @@ class FutureAll:
             self._tracker.event.wait(timeout)
 
         return self._release_futures()
+
+    def append_tracker_to(self, _list: list) -> 'FutureAll':
+        _list.append(self._tracker)
+        return self
 
     @property
     def pending_futures(self) -> int:

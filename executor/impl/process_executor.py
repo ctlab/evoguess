@@ -11,10 +11,10 @@ class ProcessExecutor(Executor):
         super().__init__(*args, **kwargs)
         self.executor = ProcessPoolExecutor(max_workers=self.workers)
 
-    def submit(self, fn, *args, **kwargs):
+    def submit(self, fn: Callable, *args, **kwargs) -> Future:
         return self.executor.submit(fn, *args, **kwargs)
 
-    def shutdown(self, wait=True):
+    def shutdown(self, wait: bool = True):
         self.executor.shutdown(wait)
 
 
