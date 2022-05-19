@@ -1,10 +1,11 @@
+from ..model import *
+
 from os import cpu_count
 
 
 class Executor:
     slug = 'executor'
     name = 'Executor'
-    awaiter_dict = {}
 
     def __init__(self, *args, **kwargs):
         self.workers = kwargs.get('workers', cpu_count())
@@ -13,17 +14,14 @@ class Executor:
     def submit(self, fn, *args, **kwargs):
         raise NotImplementedError
 
-    def submit_all(self, fn, tasks, payload):
-        # todo: rewrite this method
-        index_futures = []
-        # for shape in self.shaping.get(self.workers, tasks):
-        #     index = [task.index for task in shape]
-        #     future = self.submit(fn, payload, shape)
-        #     index_futures.append((index, future))
-        return index_futures
-
-    def get_awaiter(self, key='as_completed'):
-        return self.awaiter_dict.get(key)
+    # def submit_all(self, fn, *args, **kwargs) -> FutureAll:
+    #     # todo: rewrite this method
+    #     futures = []
+    #     for args, kwargs in argslist:
+    #         #     index = [task.index for task in shape]
+    #         future = self.submit(fn, *args, *gargs, **gkwargs, **kwargs)
+    #     #     index_futures.append((index, future))
+    #     return FutureAll(futures)
 
     def shutdown(self, wait=True):
         raise NotImplementedError
@@ -43,5 +41,6 @@ class Executor:
 
 
 __all__ = [
-    'Executor'
+    'Executor',
+    'FutureAll'
 ]

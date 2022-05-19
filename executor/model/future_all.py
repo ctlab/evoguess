@@ -1,6 +1,7 @@
 import time
 import threading
 
+from typings.future import Future
 from typings.optional import Uint, Float
 
 NOTIFIED_STATES = [
@@ -66,8 +67,8 @@ class _Tracker:
 
 
 # noinspection PyProtectedMember
-class FutureBox:
-    def __init__(self, futures):
+class FutureAll:
+    def __init__(self, futures: list[Future]):
         self._futures = set(futures)
         self._tracker = _Tracker(futures)
 
@@ -110,10 +111,11 @@ class FutureBox:
 
         return self._release_futures()
 
-    def loaded(self) -> int:
-        return len(self._futures)
+    @property
+    def pending_futures(self) -> int:
+        return self._tracker.pending_futures
 
 
 __all__ = [
-    'FutureBox'
+    'FutureAll'
 ]
