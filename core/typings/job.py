@@ -1,4 +1,5 @@
 import threading
+
 from enum import Enum
 from typing import Optional
 
@@ -75,7 +76,7 @@ class Job:
         self._waiters = []
         self._state = JobState.PENDING
         self._condition = threading.Condition()
-        self._processor = threading.Thread(
+        self._job_manager = threading.Thread(
             name=f'JobManagerThread {job_id}',
             target=self._process, args=(context,)
         )
@@ -126,14 +127,14 @@ class Job:
 
             active = self._get_active_futures()
             while len(active) > 0 and is_reasonably:
-                count, timeout = context.get_limits(completed, len(self._results))
+                count, timeout = context.get_limits(self._results)
 
                 for future in awaiter(active, timeout):
                     self._handle_future(future)
 
                 active = self._get_active_futures()
-                completed = self._get_completed_values()
-                is_reasonably = context.is_reasonably(active, completed)
+                # completed = self._get_completed_values()
+                is_reasonably = context.is_reasonably(active, self._results)
 
             tasks = context.get_tasks(self._results)
 
@@ -150,7 +151,7 @@ class Job:
             raise AlreadyRunning()
 
         self._state = JobState.RUNNING
-        self._processor.start()
+        self._job_manager.start()
         return self
 
     def cancel(self) -> bool:
@@ -164,9 +165,9 @@ class Job:
                     future.cancel()
                 self._condition.notify_all()
 
-        if self._processor is not None:
-            self._processor.join()
-            self._processor = None
+        if self._job_manager is not None:
+            self._job_manager.join()
+            self._job_manager = None
 
         return True
 
@@ -231,7 +232,7 @@ def first_completed(jobs: list[Job], timeout: Timeout = None) -> list[Job]:
 
 __all__ = [
     'Job',
-    #
+    # waiters
     'n_completed',
     'all_completed',
     'first_completed',

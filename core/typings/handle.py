@@ -23,7 +23,7 @@ class Handle:
     def cancel(self) -> bool:
         raise NotImplementedError
 
-    def result(self, timeout=None) -> object:
+    def result(self, timeout=None) -> Point:
         raise NotImplementedError
 
 
@@ -68,6 +68,6 @@ __all__ = [
     'Handle',
     'JobHandle',
     'VoidHandle',
-    #
+    # waiters
     'n_completed',
 ]

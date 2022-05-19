@@ -24,7 +24,9 @@ class Optimization(Estimator):
 
         awaited = self.algorithm.awaited_count
         backdoor = self.space.get_root(self.instance)
-        point, handles = self._await(self.estimate(backdoor))
+        # todo: search root estimation in cache
+        point, handles = self.estimate(backdoor).result(), []
+        assert point.estimated(), 'Root backdoor not estimated'
         with self.algorithm.start(point) as algorithm:
             while not self.limitation.exhausted():
                 if len(handles) > algorithm.max_points:
@@ -41,7 +43,7 @@ class Optimization(Estimator):
 
             return algorithm.solution()
 
-    def _await(self, *handles, count=None) -> (Point, Handles):
+    def _await(self, *handles: Handle, count: int = None):
         count = smin(count, len(handles))
         timeout = self.limitation.left()
         done = n_completed(handles, count, timeout)

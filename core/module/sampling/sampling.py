@@ -1,22 +1,4 @@
-from enum import Enum
-from typing import NamedTuple
-
-from numpy.random import RandomState
-
-
-# todo: is it needed at all?
-# class SamplingOrder(Enum):
-#     [
-#         RANDOM,
-#         DIRECT,
-#         REVERSED
-#     ] = range(3)
-
-
-class SamplingState(NamedTuple):
-    seed: int
-    power: int
-    sequence: list[int]
+from function.typings import Results
 
 
 class Sampling:
@@ -29,13 +11,8 @@ class Sampling:
         self.max_size = max_size
         # todo: regions settings
 
-    def get_state(self, seed: int, power: int) -> SamplingState:
-        random_state = RandomState(seed=seed)
-        if power > self.max_size:
-            sequence = random_state.randint(0, self.regions, self.max_size)
-        else:
-            sequence = random_state.permutation(power)
-        return SamplingState(seed, power, list(sequence))
+    def get_state(self, offset: int, size: int) -> 'SamplingState':
+        return SamplingState(self, offset, size)
 
     def generate(self, power: int, values: list[float]):
         raise NotImplementedError
@@ -47,14 +24,25 @@ class Sampling:
         return {
             'slug': self.slug,
             'name': self.name,
-            'order': self.order
+            # 'order': self.order
         }
 
     def __str__(self):
         return self.name
 
 
+class SamplingState:
+    def __init__(self, sampling: Sampling, offset: int, size: int):
+        self.size = size
+        self.offset = offset
+        self.sampling = sampling
+
+    def chunks(self, results: Results) -> list[tuple[int, int]]:
+        self.offset = 0
+        return [(0, 0)]
+
+
 __all__ = [
     'Sampling',
-    'SamplingOrder'
+    'SamplingState'
 ]

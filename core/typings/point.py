@@ -11,11 +11,14 @@ class Point(Comparable):
         return len(self.backdoor)
 
     def set(self, **estimation) -> 'Point':
-        if not self.estimation:
+        if self.estimation is None:
             self.estimation = estimation
             return self
         else:
             raise Exception('Estimation already set')
+
+    def estimated(self) -> bool:
+        return self.estimation is not None
 
     def value(self) -> float:
         return self.estimation.get('value', None)

@@ -1,13 +1,8 @@
-from typing import Optional, NamedTuple
+from typing import Optional
 
 from ..static import CORE_CACHE
 from util.collection import pick_by
-from function.typings import TaskId, TaskResult, Estimation
-
-
-class JobTask(NamedTuple):
-    id: TaskId
-    index: int
+from function.typings import Estimation, Results, WorkerArgs
 
 
 class Context:
@@ -16,28 +11,24 @@ class Context:
         self.instance = instance
 
         self.space = kwargs.get('space')
+        self.shaping = kwargs.get('shaping')
         self.function = kwargs.get('function')
         self.sampling = kwargs.get('sampling')
         self.executor = kwargs.get('executor')
         self.job_seed = kwargs.get('job_seed')
-        self.state = self.sampling.get_state(
-            self.job_seed, backdoor.task_count()
-        )
 
-    def get_tasks(self, results: list[TaskResult]) -> list[JobTask]:
-        tasks, offset = [], len(results)
-        count = self.sampling.get_count(self.backdoor, results)
+        self.sample_size = min(backdoor.task_count(), self.sampling.max_size) \
+            if not self.function.supbs_required else self.sampling.max_size
+        self.sample_state = self.sampling.get_state(0, self.sample_size)
 
-        if count > 0:
-            if self.power > self.sampling.max_size:
-                value = self.job_seed
-                tasks = [JobTask(i, value + i) for i in range(offset, offset + count)]
-            else:
-                values = self._get_sequence()
-                tasks = [JobTask(i, values[i]) for i in range(offset, offset + count)]
-        return tasks
+    def get_tasks(self, results: Results) -> list[WorkerArgs]:
+        # todo: pass shape model to sample_state
+        return [
+            (self.job_seed, self.sample_size, offset, length) for offset, length
+            in self.sample_state.chunks(self.executor.workers, results)
+        ]
 
-    def get_estimation(self, results: list[TaskResult] = None) -> Estimation:
+    def get_estimation(self, results: Results = None) -> Estimation:
         del CORE_CACHE.estimating[self.backdoor]
         if results is None:
             CORE_CACHE.canceled[self.backdoor] = self.job_seed
@@ -52,14 +43,13 @@ class Context:
         }
         return estimation
 
-    def get_limits(self, results: list[TaskResult]) -> tuple[int, Optional[int]]:
+    def get_limits(self, results: Results) -> tuple[int, Optional[int]]:
         return 0, None
 
-    def is_reasonably(self, futures, values):
+    def is_reasonably(self, futures, results: Results):
         return True
 
 
 __all__ = [
-    'JobTask',
     'Context',
 ]
