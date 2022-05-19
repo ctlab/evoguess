@@ -40,13 +40,6 @@ class _Tracker:
                     self.pending_futures += 1
                     future._waiters.append(self)
 
-    def release_futures(self):
-        with self.lock:
-            finished = self.finished_futures
-            self.finished_futures = []
-            self.event = None
-        return finished
-
     def _decrement_pending_calls(self):
         if self.event:
             self.pending_calls -= 1
@@ -72,23 +65,38 @@ class _Tracker:
             self.finished_futures.append(future)
 
 
+# noinspection PyProtectedMember
 class FutureBox:
     def __init__(self, futures):
         self._futures = set(futures)
         self._tracker = _Tracker(futures)
 
+    def _release_futures(self):
+        with self._tracker.lock:
+            finished = self._tracker.finished_futures
+            self._tracker.finished_futures = []
+            self._tracker.event = None
+        self._futures -= set(finished)
+
+        for future in finished:
+            with future._condition:
+                future._waiters.remove(self._tracker)
+        return finished
+
     # noinspection PyProtectedMember
     def as_complete(self, count: Uint = None, timeout: Float = None):
+        assert self._tracker.event is None, "not thread safety!"
+        assert count is None or count >= 0, "not uint!"
+        count = count or len(self._futures)
+
         if timeout is not None:
             if timeout <= 0:
-                return self._tracker.release_futures()
+                return self._release_futures()
             end_time = timeout + time.time()
 
-        assert count is None or count >= 0
         count = count or len(self._futures)
         with self._tracker.lock:
             if count > len(self._tracker.finished_futures):
-                assert self._tracker.event is None
                 self._tracker.event = threading.Event()
                 self._tracker.pending_calls = min(
                     self._tracker.pending_futures,
@@ -100,13 +108,7 @@ class FutureBox:
                 timeout = end_time - time.time()
             self._tracker.event.wait(timeout)
 
-        finished = self._tracker.release_futures()
-        for future in finished:
-            with future._condition:
-                future._waiters.remove(self._tracker)
-        self._futures -= set(finished)
-
-        return finished
+        return self._release_futures()
 
     def loaded(self) -> int:
         return len(self._futures)
