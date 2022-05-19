@@ -39,7 +39,7 @@ def ibs_function(common_data, tasks_data=None):
             if lit // 2 in assumption_vars:
                 assumptions.append(lit)
 
-        assert len(assumptions) == len(assumption_vars)
+        assert len(set(assumptions)) == len(set(assumption_vars))
 
         status, stats, _ = slv.solve(inst, assumptions, **kwargs)
         time, value = stats['time'], meas.get(stats)
