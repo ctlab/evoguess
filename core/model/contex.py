@@ -43,11 +43,11 @@ class Context:
         }
         return estimation
 
-    def get_limits(self, results: Results) -> tuple[int, Optional[int]]:
-        return 0, None
-
-    def is_reasonably(self, futures, results: Results):
-        return True
+    # def get_limits(self, results: Results) -> tuple[int, Optional[int]]:
+    #     return 0, None
+    #
+    # def is_reasonably(self, futures, results: Results):
+    #     return True
 
 
 __all__ = [

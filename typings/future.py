@@ -1,7 +1,6 @@
 from typing import Any
 
 
-# This class using only for typings!
 class Future:
     def cancel(self) -> bool:
         raise NotImplementedError
@@ -25,6 +24,21 @@ class Future:
         raise NotImplementedError
 
 
+# noinspection PyProtectedMember
+class AcquireFutures(object):
+    def __init__(self, *futures: Future):
+        self.futures = sorted(futures, key=id)
+
+    def __enter__(self):
+        for future in self.futures:
+            future._condition.acquire()
+
+    def __exit__(self, *args):
+        for future in self.futures:
+            future._condition.release()
+
+
 __all__ = [
-    'Future'
+    'Future',
+    'AcquireFutures'
 ]

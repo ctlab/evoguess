@@ -1,6 +1,6 @@
 from .._abc import Estimator
+from ..model.handle import *
 from ..static import CORE_CACHE
-from ..typings.handle import *
 
 from time import time as now
 from util.operator import smin

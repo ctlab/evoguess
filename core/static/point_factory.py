@@ -1,4 +1,4 @@
-from ..typings.point import Point
+from ..model.point import Point
 
 
 class PointFactory:

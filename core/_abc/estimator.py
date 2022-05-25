@@ -1,8 +1,8 @@
 from ..static import *
 from .._abc.core import *
-from ..typings.job import Job
-from ..typings.handle import *
-from ..typings.contex import Context
+from ..model.job import Job
+from ..model.handle import *
+from ..model.contex import Context
 
 
 class Estimator(Core):

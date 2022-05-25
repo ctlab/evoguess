@@ -1,27 +1,13 @@
 import time
 import threading
 
-from typings.future import Future
 from typings.optional import Uint, Float
+from typings.future import Future, AcquireFutures
 
 NOTIFIED_STATES = [
     'FINISHED',
     'CANCELLED_AND_NOTIFIED'
 ]
-
-
-# noinspection PyProtectedMember
-class _AcquireFutures(object):
-    def __init__(self, futures):
-        self.futures = sorted(futures, key=id)
-
-    def __enter__(self):
-        for future in self.futures:
-            future._condition.acquire()
-
-    def __exit__(self, *args):
-        for future in self.futures:
-            future._condition.release()
 
 
 class _Tracker:
@@ -32,7 +18,7 @@ class _Tracker:
         self.finished_futures = []
         self.lock = threading.Lock()
 
-        with _AcquireFutures(futures):
+        with AcquireFutures(futures):
             self.pending_futures = 0
             for future in futures:
                 if future._state in NOTIFIED_STATES:
@@ -111,6 +97,12 @@ class FutureAll:
 
         return self._release_futures()
 
+    def cancel(self) -> float:
+        canceled = 0.
+        for future in self._futures:
+            canceled += int(future.cancel())
+        return canceled / len(self._futures)
+
     def append_tracker_to(self, _list: list) -> 'FutureAll':
         _list.append(self._tracker)
         return self
@@ -118,6 +110,9 @@ class FutureAll:
     @property
     def pending_futures(self) -> int:
         return self._tracker.pending_futures
+
+    def __len__(self):
+        return len(self._futures)
 
 
 __all__ = [
