@@ -19,7 +19,7 @@ StatusMap = dict[str, int]
 ProcessId = int
 ProcessTime = float
 
-WorkerResults = tuple[
+WorkerResult = tuple[
     TimeMap,
     ValueMap,
     StatusMap,
@@ -29,7 +29,7 @@ WorkerResults = tuple[
 ]
 
 
-class ChunkResults(NamedTuple):
+class ChunkResult(NamedTuple):
     times: TimeMap
     values: ValueMap
     statuses: StatusMap
@@ -41,6 +41,6 @@ class ChunkResults(NamedTuple):
 
 __all__ = [
     'WorkerArgs',
-    'ChunkResults',
-    'WorkerResults',
+    'ChunkResult',
+    'WorkerResult',
 ]

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from ..static import CORE_CACHE
 from util.collection import pick_by
 from function.typings import Estimation, Results, WorkerArgs
@@ -11,7 +9,6 @@ class Context:
         self.instance = instance
 
         self.space = kwargs.get('space')
-        self.shaping = kwargs.get('shaping')
         self.function = kwargs.get('function')
         self.sampling = kwargs.get('sampling')
         self.executor = kwargs.get('executor')
@@ -22,10 +19,9 @@ class Context:
         self.sample_state = self.sampling.get_state(0, self.sample_size)
 
     def get_tasks(self, results: Results) -> list[WorkerArgs]:
-        # todo: pass shape model to sample_state
         return [
-            (self.job_seed, self.sample_size, offset, length) for offset, length
-            in self.sample_state.chunks(self.executor.workers, results)
+            (self.job_seed, self.sample_size, offset, length)
+            for offset, length in self.sample_state.chunks(results)
         ]
 
     def get_estimation(self, results: Results = None) -> Estimation:

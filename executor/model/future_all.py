@@ -1,7 +1,7 @@
 import time
 import threading
 
-from typings.optional import Uint, Float
+from typings.optional import Int, Float
 from typings.future import Future, AcquireFutures
 
 NOTIFIED_STATES = [
@@ -71,7 +71,7 @@ class FutureAll:
         return finished
 
     # noinspection PyProtectedMember
-    def as_complete(self, count: Uint = None, timeout: Float = None) -> list[Future]:
+    def as_complete(self, count: Int = None, timeout: Float = None) -> list[Future]:
         assert self._tracker.event is None, "not thread safety!"
         assert count is None or count >= 0, "not uint!"
         count = count or len(self._futures)

@@ -1,30 +1,28 @@
 from function.typings import Results
+from util.array import concat
 
 
 class Sampling:
     slug = 'sampling'
     name = 'Sampling'
 
-    def __init__(self, max_size: int, *args, **kwargs):
-        # self.order = order
-        self.regions = 1024
+    def __init__(self, max_size: int, split_into: int, *args, **kwargs):
         self.max_size = max_size
-        # todo: regions settings
+        self.split_into = split_into
 
     def get_state(self, offset: int, size: int) -> 'SamplingState':
         return SamplingState(self, offset, size)
 
-    def generate(self, power: int, values: list[float]):
+    def get_count(self, offset: int, size: int, results: Results):
         raise NotImplementedError
 
-    def summarize(self, values: list[float]):
+    def summarize(self, results: Results):
         raise NotImplementedError
 
     def __info__(self):
         return {
             'slug': self.slug,
             'name': self.name,
-            # 'order': self.order
         }
 
     def __str__(self):
@@ -38,8 +36,14 @@ class SamplingState:
         self.sampling = sampling
 
     def chunks(self, results: Results) -> list[tuple[int, int]]:
-        self.offset = 0
-        return [(0, 0)]
+        count = self.sampling.get_count(self.offset, self.size, results)
+        size, remainder = divmod(count, self.sampling.split_into)
+        chunks = []
+        for chunk_i in range(0, self.sampling.split_into):
+            chunk_size = size + 1 if chunk_i < remainder else 0
+            chunks.append((self.offset, chunk_size))
+            self.offset += chunk_size
+        return chunks
 
 
 __all__ = [

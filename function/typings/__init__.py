@@ -19,10 +19,10 @@ Payload = tuple[
 
 WorkerCallable = Callable[
     [WorkerArgs, Payload],
-    WorkerResults
+    WorkerResult
 ]
 
-Results = list[ChunkResults]
+Results = list[ChunkResult]
 Estimation = dict[str, Any]
 
 __all__ = [

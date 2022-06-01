@@ -1,6 +1,6 @@
 from time import time as now
 
-from core.typings.point import Point
+from core.model.point import Point
 
 
 class _Algorithm:

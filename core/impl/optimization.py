@@ -19,7 +19,7 @@ class Optimization(Estimator):
         CORE_CACHE.best_point = None
         self.optimization_trace = []
 
-    def launch(self, *args, **kwargs):
+    def launch(self, *args, **kwargs) -> Solution:
         self.start_stamp = now()
 
         awaited = self.algorithm.awaited_count
@@ -41,6 +41,7 @@ class Optimization(Estimator):
                 self.limitation.set('time', spent_time)
                 # self.limitation.update(algorithm)
 
+            [h.cancel() for h in handles]
             return algorithm.solution()
 
     def _await(self, *handles: Handle, count: int = None):

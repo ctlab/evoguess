@@ -16,16 +16,14 @@ class Epsilon(Sampling):
         super().__init__(self.max, *args, **kwargs)
 
     def _n_e_d(self, values):
-        n = len(values)
-        e = sum(values) / n
-        d = sum([(value - e) ** 2 for value in values]) / (n - 1)
+        n, e = len(values), sum(values) / len(values)
         return n, e, sum([(value - e) ** 2 for value in values]) / (n - 1)
 
     def _get_eps(self, values):
         n, e, d = self._n_e_d(values)
         return sqrt(d / (self.delta * n)) / e
 
-    def get_count(self, backdoor, values):
+    def get_count(self, offset, size, values):
         count = len(values)
         bd_count = backdoor.task_count()
 
@@ -37,10 +35,7 @@ class Epsilon(Sampling):
                 return max(0, bound - count)
         return 0
 
-    def get_size(self):
-        return self.max, self.step
-
-    def report(self, values):
+    def summarize(self, values):
         return {
             'epsilon': self._get_eps(values)
         }

@@ -1,6 +1,11 @@
-from .impl import *
 from . import impl
+
+from .impl import *
+from .comparator import Comparator
 
 impls = impl.comparators
 
-__all__ = impl.__all__
+__all__ = [
+    'Comparator',
+    impl.__all__
+]

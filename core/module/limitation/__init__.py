@@ -1,12 +1,13 @@
+from . import impl
+
 from .impl import *
-from . import tools, impl
+from .limitation import Limitation
 
 impls = {
     **impl.limits,
-    **tools.limits
 }
 
 __all__ = [
-    'tools',
+    'Limitation',
     *impl.__all__
 ]

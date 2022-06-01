@@ -1,5 +1,9 @@
 from typing import Any
 
+from typings.optional import Int
+
+Timeout = Int
+
 
 class Future:
     def cancel(self) -> bool:
@@ -17,10 +21,10 @@ class Future:
     def add_done_callback(self, fn):
         raise NotImplementedError
 
-    def result(self, timeout=None) -> Any:
+    def result(self, timeout: Timeout = None) -> Any:
         raise NotImplementedError
 
-    def exception(self, timeout=None) -> Exception:
+    def exception(self, timeout: Timeout = None) -> Exception:
         raise NotImplementedError
 
 
@@ -40,5 +44,6 @@ class AcquireFutures(object):
 
 __all__ = [
     'Future',
+    'Timeout',
     'AcquireFutures'
 ]

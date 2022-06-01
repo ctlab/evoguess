@@ -13,10 +13,7 @@ class Const(Sampling):
         count = min(self.count, backdoor.task_count())
         return max(0, count - len(values))
 
-    def get_size(self):
-        return self.count, self.count
-
-    def report(self, values):
+    def summarize(self, values):
         return {}
 
     def __info__(self):

@@ -1,12 +1,23 @@
+from function import Function
+
 from ..static import *
 from .._abc.core import *
 from ..model.job import Job
 from ..model.handle import *
 from ..model.contex import Context
 
+from ..module.space import Space
+from ..module.sampling import Sampling
+from ..module.comparator import Comparator
+
 
 class Estimator(Core):
-    def __init__(self, space, sampling, function, comparator, *args, **kwargs):
+    def __init__(self,
+                 space: Space,
+                 sampling: Sampling,
+                 function: Function,
+                 comparator: Comparator,
+                 *args, **kwargs):
         self.space = space
         self.sampling = sampling
         self.function = function

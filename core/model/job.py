@@ -1,15 +1,12 @@
 import threading
 
 from enum import Enum
-from typing import Optional
 
 from util.array import none
 from util.collection import for_each
-from function.typings import ChunkResults as Res
-from typings.future import Future, AcquireFutures
+from function.typings import ChunkResult as Result
 from util.error import AlreadyRunning, CancelledError
-
-Timeout = Optional[int]
+from typings.future import Future, Timeout, AcquireFutures
 
 
 class JobState(Enum):
@@ -91,7 +88,7 @@ class Job(Future):
                             self._exceptions.append(future._exception)
                         elif future._result is not None:
                             idx = self._futures.index(None)
-                            self._results[idx] = Res(*future._result)
+                            self._results[idx] = Result(*future._result)
 
             tasks = context.get_tasks(self._results)
             iterables = [(args, payload) for args in tasks]
