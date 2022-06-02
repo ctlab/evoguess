@@ -26,10 +26,13 @@ class CNFPlus:
         cnfp = CNFP(from_file=self.path)
         cnf_instance[self.path] = cnfp
 
-    def clauses(self):
+    def clauses(self, constraints=()):
         with lock:
             self._parse()
-            return cnf_instance[self.path].clauses
+            return [
+                *cnf_instance[self.path].clauses,
+                *constraints
+            ]
 
     def atmosts(self):
         with lock:

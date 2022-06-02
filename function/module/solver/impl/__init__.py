@@ -6,6 +6,7 @@ from .native import *
 solvers = {
     Linear.slug: Linear,
     Kissat.slug: Kissat,
+    Cadical5.slug: Cadical5,
     # pysat
     Cadical.slug: Cadical,
     Glucose3.slug: Glucose3,

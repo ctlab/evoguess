@@ -11,13 +11,15 @@ class PySat(Solver):
     name = 'Solver: PySat'
 
     def prototype(self, instance, **kwargs):
-        solver = self.constructor(instance.clauses(), use_timer=True)
+        clauses = instance.clauses(kwargs.get('constraints', []))
+        solver = self.constructor(clauses, use_timer=True)
         for [literals, rhs] in kwargs.get('atmosts', []):
             solver.add_atmost(literals, rhs)
         return _IPySat(solver)
 
     def propagate(self, instance, assumptions, **kwargs):
-        with self.constructor(instance.clauses(), use_timer=True) as solver:
+        clauses = instance.clauses(kwargs.get('constraints', []))
+        with self.constructor(clauses, use_timer=True) as solver:
             for [literals, rhs] in kwargs.get('atmosts', []):
                 solver.add_atmost(literals, rhs)
             status, statistics, literals = self.propagate_with(solver, assumptions, **kwargs)
@@ -25,7 +27,8 @@ class PySat(Solver):
         return status, statistics, literals
 
     def solve(self, instance, assumptions, limits=None, **kwargs):
-        with self.constructor(instance.clauses(), use_timer=True) as solver:
+        clauses = instance.clauses(kwargs.get('constraints', []))
+        with self.constructor(clauses, use_timer=True) as solver:
             for [literals, rhs] in kwargs.get('atmosts', []):
                 solver.add_atmost(literals, rhs)
 
@@ -49,7 +52,7 @@ class PySat(Solver):
         return status, statistics, literals
 
     @staticmethod
-    def solve_with(solver, assumptions, limits, expect_interrupt=False):
+    def solve_with(solver, assumptions, limits, expect_interrupt=False, **kwargs):
         if limits and limits.get('time_limit', 0) > 0:
             timer = Timer(limits['time_limit'], solver.interrupt, ())
             timer.start()

@@ -34,10 +34,11 @@ class Native(Solver):
     def solve(self, instance, assumptions, limits=None, **kwargs):
         files, launch_args = [], [join(SOLVER_PATH, self.file)]
 
-        source = instance.cnf.source(assumptions)
+        constraints = kwargs.get('constraints', [])
+        source = instance.cnf.source(assumptions, constraints)
         if self.stdin_file is not None:
             with NamedTemporaryFile(delete=False) as handle:
-                handle.write(source)
+                handle.write(source.encode())
                 files.append(handle.name)
                 launch_args.append(self.stdin_file % handle.name)
 
@@ -49,7 +50,7 @@ class Native(Solver):
         timeout = limits and limits.get('time_limit')
         for key in self.budget.keys():
             if limits and limits.get(key, 0) > 0 and self.budget[key]:
-                launch_args.append(self.budget[key] % limits[key])
+                launch_args.extend(self.budget[key](limits[key]))
 
         timestamp = now()
         timeout = timeout and timeout + 1
@@ -78,7 +79,7 @@ class Native(Solver):
         statistics = {}
         for key, pattern in self.statistic.items():
             result = pattern.search(output)
-            statistics[key] = result and int(result.group(1))
+            statistics[key] = int(result.group(1)) if result else 0
 
         return statistics, concat(*[
             [int(var) for var in line.split()]
@@ -94,9 +95,9 @@ class Kissat(Native):
     stdin_file = None
     stdout_file = None
     budget = {
-        'time_limit': '--time=%d',
-        'conf_budget': '--conflicts=%d',
-        'decs_budget': '--decisions=%d',
+        'time_limit': lambda d: [f'--time={int(d)}'],
+        'conf_budget': lambda d: [f'--conflicts={int(d)}'],
+        'decs_budget': lambda d: [f'--decisions={int(d)}'],
     }
     statistic = {
         'restarts': re.compile(r'^c restarts:\s+(\d+)', re.MULTILINE),
@@ -104,6 +105,27 @@ class Kissat(Native):
         'decisions': re.compile(r'^c decisions:\s+(\d+)', re.MULTILINE),
         'propagations': re.compile(r'^c propagations:\s+(\d+)', re.MULTILINE),
         'learned_literals': re.compile(r'^c clauses_learned:\s+(\d+)', re.MULTILINE),
+    }
+
+
+class Cadical5(Native):
+    slug = 'solver:native:cadical'
+    name = 'Solver: Native(CaDiCaL)'
+    file = 'cadical-rel-1.5.0/build/cadical'
+
+    stdin_file = None
+    stdout_file = None
+    budget = {
+        'time_limit': lambda d: ['-t', f'{int(d)}'],
+        'conf_budget': lambda d: ['-c', f'{int(d)}'],
+        'decs_budget': lambda d: ['-d', f'{int(d)}'],
+    }
+    statistic = {
+        'restarts': re.compile(r'^c restarts:\s+(\d+)', re.MULTILINE),
+        'conflicts': re.compile(r'^c conflicts:\s+(\d+)', re.MULTILINE),
+        'decisions': re.compile(r'^c decisions:\s+(\d+)', re.MULTILINE),
+        'propagations': re.compile(r'^c propagations:\s+(\d+)', re.MULTILINE),
+        'learned_literals': re.compile(r'^c learned_lits:\s+(\d+)', re.MULTILINE),
     }
 
 
@@ -123,6 +145,6 @@ class Kissat(Native):
 
 
 __all__ = [
-    # 'Rokk',
-    'Kissat'
+    'Kissat',
+    'Cadical5'
 ]

@@ -17,8 +17,8 @@ class Instance:
     def __str__(self):
         return self.name
 
-    def clauses(self):
-        return self.cnf.clauses()
+    def clauses(self, constraints=()):
+        return self.cnf.clauses(constraints)
 
     def max_literal(self):
         return self.cnf.max_literal()

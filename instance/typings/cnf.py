@@ -41,19 +41,22 @@ class CNF:
         cnf_max_literal[self.path] = max_lit
         cnf_source[self.path] = ''.join(lines)
 
-    def source(self, assumptions=()):
-        with lock:
-            self._parse()
-            return ''.join([
-                f'p cnf {cnf_max_literal[self.path]} ',
-                f'{len(cnf_clauses[self.path]) + len(assumptions)}\n',
-                cnf_source[self.path], *(f'{x} 0\n' for x in assumptions)
-            ])
+    def source(self, assumptions=(), constraints=()):
+        clauses = self.clauses(constraints)
+        return ''.join([
+            f'p cnf {cnf_max_literal[self.path]} ',
+            f'{len(clauses) + len(assumptions)}\n',
+            cnf_source[self.path], *(f'{x} 0\n' for x in assumptions),
+            *(' '.join(map(str, c)) + ' 0\n' for c in constraints),
+        ])
 
-    def clauses(self):
+    def clauses(self, constraints=()):
         with lock:
             self._parse()
-            return cnf_clauses[self.path]
+            return [
+                *cnf_clauses[self.path],
+                *constraints
+            ]
 
     def max_literal(self):
         with lock:
