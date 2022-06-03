@@ -115,6 +115,14 @@ class InverseBackdoorSets(Function):
             'process_time': round(process_time, 2),
         }
 
+    def __info__(self):
+        return {
+            **super().__info__(),
+            'min_xi': self.min_xi,
+            'limit_key': self.limit_key,
+            'limit_value': self.limit_value
+        }
+
 
 __all__ = [
     'InverseBackdoorSets'
