@@ -25,17 +25,20 @@ class Variables:
 
     @staticmethod
     def _to_str(variables):
-        strings, i, j = [], 0, 1
-        while i < len(variables):
-            if j == len(variables) or variables[j] - variables[i] != j - i:
-                if j - i > 2:
-                    strings.append(f'{variables[i]}..{variables[j - 1]}')
+        try:
+            strings, i, j = [], 0, 1
+            while i < len(variables):
+                if j == len(variables) or variables[j] - variables[i] != j - i:
+                    if j - i > 2:
+                        strings.append(f'{variables[i]}..{variables[j - 1]}')
+                    else:
+                        strings.extend(f'{variables[k]}' for k in range(i, j))
+                    i, j = j, j + 1
                 else:
-                    strings.extend(f'{variables[k]}' for k in range(i, j))
-                i, j = j, j + 1
-            else:
-                j += 1
-        return ' '.join(strings)
+                    j += 1
+            return ' '.join(strings)
+        except TypeError:
+            return str(variables)
 
     @staticmethod
     def _from_str(string):

@@ -10,12 +10,11 @@ class Backdoor(Variables):
     name = 'Backdoor'
 
     def __init__(self, _list=()):
-        super().__init__(sorted(set(_list)))
+        super().__init__(list(_list))
         self._mask = [True] * self.length
         self._variables = copy(self._list)
 
         assert len(self._list) > 0, 'Empty backdoor'
-        assert self._list[0] >= 0, 'Backdoor contains negative numbers'
         if len(_list) != self.length:
             warnings.warn('Repeating variables in backdoor', Warning)
 
