@@ -10,7 +10,7 @@ class Const(Sampling):
         super().__init__(count, *args, **kwargs)
 
     def get_count(self, backdoor, results=()):
-        count = min(self.count, backdoor.task_count())
+        count = min(self.count, backdoor.power())
         return max(0, count - len(results))
 
     def get_size(self):

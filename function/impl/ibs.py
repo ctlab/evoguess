@@ -2,46 +2,33 @@ from .._abc.function import *
 
 from os import getpid
 from time import time as now
+from util.array import side_trim
 from numpy.random.mtrand import RandomState
 
 
 def ibs_function(common_data, tasks_data=None):
-    inst, slv, meas, limits, info = common_data
+    inst, slv, meas, limits, payload = common_data
 
-    results = []
-    bits = decode_bits(info)
-    [dim_type, bd_type] = bits[:2]
-    bd_base = to_number(bits[2:8], 6)
-    mask_len = to_number(bits[8:24], 16)
-    bd_mask = bits[24:mask_len + 24]
+    bits = decode_bits(payload)
+    dim_type, mask = bits[0], bits[1:]
+    backdoor = inst.get_backdoor(mask=mask)
 
-    supbs_vars = inst.supbs.variables()
-    backdoor = inst.get_backdoor2(bd_type, bd_base, bd_mask)
     assumption_vars = backdoor.variables() + inst.output_set.variables()
     assumption_vars += inst.extra_set.variables() if inst.extra_set else []
 
-    with slv.prototype(inst) as propagator:
-        for task_data in tasks_data:
-            st_timestamp = now()
-            task_i, task_value = task_data
+    results = []
+    for task_data in tasks_data:
+        st_timestamp = now()
+        task_i, task_value = task_data
+        # todo: provide uniq seed
+        state = RandomState(seed=task_value)
+        assumptions, constraints = \
+            inst.get_supplements(slv, state, backdoor=backdoor)
 
-            # todo: provide uniq seed
-            state = RandomState(seed=task_value)
-            i_values = state.randint(0, bd_base, size=len(supbs_vars))
-            i_assumptions = [x if i_values[i] else -x for i, x in enumerate(supbs_vars)]
-            _, _, literals = propagator.propagate(i_assumptions)
-
-            assumptions = []
-            for lit in literals:
-                if abs(lit) in assumption_vars:
-                    assumptions.append(lit)
-
-            kwargs = {'limits': limits}
-            if inst.cnf.has_atmosts and inst.cnf.atmosts():
-                kwargs['atmosts'] = inst.cnf.atmosts()
-            status, stats, _ = slv.solve(inst, assumptions, **kwargs)
-            time, value = stats['time'], meas.get(stats)
-            results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
+        kwargs = {'limits': limits}
+        status, stats, _ = slv.solve(inst, assumptions, **kwargs)
+        time, value = stats['time'], meas.get(stats)
+        results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
 
     return results
 
@@ -75,16 +62,10 @@ class InverseBackdoorSets(Function):
         assert instance.supbs is not None, "IBS method depends on instance supbs"
         assert instance.output_set is not None, "IBS method depends on instance output_set"
 
-        bd_mask = instance.get_bd_mask(backdoor)
+        bd_mask = side_trim(backdoor.get_mask(), at_start=False)
         return instance, self.solver, self.measure, {
             self.limit_key: self.limit_value
-        }, encode_bits([
-            *to_bits(dim_type, 1),
-            *to_bits(backdoor.kind, 1),
-            *to_bits(backdoor.base, 6),
-            *to_bits(len(bd_mask), 16),
-            *bd_mask
-        ])
+        }, encode_bits([*to_bits(dim_type, 1), *bd_mask])
 
     def calculate(self, backdoor, *cases):
         process_time, time_sum = 0, 0

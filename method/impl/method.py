@@ -22,9 +22,8 @@ class Context:
 
         self.state = {
             **seeds,
-            'base': backdoor.base,
             'size': len(backdoor),
-            'power': backdoor.task_count(),
+            'power': backdoor.power(),
         }
 
         self.dim_type = to_bit(self.state['power'] > self.sampling.max_size)

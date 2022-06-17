@@ -8,8 +8,8 @@ from time import time as now
 from itertools import combinations, product
 
 from instance.typings.cnf import CNF
+from instance.typings import Backdoor
 from function.module.solver import solvers
-from instance.typings.variables import BaseBackdoor
 
 up_solver = solvers.get(f'solver:pysat:g3')()
 
@@ -25,7 +25,7 @@ def decimal_to_base(number, bases):
 def worker_func(args):
     st_stamp = now()
     case, cnf, solver, bds = args
-    backdoors = list(map(BaseBackdoor.parse, bds))
+    backdoors = list(map(Backdoor.parse, bds))
 
     info = {}
     max_literal = cnf.max_literal()

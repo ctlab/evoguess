@@ -2,57 +2,46 @@ from .._abc.function import *
 
 from os import getpid
 from time import time as now
+from util.array import side_trim
+from instance.typings.var import compress
 from numpy.random.mtrand import RandomState
 
 
 def gad_function(common_data, tasks_data=None):
-    inst, slv, meas, info = common_data
+    inst, slv, meas, payload = common_data
+
+    bits = decode_bits(payload)
+    dim_type, mask = bits[0], bits[1:]
+    backdoor = inst.get_backdoor(mask=mask)
+    assumptions, constraints = inst.get_supplements(slv)
 
     results = []
-    bits = decode_bits(info)
-    [dim_type, bd_type] = bits[:2]
-    bd_base = to_number(bits[2:8], 6)
-    mask_len = to_number(bits[8:24], 16)
-    bd_mask = bits[24:mask_len + 24]
-
-    kwargs = {}
-    if inst.cnf.has_atmosts and inst.cnf.atmosts():
-        kwargs['atmosts'] = inst.cnf.atmosts()
-
-    backdoor = inst.get_backdoor2(bd_type, bd_base, bd_mask)
-    bases = backdoor.get_bases()
-
-    extra_assumptions = []
-    if inst.has_intervals():
-        state = RandomState()
-        supbs_vars = inst.supbs.variables()
-        output_vars = inst.output_set.variables()
-        supbs_values = state.randint(0, bd_base, size=len(supbs_vars))
-        supbs_assumptions = [x if supbs_values[i] else -x for i, x in enumerate(supbs_vars)]
-        _, _, solution = slv.solve(inst, supbs_assumptions, **kwargs)
-
-        for lit in solution:
-            if abs(lit) in output_vars:
-                extra_assumptions.append(lit)
-
-        assert len(extra_assumptions) == len(output_vars)
-
+    var_bases = backdoor.get_var_bases()
     for task_data in tasks_data:
         st_timestamp = now()
         task_i, task_value = task_data
 
         if dim_type == NUMBERS:
             state = RandomState(seed=task_value)
-            values = state.randint(0, bd_base, size=len(backdoor))
-            # todo: apply backdoor.get_masks() to values
+            values = state.randint(0, var_bases)
         else:
-            values = decimal_to_base(task_value, bases)
-            # todo: map values using backdoor.get_mappers()
+            values = decimal_to_base(task_value, var_bases)
 
-        assumptions = inst.get_assumptions(backdoor, values)
-        status, stats, _ = slv.solve(inst, assumptions + extra_assumptions, **kwargs)
+        task_values = {
+            var: value for var, value in zip(backdoor, values)
+        }
+        task_assumptions, task_constraints = compress(*(
+            var.supplements(task_values) for var in backdoor
+        ))
+
+        print(task_i, repr(backdoor), task_assumptions, task_constraints)
+        status, stats, _ = slv.solve(
+            inst, assumptions + task_assumptions,
+            constraints=constraints + task_constraints
+        )
         time, value = stats['time'], meas.get(stats)
         results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
+
     return results
 
 
@@ -65,13 +54,9 @@ class GuessAndDetermine(Function):
         return gad_function
 
     def prepare_data(self, state, instance, backdoor, dim_type):
-        bd_mask = instance.get_bd_mask(backdoor)
+        bd_mask = side_trim(backdoor.get_mask(), at_start=False)
         return instance, self.solver, self.measure, encode_bits([
-            *to_bits(dim_type, 1),
-            *to_bits(backdoor.kind, 1),
-            *to_bits(backdoor.base, 6),
-            *to_bits(len(bd_mask), 16),
-            *bd_mask
+            *to_bits(dim_type, 1), *bd_mask
         ])
 
     def calculate(self, backdoor, *cases):
@@ -85,7 +70,7 @@ class GuessAndDetermine(Function):
             statistic[case[4]] += 1
 
         time, value, = None, None
-        count = backdoor.task_count()
+        count = backdoor.power()
         if count == len(cases):
             time, value = time_sum, value_sum
         elif len(cases) > 0:

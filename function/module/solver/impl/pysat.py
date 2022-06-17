@@ -13,15 +13,17 @@ class PySat(Solver):
     def prototype(self, instance, **kwargs):
         clauses = instance.clauses(kwargs.get('constraints', []))
         solver = self.constructor(clauses, use_timer=True)
-        for [literals, rhs] in kwargs.get('atmosts', []):
-            solver.add_atmost(literals, rhs)
+        if instance.cnf.has_atmosts and instance.cnf.atmosts():
+            for [literals, rhs] in instance.cnf.atmosts():
+                solver.add_atmost(literals, rhs)
         return _IPySat(solver)
 
     def propagate(self, instance, assumptions, **kwargs):
         clauses = instance.clauses(kwargs.get('constraints', []))
         with self.constructor(clauses, use_timer=True) as solver:
-            for [literals, rhs] in kwargs.get('atmosts', []):
-                solver.add_atmost(literals, rhs)
+            if instance.cnf.has_atmosts and instance.cnf.atmosts():
+                for [literals, rhs] in instance.cnf.atmosts():
+                    solver.add_atmost(literals, rhs)
             status, statistics, literals = self.propagate_with(solver, assumptions, **kwargs)
 
         return status, statistics, literals
@@ -29,8 +31,9 @@ class PySat(Solver):
     def solve(self, instance, assumptions, limits=None, **kwargs):
         clauses = instance.clauses(kwargs.get('constraints', []))
         with self.constructor(clauses, use_timer=True) as solver:
-            for [literals, rhs] in kwargs.get('atmosts', []):
-                solver.add_atmost(literals, rhs)
+            if instance.cnf.has_atmosts and instance.cnf.atmosts():
+                for [literals, rhs] in instance.cnf.atmosts():
+                    solver.add_atmost(literals, rhs)
 
             if limits and limits.get('conf_budget', 0) > 0:
                 kwargs['expect_interrupt'] = True

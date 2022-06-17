@@ -26,7 +26,7 @@ class Epsilon(Sampling):
 
     def get_count(self, backdoor, results=()):
         count = len(results)
-        bd_count = backdoor.task_count()
+        bd_count = backdoor.power()
 
         if count == 0:
             return min(self.min, bd_count)

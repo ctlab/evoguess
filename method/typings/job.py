@@ -1,7 +1,7 @@
 import threading
 import traceback
 
-from util.array import unzip, none
+from util.array import unzip, list_of
 from util.collection import for_each
 from util.error import AlreadyRunning, CancelledError
 
@@ -145,8 +145,8 @@ class Job:
             with self._condition:
                 self._indexes.extend(indexes)
                 self._futures.extend(futures)
-                self._results.extend(none(tasks))
-                self._handled.extend(none(futures))
+                self._results.extend(list_of(None, tasks))
+                self._handled.extend(list_of(None, futures))
 
             active = self._get_active_futures()
             while len(active) > 0 and is_reasonably:

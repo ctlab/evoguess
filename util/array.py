@@ -1,3 +1,6 @@
+from copy import copy
+
+
 def concat(*lists):
     return sum(lists, [])
 
@@ -11,11 +14,11 @@ def slice_by_count(count, _list):
     return slice_by_size(len(_list) // count, _list)
 
 
-def none(dimension):
+def list_of(example, dimension):
     if hasattr(dimension, '__len__'):
-        return [None] * len(dimension)
+        return [copy(example) for _ in dimension]
     else:
-        return [None] * int(dimension)
+        return [copy(example) for _ in range(int(dimension))]
 
 
 def first_non_zero_position(_list, direction=True):

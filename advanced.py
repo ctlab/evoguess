@@ -16,7 +16,7 @@ from executor.module.shaping.impl import Chunks
 
 from instance.impl import Instance
 from instance.typings.cnf import CNF
-from instance.typings.variables import Interval
+from instance.typings import Interval
 
 from output.impl import JSONOut
 
@@ -41,8 +41,8 @@ if __name__ == '__main__':
             sampling=Const(count=100)
         ),
         instance=Instance(
-            input_set=Interval(start=1, length=3244),
             cnf=CNF(path='sort/pvs_4_7.cnf'),
+            input_set=Interval(start=1, length=3244),
         ),
         output=JSONOut(path='test/pvs/4_7'),
     )
