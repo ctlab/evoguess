@@ -17,22 +17,6 @@ class Variables:
         self._var_bases = None
         self._deps_bases = None
 
-    def _upd_var_deps(self):
-        self._var_deps = list(set(chain(*[
-            v.deps for v in self.variables()
-        ])))
-
-    def _upd_var_bases(self):
-        self._var_bases = [
-            v.base for v in self.variables()
-        ]
-
-    def _upd_deps_bases(self):
-        self._deps_bases = [
-            2 if isinstance(v, int) else
-            v.base for v in self.get_var_deps()
-        ]
-
     def variables(self) -> list[Var]:
         return self._variables
 
@@ -68,6 +52,22 @@ class Variables:
 
     def __str__(self):
         return ' '.join(map(str, self.variables()))
+
+    def _upd_var_deps(self):
+        self._var_deps = list(set(chain(*[
+            v.deps for v in self.variables()
+        ])))
+
+    def _upd_var_bases(self):
+        self._var_bases = [
+            v.base for v in self.variables()
+        ]
+
+    def _upd_deps_bases(self):
+        self._deps_bases = [
+            2 if isinstance(v, int) else
+            v.base for v in self.get_var_deps()
+        ]
 
     @staticmethod
     def _from(string: str, rules: VarRules = ()):

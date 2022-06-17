@@ -18,7 +18,7 @@ class Merged(Var):
         if self.name in value_dict:
             value = value_dict[self.name]
         else:
-            value = self.fn(value_dict[i] for i in self.group)
+            value = self.fn(*(value_dict[i] for i in self.group))
 
         constraints, size = [], len(self.group)
         for case in range(0, 2 ** size):

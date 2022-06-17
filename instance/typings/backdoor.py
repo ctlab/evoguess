@@ -13,10 +13,9 @@ class Backdoor(Variables):
 
     def __init__(self, variables: list[Var]):
         super().__init__(variables)
+        self._var_state = None
         self._length = len(variables)
         self._mask = list_of(1, self._length)
-
-        self._var_state = None
 
     def _upd_var_state(self):
         self._var_state = list(compress(

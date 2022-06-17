@@ -16,8 +16,8 @@ from function.module.solver.impl.pysat import Glucose3
 from executor.impl import ProcessExecutor
 from executor.module.shaping.impl import Chunks
 
-from instance.cnf import CNF
 from instance.impl import Instance
+from instance.typings.cnf import CNF
 from instance.typings import Interval
 
 from output.impl import JSONOut

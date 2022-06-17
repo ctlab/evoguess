@@ -69,7 +69,7 @@
   },
   "backdoors": [
     {
-      "slug": "backdoor:base"
+      "slug": "backdoor"
     }
   ]
 }

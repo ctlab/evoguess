@@ -34,7 +34,6 @@ def gad_function(common_data, tasks_data=None):
             var.supplements(task_values) for var in backdoor
         ))
 
-        print(task_i, repr(backdoor), task_assumptions, task_constraints)
         status, stats, _ = slv.solve(
             inst, assumptions + task_assumptions,
             constraints=constraints + task_constraints

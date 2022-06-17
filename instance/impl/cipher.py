@@ -29,7 +29,7 @@ class StreamCipher(Instance):
             self, assumptions, constraints=constraints
         )
         solution_values = {
-            abs(lit): 1 if lit else 0 for lit in solution
+            abs(lit): 1 if lit > 0 else 0 for lit in solution
         }
         return compress(*(
             var.supplements(solution_values) for var in intervals

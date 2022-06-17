@@ -13,9 +13,6 @@ def ibs_function(common_data, tasks_data=None):
     dim_type, mask = bits[0], bits[1:]
     backdoor = inst.get_backdoor(mask=mask)
 
-    assumption_vars = backdoor.variables() + inst.output_set.variables()
-    assumption_vars += inst.extra_set.variables() if inst.extra_set else []
-
     results = []
     for task_data in tasks_data:
         st_timestamp = now()
@@ -25,7 +22,8 @@ def ibs_function(common_data, tasks_data=None):
         assumptions, constraints = \
             inst.get_supplements(slv, state, backdoor=backdoor)
 
-        kwargs = {'limits': limits}
+        print(task_i, repr(backdoor), assumptions, constraints)
+        kwargs = {'limits': limits, 'constraints': constraints}
         status, stats, _ = slv.solve(inst, assumptions, **kwargs)
         time, value = stats['time'], meas.get(stats)
         results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
