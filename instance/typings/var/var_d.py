@@ -7,7 +7,7 @@ class Domain(Var):
         super().__init__(len(group), name)
 
     @property
-    def deps(self) -> list[AnyVar]:
+    def deps(self) -> List[AnyVar]:
         return [self]
 
     def supplements(self, value_dict) -> Supplements:

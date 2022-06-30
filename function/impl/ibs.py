@@ -22,7 +22,7 @@ def ibs_function(common_data, tasks_data=None):
         assumptions, constraints = \
             inst.get_supplements(slv, state, backdoor=backdoor)
 
-        print(task_i, repr(backdoor), assumptions, constraints)
+        # print(task_i, repr(backdoor), assumptions, constraints)
         kwargs = {'limits': limits, 'constraints': constraints}
         status, stats, _ = slv.solve(inst, assumptions, **kwargs)
         time, value = stats['time'], meas.get(stats)

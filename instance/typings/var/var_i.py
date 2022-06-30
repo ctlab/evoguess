@@ -7,7 +7,7 @@ class Index(Var):
         super().__init__(2, str(index))
 
     @property
-    def deps(self) -> list[AnyVar]:
+    def deps(self) -> List[AnyVar]:
         return [self.index]
 
     def supplements(self, value_dict) -> Supplements:

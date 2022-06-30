@@ -1,8 +1,8 @@
-from typing import Union
+from typing import Union, List, Tuple
 
-Assumptions = list[int]
-Constraints = list[list[int]]
-Supplements = tuple[Assumptions, Constraints]
+Assumptions = List[int]
+Constraints = List[List[int]]
+Supplements = Tuple[Assumptions, Constraints]
 
 
 class Var:
@@ -11,7 +11,7 @@ class Var:
         self.name = name
 
     @property
-    def deps(self) -> list['AnyVar']:
+    def deps(self) -> List['AnyVar']:
         raise NotImplementedError
 
     def supplements(self, value_dict) -> Supplements:
@@ -34,6 +34,7 @@ AnyVar = Union[Var, int]
 
 __all__ = [
     'Var',
+    'List',
     'AnyVar',
     'Assumptions',
     'Constraints',

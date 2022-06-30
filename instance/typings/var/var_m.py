@@ -11,7 +11,7 @@ class Merged(Var):
         super().__init__(2, name)
 
     @property
-    def deps(self) -> list[AnyVar]:
+    def deps(self) -> List[AnyVar]:
         return self.group
 
     def supplements(self, value_dict) -> Supplements:

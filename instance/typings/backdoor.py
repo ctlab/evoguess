@@ -11,7 +11,7 @@ class Backdoor(Variables):
     slug = 'backdoor'
     name = 'Backdoor'
 
-    def __init__(self, variables: list[Var]):
+    def __init__(self, variables: List[Var]):
         super().__init__(variables)
         self._var_state = None
         self._length = len(variables)
@@ -22,7 +22,7 @@ class Backdoor(Variables):
             self._variables, self._mask
         ))
 
-    def variables(self) -> list[Var]:
+    def variables(self) -> List[Var]:
         if not self._var_state:
             self._upd_var_state()
         return self._var_state
@@ -30,7 +30,7 @@ class Backdoor(Variables):
     def power(self) -> int:
         return prod(self.get_var_bases())
 
-    def get_mask(self) -> list[int]:
+    def get_mask(self) -> List[int]:
         return copy(self._mask)
 
     def _set_mask(self, mask) -> 'Backdoor':

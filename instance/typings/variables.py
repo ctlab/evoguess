@@ -1,8 +1,9 @@
 from .var import Index, Var, AnyVar
 
 from itertools import chain
+from typing import Dict, List
 
-VarRules = dict[str, Var]
+VarRules = Dict[str, Var]
 
 
 class Variables:
@@ -10,27 +11,27 @@ class Variables:
     name = 'Variables'
 
     # noinspection PyMissingConstructor
-    def __init__(self, variables: list[Var] = ()):
+    def __init__(self, variables: List[Var] = ()):
         self._variables = variables
 
         self._var_deps = None
         self._var_bases = None
         self._deps_bases = None
 
-    def variables(self) -> list[Var]:
+    def variables(self) -> List[Var]:
         return self._variables
 
-    def get_var_deps(self) -> list[AnyVar]:
+    def get_var_deps(self) -> List[AnyVar]:
         if not self._var_deps:
             self._upd_var_deps()
         return self._var_deps
 
-    def get_var_bases(self) -> list[int]:
+    def get_var_bases(self) -> List[int]:
         if not self._var_bases:
             self._upd_var_bases()
         return self._var_bases
 
-    def get_deps_bases(self) -> list[int]:
+    def get_deps_bases(self) -> List[int]:
         if not self._deps_bases:
             self._upd_deps_bases()
         return self._deps_bases
@@ -89,6 +90,7 @@ class Variables:
 
 __all__ = [
     'Var',
+    'List',
     'VarRules',
     'Variables'
 ]
