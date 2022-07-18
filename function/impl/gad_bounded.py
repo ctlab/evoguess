@@ -15,7 +15,7 @@ def gad_function(common_data, tasks_data=None):
     backdoor = inst.get_backdoor(mask=mask)
     assumptions, constraints = inst.get_supplements(slv)
 
-    results, kwargs = [], {'limits': limits}
+    results = []
     var_bases = backdoor.get_var_bases()
     for task_data in tasks_data:
         st_timestamp = now()
@@ -34,10 +34,8 @@ def gad_function(common_data, tasks_data=None):
             var.supplements(task_values) for var in backdoor
         ))
 
-        status, stats, _ = slv.solve(
-            inst, assumptions + task_assumptions,
-            constraints=constraints + task_constraints
-        )
+        kwargs = {'limits': limits, 'constraints': constraints + task_constraints}
+        status, stats, _ = slv.solve(inst, assumptions + task_assumptions, **kwargs)
         time, value = stats['time'], meas.get(stats)
         results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
     return results
