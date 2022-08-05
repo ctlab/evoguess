@@ -24,7 +24,12 @@ class Instance:
 
     # noinspection PyProtectedMember
     def get_backdoor(self, **kwargs):
-        backdoor = Backdoor(self.input_set.variables())
+        # todo: remove in island based fw
+        if not self.input_set._variables:
+            backdoor = Backdoor.from_file(self.input_set._path)
+        else:
+            #
+            backdoor = Backdoor(self.input_set.variables())
         if 'variables' in kwargs:
             variables = kwargs['variables']
             if isinstance(variables, str):

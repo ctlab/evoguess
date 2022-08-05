@@ -1,10 +1,8 @@
-from .var import AnyVar
-from .variables import *
-
 from math import prod
 from copy import copy
+from .variables import *
+from itertools import compress
 from util.array import list_of
-from itertools import compress, chain
 
 
 class Backdoor(Variables):
@@ -18,9 +16,16 @@ class Backdoor(Variables):
         self._mask = list_of(1, self._length)
 
     def _upd_var_state(self):
-        self._var_state = list(compress(
-            self._variables, self._mask
-        ))
+        # todo: remove in island based fw
+        if not self._variables:
+            self._var_state = list(compress(
+                parse_var_file(self._path), self._mask
+            ))
+        else:
+            #
+            self._var_state = list(compress(
+                self._variables, self._mask
+            ))
 
     def variables(self) -> List[Var]:
         if not self._var_state:
@@ -47,7 +52,12 @@ class Backdoor(Variables):
         return self
 
     def get_copy(self, mask) -> 'Backdoor':
-        backdoor = Backdoor(self._variables)
+        # todo: remove in island based fw
+        if not self._variables:
+            backdoor = Backdoor.from_file(self._path)
+        else:
+            #
+            backdoor = Backdoor(self._variables)
         return backdoor._set_mask(mask)
 
     def __copy__(self):
@@ -57,6 +67,15 @@ class Backdoor(Variables):
     def _from(string: str, rules: VarRules = ()) -> 'Backdoor':
         variables = Variables._from(string, rules)
         return Backdoor(variables.variables())
+
+    @staticmethod
+    # todo: remove in island based fw
+    def from_file(path: str) -> 'Backdoor':
+        variables = Variables.from_file(path)
+        backdoor = Backdoor(variables.variables())
+        backdoor._variables = None
+        backdoor._path = path
+        return backdoor
 
     def __info__(self):
         return {
