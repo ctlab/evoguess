@@ -15,8 +15,8 @@ from executor.impl import MPIExecutor
 from executor.module.shaping.impl import Chunks
 
 from instance.impl import Instance
-from instance.typings.cnf import CNF
 from instance.typings import Variables
+from instance.module.encoding import CNF
 
 from output.impl import JSONOut
 
@@ -41,7 +41,7 @@ algorithm = Elitism(
         ),
     ),
     instance=Instance(
-        cnf=CNF(path='multipliers/lec_CvK_16.cnf'),
+        encoding=CNF(from_file='multipliers/lec_CvK_16.cnf'),
         input_set=Variables.from_file('_variables/lec_maj_vars.json')
     ),
     output=JSONOut(path='other/lec_CvK_16'),

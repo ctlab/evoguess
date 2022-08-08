@@ -24,9 +24,9 @@
   },
   "instance": {
     "slug": "instance",
-    "cnf": {
-      "slug": "cnf",
-      "path": "sorting/PvS_4_7.cnf"
+    "encoding": {
+      "slug": "encoding:cnf",
+      "from_file": "sort/pvs_4_7.cnf"
     },
     "supbs": {
       "slug": "interval",
@@ -64,7 +64,7 @@
     "slug": "executor:process",
     "shaping": {
       "slug": "shaping:chunks",
-      "chunk_rate": 4
+      "chunk_size": 32
     }
   },
   "backdoors": [

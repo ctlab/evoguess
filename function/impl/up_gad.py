@@ -18,7 +18,7 @@ def gad_function(common_data, tasks_data=None):
     assumptions, constraints = inst.get_supplements(slv)
 
     var_bases = backdoor.get_var_bases()
-    with slv.prototype(inst) as solver:
+    with slv.prototype(inst.encoding_data()) as solver:
         for task_data in tasks_data:
             st_timestamp = now()
             task_i, task_value = task_data

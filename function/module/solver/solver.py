@@ -2,10 +2,10 @@ class Solver:
     slug = 'solver'
     name = "Solver"
 
-    def solve(self, instance, assumptions, **kwargs):
+    def solve(self, encoding, assumptions, **kwargs):
         raise NotImplementedError
 
-    def propagate(self, instance, assumptions, **kwargs):
+    def propagate(self, encoding, assumptions, **kwargs):
         raise NotImplementedError
 
     def __info__(self):

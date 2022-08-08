@@ -29,10 +29,10 @@ class Linear(Solver):
 
     solution = re.compile(r'^v ([-\d ]*)', re.MULTILINE)
 
-    def propagate(self, instance, assumptions, **kwargs):
+    def propagate(self, encoding, assumptions, **kwargs):
         raise NotImplementedError
 
-    def solve(self, instance, assumptions, limits=None, **kwargs):
+    def solve(self, encoding, assumptions, limits=None, **kwargs):
         launch_args = [join(SOLVER_PATH, self.file)]
         timeout = limits and limits.get('time_limit')
         for key in self.budget.keys():
@@ -43,7 +43,7 @@ class Linear(Solver):
         timeout = timeout and timeout + 1
         process = Popen(launch_args, stdin=PIPE, stdout=PIPE, stderr=PIPE)
         try:
-            data = instance.cnf.source(assumptions).encode()
+            data = encoding.source(assumptions).encode()
             output, error = process.communicate(data, timeout)
             statistics, solution = self.parse(output.decode())
             status = STATUSES.get(process.returncode)

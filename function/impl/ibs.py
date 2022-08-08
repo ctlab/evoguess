@@ -24,7 +24,7 @@ def ibs_function(common_data, tasks_data=None):
 
         # print(task_i, repr(backdoor), assumptions, constraints)
         kwargs = {'limits': limits, 'constraints': constraints}
-        status, stats, _ = slv.solve(inst, assumptions, **kwargs)
+        status, stats, _ = slv.solve(inst.encoding_data(), assumptions, **kwargs)
         time, value = stats['time'], meas.get(stats)
         results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
 

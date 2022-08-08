@@ -35,7 +35,7 @@ def gad_function(common_data, tasks_data=None):
         ))
 
         kwargs = {'limits': limits, 'constraints': constraints + task_constraints}
-        status, stats, _ = slv.solve(inst, assumptions + task_assumptions, **kwargs)
+        status, stats, _ = slv.solve(inst.encoding_data(), assumptions + task_assumptions, **kwargs)
         time, value = stats['time'], meas.get(stats)
         results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
     return results

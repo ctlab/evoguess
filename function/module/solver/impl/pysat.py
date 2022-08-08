@@ -10,30 +10,42 @@ class PySat(Solver):
     slug = 'solver:pysat'
     name = 'Solver: PySat'
 
-    def prototype(self, instance, **kwargs):
-        clauses = instance.clauses(kwargs.get('constraints', []))
+    def prototype(self, encoding, **kwargs):
+        clauses = encoding.clauses(kwargs.get('constraints', []))
         solver = self.constructor(clauses, use_timer=True)
-        if instance.cnf.has_atmosts and instance.cnf.atmosts():
-            for [literals, rhs] in instance.cnf.atmosts():
-                solver.add_atmost(literals, rhs)
+        try:
+            # todo: refactor atmosts adding
+            if encoding.atmosts and encoding.atmosts():
+                for [literals, rhs] in encoding.atmosts():
+                    solver.add_atmost(literals, rhs)
+        except AttributeError as ignore:
+            pass
         return _IPySat(solver)
 
-    def propagate(self, instance, assumptions, **kwargs):
-        clauses = instance.clauses(kwargs.get('constraints', []))
+    def propagate(self, encoding, assumptions, **kwargs):
+        clauses = encoding.clauses(kwargs.get('constraints', []))
         with self.constructor(clauses, use_timer=True) as solver:
-            if instance.cnf.has_atmosts and instance.cnf.atmosts():
-                for [literals, rhs] in instance.cnf.atmosts():
-                    solver.add_atmost(literals, rhs)
+            try:
+                # todo: refactor atmosts adding
+                if encoding.atmosts and encoding.atmosts():
+                    for [literals, rhs] in encoding.atmosts():
+                        solver.add_atmost(literals, rhs)
+            except AttributeError as ignore:
+                pass
             status, statistics, literals = self.propagate_with(solver, assumptions, **kwargs)
 
         return status, statistics, literals
 
-    def solve(self, instance, assumptions, limits=None, **kwargs):
-        clauses = instance.clauses(kwargs.get('constraints', []))
+    def solve(self, encoding, assumptions, limits=None, **kwargs):
+        clauses = encoding.clauses(kwargs.get('constraints', []))
         with self.constructor(clauses, use_timer=True) as solver:
-            if instance.cnf.has_atmosts and instance.cnf.atmosts():
-                for [literals, rhs] in instance.cnf.atmosts():
-                    solver.add_atmost(literals, rhs)
+            try:
+                # todo: refactor atmosts adding
+                if encoding.atmosts and encoding.atmosts():
+                    for [literals, rhs] in encoding.atmosts():
+                        solver.add_atmost(literals, rhs)
+            except AttributeError as ignore:
+                pass
 
             if limits and limits.get('conf_budget', 0) > 0:
                 kwargs['expect_interrupt'] = True

@@ -28,14 +28,14 @@ class Native(Solver):
 
     solution = re.compile(r'^v ([-\d ]*)', re.MULTILINE)
 
-    def propagate(self, instance, assumptions, **kwargs):
+    def propagate(self, encoding, assumptions, **kwargs):
         raise NotImplementedError
 
-    def solve(self, instance, assumptions, limits=None, **kwargs):
+    def solve(self, encoding, assumptions, limits=None, **kwargs):
         files, launch_args = [], [join(SOLVER_PATH, self.file)]
 
         constraints = kwargs.get('constraints', [])
-        source = instance.cnf.source(assumptions, constraints)
+        source = encoding.source(assumptions, constraints)
         if self.stdin_file is not None:
             with NamedTemporaryFile(delete=False) as handle:
                 handle.write(source.encode())

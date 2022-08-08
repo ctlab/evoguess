@@ -9,18 +9,12 @@ class Instance:
     slug = 'instance'
     name = 'Instance'
 
-    def __init__(self, cnf, input_set, *args, **kwargs):
-        self.cnf = cnf
+    def __init__(self, encoding, input_set, *args, **kwargs):
+        self.encoding = encoding
         self.input_set = input_set
 
-    def check(self):
-        return isfile(self.cnf.path)
-
-    def clauses(self, constraints=()):
-        return self.cnf.clauses(constraints)
-
-    def max_literal(self):
-        return self.cnf.max_literal()
+    def encoding_data(self):
+        return self.encoding.get_data()
 
     # noinspection PyProtectedMember
     def get_backdoor(self, **kwargs):
@@ -56,7 +50,7 @@ class Instance:
         return {
             'slug': self.slug,
             'name': self.name,
-            'cnf': self.cnf.__info__(),
+            'encoding': self.encoding.__info__(),
             'input_set': self.input_set.__info__(),
         }
 

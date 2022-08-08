@@ -1,7 +1,6 @@
 from ..shaping import *
 
 from util.array import slice_by_size
-from numpy.random.mtrand import RandomState
 
 
 class Chunks(Shaping):
@@ -20,3 +19,8 @@ class Chunks(Shaping):
             **super().__info__(),
             'chunk_size': self.chunk_size
         }
+
+
+__all__ = [
+    'Chunks'
+]

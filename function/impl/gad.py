@@ -35,7 +35,7 @@ def gad_function(common_data, tasks_data=None):
         ))
 
         status, stats, _ = slv.solve(
-            inst, assumptions + task_assumptions,
+            inst.encoding_data(), assumptions + task_assumptions,
             constraints=constraints + task_constraints
         )
         time, value = stats['time'], meas.get(stats)

@@ -7,3 +7,8 @@ class Single(Shaping):
 
     def get(self, size, tasks):
         return [tasks]
+
+
+__all__ = [
+    'Single'
+]
