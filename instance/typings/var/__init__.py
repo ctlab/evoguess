@@ -1,7 +1,7 @@
 from .var import *
 
 from .var_i import *
-from .var_m import *
+from .var_s import *
 from .var_d import *
 
 

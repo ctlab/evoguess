@@ -1,7 +1,7 @@
 import unittest
 
 from instance.typings import Interval, Backdoor
-from instance.typings.var import Index, Domain, Merged, compress
+from instance.typings.var import Index, Domain, Switch, compress
 
 
 class TestVariables(unittest.TestCase):
@@ -37,8 +37,8 @@ class TestVariables(unittest.TestCase):
         backdoor = Backdoor([
             Domain('d1', [1, 2, 3, 4, 5, 6]),
             Index(7), Index(8), Index(9), Index(10),
-            Merged('x1', lambda *args: sum(args) % 2 == 1, [11, 12]),
-            Merged('x2', lambda *args: sum(args) % 2 == 1, [13, 14])
+            Switch('x1', lambda *args: sum(args) % 2 == 1, [11, 12]),
+            Switch('x2', lambda *args: sum(args) % 2 == 1, [13, 14])
         ])
 
         values = [4, 1, 1, 0, 0, 1, 0]

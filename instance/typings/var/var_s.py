@@ -4,7 +4,7 @@ from typing import Callable
 from util.numeral import base_to_binary2
 
 
-class Merged(Var):
+class Switch(Var):
     def __init__(self, name: str, fn: Callable, group: list):
         self.fn = fn
         self.group = group
@@ -32,5 +32,5 @@ class Merged(Var):
 
 
 __all__ = [
-    'Merged'
+    'Switch'
 ]

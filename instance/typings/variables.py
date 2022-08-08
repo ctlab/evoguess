@@ -5,7 +5,7 @@ from .operator import *
 from itertools import chain
 from typing import Dict, List
 from util.const import TEMPLATE_PATH
-from .var import Var, AnyVar, Index, Merged, Domain
+from .var import Var, AnyVar, Index, Switch, Domain
 
 # todo: remove in island based fw
 variables_dict = {}
@@ -26,11 +26,11 @@ def parse_var_file(path):
         for key, value in var_scheme.items():
             if key.startswith('index'):
                 variables.extend([Index(var) for var in value])
-            elif key.startswith('merged'):
+            elif key.startswith('switch'):
                 prefix = value['prefix']
                 op = operations[value['op']]
                 variables.extend([
-                    Merged(f'{prefix}{i}', op, group)
+                    Switch(f'{prefix}{i}', op, group)
                     for i, group in enumerate(value['groups'])
                 ])
             elif key.startswith('domain'):
