@@ -7,8 +7,8 @@ from os.path import join
 from time import time as now
 from itertools import combinations, product
 
-from instance.typings.cnf import CNF
 from instance.typings import Backdoor
+from instance.module.encoding import CNF
 from function.module.solver import solvers
 
 up_solver = solvers.get(f'solver:pysat:g3')()
@@ -28,13 +28,13 @@ def worker_func(args):
     backdoors = list(map(Backdoor.parse, bds))
 
     info = {}
-    max_literal = cnf.max_literal()
+    max_literal = cnf.get_data().max_literal()
     all_up_tasks, all_hard_tasks = [], []
     for backdoor in backdoors:
         up_tasks, hard_tasks = [], []
         variables = backdoor.variables()
         backdoor_bases = backdoor.get_bases()
-        with up_solver.prototype(cnf.clauses()) as slv:
+        with up_solver.prototype(cnf.get_data()) as slv:
             for task_i in range(backdoor.task_count()):
                 values = decimal_to_base(task_i, backdoor_bases)
 
@@ -52,7 +52,7 @@ def worker_func(args):
     hard_cases = numpy.prod([len(h) for h in all_hard_tasks])
 
     print(f'Generated {hard_cases} hard tasks')
-    with solver.prototype(cnf.clauses()) as slv:
+    with solver.prototype(cnf.get_data()) as slv:
         for up_tasks in all_up_tasks:
             for assumptions in up_tasks:
                 status, stats, _ = slv.solve(assumptions, expect_interrupt=False)

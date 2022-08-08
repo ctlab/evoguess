@@ -15,8 +15,8 @@ from executor.impl import ProcessExecutor
 from executor.module.shaping.impl import Chunks
 
 from instance.impl import Instance
-from instance.typings.cnf import CNF
 from instance.typings import Interval
+from instance.module.encoding import CNF
 
 from output.impl import JSONOut
 
