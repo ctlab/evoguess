@@ -1,8 +1,7 @@
 from .var import *
-
+from .var_d import *
 from .var_i import *
 from .var_s import *
-from .var_d import *
 
 
 def compress(*args: Supplements) -> Supplements:
@@ -11,3 +10,16 @@ def compress(*args: Supplements) -> Supplements:
         assumptions.extend(supplements[0])
         constraints.extend(supplements[1])
     return assumptions, constraints
+
+
+__all__ = [
+    'Var',
+    'Index',
+    'Switch',
+    'Domain',
+    'VarDeps',
+    'compress',
+    'Assumptions',
+    'Constraints',
+    'Supplements'
+]

@@ -4,8 +4,8 @@ from os import getpid
 from math import log2
 from time import time as now
 from util.array import side_trim
-from instance.typings.var import compress
 from numpy.random.mtrand import RandomState
+from instance.module.variables.vars import compress
 
 
 def gad_function(common_data, tasks_data=None):
@@ -14,7 +14,7 @@ def gad_function(common_data, tasks_data=None):
     results = []
     bits = decode_bits(payload)
     dim_type, mask = bits[0], bits[1:]
-    backdoor = inst.get_backdoor(mask=mask)
+    backdoor = inst.get_backdoor(by_mask=mask)
     assumptions, constraints = inst.get_supplements(slv)
 
     var_bases = backdoor.get_var_bases()

@@ -4,6 +4,8 @@ Assumptions = List[int]
 Constraints = List[List[int]]
 Supplements = Tuple[Assumptions, Constraints]
 
+VarDeps = List[Union['Var', int]]
+
 
 class Var:
     def __init__(self, base: int, name: str):
@@ -11,7 +13,7 @@ class Var:
         self.name = name
 
     @property
-    def deps(self) -> List['AnyVar']:
+    def deps(self) -> VarDeps:
         raise NotImplementedError
 
     def supplements(self, value_dict) -> Supplements:
@@ -30,12 +32,9 @@ class Var:
             return self.name == other.name
 
 
-AnyVar = Union[Var, int]
-
 __all__ = [
     'Var',
-    'List',
-    'AnyVar',
+    'VarDeps',
     'Assumptions',
     'Constraints',
     'Supplements'

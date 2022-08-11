@@ -41,7 +41,7 @@ class CNFP(CNF):
         self.atmosts = list(from_atmosts)
         super().__init__(**kwargs)
 
-    def _process_raw_data(self, raw_data):
+    def _parse_raw_data(self, raw_data: str):
         lines, clauses, atmosts, max_lit = [], [], [], 0
         for line in raw_data.splitlines(keepends=True):
             if line[0] not in self.comment_lead:
@@ -55,8 +55,8 @@ class CNFP(CNF):
                         lits = [-int(n) for n in items[:-2]]
                         rhs = len(lits) - int(items[-1])
                     else:
-                        lits = [int(n) for n in items[:-2]]
                         rhs = int(items[-1])
+                        lits = [int(n) for n in items[:-2]]
                     max_lit = max(max_lit, *map(abs, lits))
                     atmosts.append((lits, rhs))
                 lines.append(line)
@@ -71,7 +71,7 @@ class CNFP(CNF):
         elif self.filepath in cnfp_data:
             return cnfp_data[self.filepath]
 
-        self._parse_raw_data()
+        self._process_raw_data()
         return cnfp_data[self.filepath]
 
     def __copy__(self):

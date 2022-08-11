@@ -17,6 +17,7 @@ class TestEncodings(unittest.TestCase):
 
         cnf = CNF(from_clauses=clauses)
         cnf_data = cnf.get_data()
+        cnf.__info__()
 
         self.assertEqual(type(cnf_data), CNFData)
 
@@ -34,6 +35,8 @@ class TestEncodings(unittest.TestCase):
     def test_cnf_from_file(self):
         cnf = CNF(from_file='a5_1.cnf')
         cnf_data = cnf.get_data()
+        cnf.__info__()
+
         self.assertEqual(cnf_data.clauses()[0], [65, 9, 30])
         self.assertEqual(cnf_data.clauses()[16], [-68, 17, 65])
         self.assertEqual(cnf_data.clauses()[1228], [-335, 268, 333])

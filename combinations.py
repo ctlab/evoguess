@@ -7,8 +7,9 @@ from os.path import join
 from time import time as now
 from itertools import combinations, product
 
-from instance.typings import Backdoor
 from instance.module.encoding import CNF
+from instance.module.variables import Backdoor
+
 from function.module.solver import solvers
 
 up_solver = solvers.get(f'solver:pysat:g3')()

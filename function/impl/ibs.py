@@ -11,7 +11,7 @@ def ibs_function(common_data, tasks_data=None):
 
     bits = decode_bits(payload)
     dim_type, mask = bits[0], bits[1:]
-    backdoor = inst.get_backdoor(mask=mask)
+    backdoor = inst.get_backdoor(by_mask=mask)
 
     results = []
     for task_data in tasks_data:

@@ -1,8 +1,8 @@
 from ..encoding import *
+from ...variables.vars import Assumptions, Constraints
 
 from threading import Lock
 from typing import List, Tuple
-from instance.typings.var import Assumptions, Constraints
 
 Clause = List[int]
 Clauses = List[Clause]
@@ -51,7 +51,7 @@ class CNF(Encoding):
         self.clauses = from_clauses
         super().__init__(**kwargs)
 
-    def _process_raw_data(self, raw_data):
+    def _parse_raw_data(self, raw_data: str):
         lines, clauses, max_lit = [], [], 0
         for line in raw_data.splitlines(keepends=True):
             if line[0] not in self.comment_lead:
@@ -64,13 +64,13 @@ class CNF(Encoding):
             clauses, ''.join(lines), max_lit
         )
 
-    def _parse_raw_data(self):
+    def _process_raw_data(self):
         with parse_lock:
             if self.filepath in cnf_data:
                 return
 
             data = self.get_raw_data()
-            self._process_raw_data(data)
+            self._parse_raw_data(data)
 
     def get_data(self) -> CNFData:
         if self.clauses:
@@ -78,7 +78,7 @@ class CNF(Encoding):
         elif self.filepath in cnf_data:
             return cnf_data[self.filepath]
 
-        self._parse_raw_data()
+        self._process_raw_data()
         return cnf_data[self.filepath]
 
     def __copy__(self):

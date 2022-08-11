@@ -1,7 +1,7 @@
 from typing import Tuple
 from ..typings import Point, Vector
-from instance.typings import Backdoor
 from method.typings.handle import Handle
+from instance.module.variables import Backdoor
 
 from time import time as now
 from util.collection import for_each

@@ -1,5 +1,7 @@
 from . import encoding
+from . import variables
 
 modules = {
-    **encoding.encodings
+    **encoding.encodings,
+    **variables.variables
 }

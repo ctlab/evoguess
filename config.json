@@ -29,12 +29,12 @@
       "from_file": "sort/pvs_4_7.cnf"
     },
     "supbs": {
-      "slug": "interval",
+      "slug": "variables:interval",
       "start": 1,
       "length": 28
     },
     "input_set": {
-      "slug": "interval",
+      "slug": "variables:interval",
       "start": 1,
       "length": 3244
     }

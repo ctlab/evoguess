@@ -1,6 +1,6 @@
 from .instance import *
-from ..typings import Variables
-from ..typings.var import Supplements, compress
+from ..module.variables import Variables
+from ..module.variables.vars import Supplements, compress
 
 from numpy.random import RandomState
 

@@ -11,7 +11,7 @@ class Switch(Var):
         super().__init__(2, name)
 
     @property
-    def deps(self) -> List[AnyVar]:
+    def deps(self) -> VarDeps:
         return self.group
 
     def supplements(self, value_dict) -> Supplements:

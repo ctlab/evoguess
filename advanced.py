@@ -15,8 +15,8 @@ from executor.impl import ProcessExecutor
 from executor.module.shaping.impl import Chunks
 
 from instance.impl import Instance
-from instance.typings import Interval
 from instance.module.encoding import CNF
+from instance.module.variables import Interval
 
 from output.impl import JSONOut
 
@@ -36,12 +36,12 @@ if __name__ == '__main__':
             ),
             executor=ProcessExecutor(
                 workers=4,
-                shaping=Chunks(chunk_rate=4)
+                shaping=Chunks(chunk_size=16)
             ),
-            sampling=Const(count=100)
+            sampling=Const(count=64)
         ),
         instance=Instance(
-            cnf=CNF(path='sort/pvs_4_7.cnf'),
+            encoding=CNF(from_file='sort/pvs_4_7.cnf'),
             input_set=Interval(start=1, length=3244),
         ),
         output=JSONOut(path='test/pvs/4_7'),
