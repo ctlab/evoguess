@@ -1,19 +1,17 @@
 from executor import Executor
-from numpy.random import randint, RandomState
+from instance import Instance
 
 from ..module.limitation import Limitation
+
+from numpy.random import randint, RandomState
 
 
 class Core:
     slug = None
     name = 'Core'
 
-    def __init__(self,
-                 output,
-                 instance,
-                 executor: Executor,
-                 limitation: Limitation,
-                 *args, **kwargs):
+    def __init__(self, instance: Instance, executor: Executor,
+                 limitation: Limitation, output, *args, **kwargs):
         self.output = output
         self.executor = executor
         self.instance = instance

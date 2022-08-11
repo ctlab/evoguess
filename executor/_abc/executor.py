@@ -7,7 +7,6 @@ from typings.future import Future
 
 class Executor:
     slug = 'executor'
-    name = 'Executor'
 
     def __init__(self, *args, **kwargs):
         self.workers = kwargs.get('workers', cpu_count())
@@ -31,7 +30,7 @@ class Executor:
         raise NotImplementedError
 
     def __str__(self):
-        return self.name
+        return self.slug
 
     def __len__(self):
         return self.workers
@@ -39,7 +38,6 @@ class Executor:
     def __info__(self):
         return {
             'slug': self.slug,
-            'name': self.name,
             'workers': self.workers,
         }
 

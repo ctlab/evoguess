@@ -6,7 +6,7 @@ class All(Space):
     name = 'All(Space)'
 
     def get_root(self, instance: Instance):
-        return instance.cnf.variables()
+        return instance.encoding.variables()
 
 
 __all__ = [

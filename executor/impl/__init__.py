@@ -7,3 +7,11 @@ executors = {
     ThreadExecutor.slug: ThreadExecutor,
     ProcessExecutor.slug: ProcessExecutor,
 }
+
+__all__ = [
+    'executors',
+    # impls
+    'MPIExecutor',
+    'ThreadExecutor',
+    'ProcessExecutor'
+]

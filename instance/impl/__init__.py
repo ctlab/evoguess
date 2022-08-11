@@ -1,5 +1,5 @@
 from .cipher import *
-from .instance import *
+from instance.impl.instance import *
 
 instances = {
     Instance.slug: Instance,
@@ -7,6 +7,8 @@ instances = {
 }
 
 __all__ = [
+    'instances',
+    # impls
     'Instance',
-    'StreamCipher'
+    'StreamCipher',
 ]

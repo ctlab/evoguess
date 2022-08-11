@@ -1,10 +1,10 @@
 from .. import typings
 from ..typings import *
 
-from instance.impl.instance import Instance
-from function.module.solver.solver import Solver
-from function.module.measure.measure import Measure
-from instance.typings.variables.backdoor import Backdoor
+from instance.impl import Instance
+from function.module.solver import Solver
+from function.module.measure import Measure
+from instance.module.variables import Backdoor
 
 
 class Function:

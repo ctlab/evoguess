@@ -1,5 +1,6 @@
 from ..space import *
 
+
 # todo: make as modifier
 class Merged(Space):
     slug = 'space:merged'

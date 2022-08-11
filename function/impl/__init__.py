@@ -9,6 +9,8 @@ functions = {
 }
 
 __all__ = [
+    'functions',
+    # impls
     'RhoFunction',
     'GuessAndDetermine',
     'InverseBackdoorSets'
