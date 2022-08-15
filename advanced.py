@@ -42,10 +42,10 @@ if __name__ == '__main__':
         ),
         instance=Instance(
             encoding=CNF(from_file='sort/pvs_4_7.cnf'),
-            input_set=Interval(start=1, length=3244),
+            input_set=Interval(start=1, length=28),
         ),
         output=JSONOut(path='test/pvs/4_7'),
     )
 
-    backdoor = algorithm.instance.get_backdoor()
+    backdoor = algorithm.instance.get_backdoor(by_mask=[])
     solution = algorithm.start_from_backdoors(backdoor)

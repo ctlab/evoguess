@@ -42,7 +42,8 @@ def gad_function(common_data, tasks_data=None):
             else:
                 status, stats, literals = solver.propagate(assumptions + task_assumptions)
             time, value = stats['time'], meas.get(stats)
-            status = not (status and len(literals) < inst.max_literal())
+            # todo: make max_lit public
+            status = not (status and len(literals) < inst.encoding_data()._max_lit)
             results.append((task_i, getpid(), value, time, status, now() - st_timestamp))
 
     return results

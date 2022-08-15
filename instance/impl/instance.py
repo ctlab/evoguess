@@ -7,7 +7,7 @@ class Instance:
     slug = 'instance'
     name = 'Instance'
 
-    def __init__(self, encoding: Encoding, input_set: Variables):
+    def __init__(self, encoding: Encoding, input_set: Variables, **kwargs):
         self.encoding = encoding
         self.input_set = input_set
 
@@ -20,9 +20,9 @@ class Instance:
             from_file=self.input_set.filepath,
             from_vars=self.input_set._variables
         )
-        if by_mask:
+        if by_mask is not None:
             backdoor._set_mask(by_mask)
-        elif by_string:
+        elif by_string is not None:
             var_names = by_string.split()
             return backdoor._set_mask([
                 1 if str(v) in var_names else

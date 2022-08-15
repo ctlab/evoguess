@@ -68,8 +68,6 @@
     }
   },
   "backdoors": [
-    {
-      "slug": "backdoor"
-    }
+    {}
   ]
 }
