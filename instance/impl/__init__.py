@@ -1,4 +1,5 @@
-from .cipher import *
+from .cipher_b import *
+from .cipher_s import *
 from .instance import *
 
 instances = {

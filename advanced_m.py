@@ -42,7 +42,7 @@ algorithm = Elitism(
     ),
     instance=Instance(
         encoding=CNF(from_file='multipliers/lec_CvK_16.cnf'),
-        input_set=Variables(from_file='_variables/lec_maj_vars.json')
+        search_set=Variables(from_file='_variables/lec_maj_vars.json')
     ),
     output=JSONOut(path='other/lec_CvK_16'),
 )

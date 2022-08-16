@@ -42,7 +42,7 @@ if __name__ == '__main__':
         ),
         instance=Instance(
             encoding=CNF(from_file='sort/pvs_4_7.cnf'),
-            input_set=Interval(start=1, length=28),
+            search_set=Interval(start=1, length=28),
         ),
         output=JSONOut(path='test/pvs/4_7'),
     )

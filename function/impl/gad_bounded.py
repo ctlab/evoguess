@@ -13,7 +13,7 @@ def gad_function(common_data, tasks_data=None):
     bits = decode_bits(payload)
     dim_type, mask = bits[0], bits[1:]
     backdoor = inst.get_backdoor(by_mask=mask)
-    assumptions, constraints = inst.get_supplements(slv)
+    assumptions, constraints = inst.get_supplements()
 
     results = []
     var_bases = backdoor.get_var_bases()

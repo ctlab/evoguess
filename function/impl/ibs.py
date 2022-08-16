@@ -20,7 +20,7 @@ def ibs_function(common_data, tasks_data=None):
         # todo: provide uniq seed
         state = RandomState(seed=task_value)
         assumptions, constraints = \
-            inst.get_supplements(slv, state, backdoor=backdoor)
+            inst.get_supplements(backdoor, state=state)
 
         # print(task_i, repr(backdoor), assumptions, constraints)
         kwargs = {'limits': limits, 'constraints': constraints}
@@ -57,7 +57,7 @@ class InverseBackdoorSets(Function):
         return ibs_function
 
     def prepare_data(self, state, instance, backdoor, dim_type):
-        assert instance.supbs is not None, "IBS method depends on instance supbs"
+        assert instance.input_set is not None, "IBS method depends on instance input_set"
         assert instance.output_set is not None, "IBS method depends on instance output_set"
 
         bd_mask = side_trim(backdoor.get_mask(), at_start=False)
