@@ -17,12 +17,12 @@ Places all tasks in a job on one thread/process.
 Chunks shaping
 --------------
 
-Divides tasks into **chunk_rate\*workers** equal parts.
+Divides all tasks into chunk with size **chunk_size**.
 
 .. code-block:: none
 
     'shaping': {
         'slug': 'shaping:chunks',
-        'chunk_rate': <number>
+        'chunk_size': <number>
     }
 

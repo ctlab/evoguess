@@ -7,14 +7,14 @@ from algorithm.module.evolution.crossover import TwoPoint
 from method.impl import Method
 from method.module.sampling import Const
 
-from function.impl import UPGuessAndDetermine
+from function.impl import InverseBackdoorSets
 from function.module.measure.impl import Propagations
 from function.module.solver.impl.pysat import Glucose3
 
 from executor.impl import ProcessExecutor
 from executor.module.shaping.impl import Chunks
 
-from instance.impl import Instance
+from instance.impl import StreamCipher
 from instance.module.encoding import CNF
 from instance.module.variables import Interval
 
@@ -29,8 +29,9 @@ if __name__ == '__main__':
         crossover=TwoPoint(),
         limit=WallTime('12:00:00'),
         method=Method(
-            function=UPGuessAndDetermine(
+            function=InverseBackdoorSets(
                 max_n=30,
+                time_limit=5,
                 solver=Glucose3(),
                 measure=Propagations(),
             ),
@@ -40,9 +41,11 @@ if __name__ == '__main__':
             ),
             sampling=Const(count=64)
         ),
-        instance=Instance(
-            encoding=CNF(from_file='sort/pvs_4_7.cnf'),
-            search_set=Interval(start=1, length=28),
+        instance=StreamCipher(
+            encoding=CNF(from_file='a5_1.cnf'),
+            input_set=Interval(start=1, length=64),
+            search_set=Interval(start=1, length=64),
+            output_set=Interval(start=8298, length=128),
         ),
         output=JSONOut(path='test/pvs/4_7'),
     )

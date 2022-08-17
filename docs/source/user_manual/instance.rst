@@ -5,29 +5,37 @@ Instance
 
     'instance': {
         'slug': 'instance',
-        'cnf': {
-            'slug': 'cnf',
-            'path': <relative to TEMPLATE_PATH from .env file>
-        },
-        'input_set': <interval>,
-        'extra_set': <optional interval>
+        'encoding': <encoding module>,
+        'search_set': <variables module>
     }
 
-Cipher
-------
+Stream Cipher
+-------------
 
 .. code-block:: none
 
     'instance': {
         'slug': 'cipher:stream',
-        'cnf': {
-            'slug': 'cnf',
-            'path': <relative to TEMPLATE_PATH from .env file>
-        },
-        'supbs': <interval>
-        'input_set': <interval>,
-        'output_set': <interval>,
-        'extra_set': <optional interval>
+        'encoding': <encoding module>,
+        'input_set': <variables module>,
+        'extra_set': <optional variables module>
+        'output_set': <variables module>,
+        'search_set': <variables module>,
+    }
+
+Block Cipher
+-------------
+
+.. code-block:: none
+
+    'instance': {
+        'slug': 'cipher:block',
+        'encoding': <encoding module>,
+        'input_set': <variables module>,
+        'plain_set': <variables module>,
+        'extra_set': <optional variables module>
+        'output_set': <variables module>,
+        'search_set': <variables module>,
     }
 
 Instance modules
@@ -36,4 +44,5 @@ Instance modules
 .. toctree::
     :maxdepth: 1
 
-    instance_modules/interval.module
+    instance_modules/encoding.module
+    instance_modules/variables.module
