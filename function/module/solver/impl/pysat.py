@@ -8,7 +8,6 @@ from time import time as now
 class PySat(Solver):
     constructor = None
     slug = 'solver:pysat'
-    name = 'Solver: PySat'
 
     def prototype(self, clauses, **kwargs):
         solver = self.constructor(bootstrap_with=clauses, use_timer=True)

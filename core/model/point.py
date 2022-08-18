@@ -1,7 +1,7 @@
-from util.comparable import Comparable
+from typings.ordered import Ordered
 
 
-class Point(Comparable):
+class Point(Ordered):
     def __init__(self, comparator, backdoor):
         self.estimation = None
         self.backdoor = backdoor

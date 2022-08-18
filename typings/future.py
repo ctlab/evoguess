@@ -1,5 +1,4 @@
 from typing import Any
-
 from typings.optional import Int
 
 Timeout = Int

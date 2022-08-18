@@ -1,10 +1,10 @@
 from .._abc import Estimator
 from ..model.handle import *
 from ..static import CORE_CACHE
+from instance.module.variables import Backdoor
 
 from time import time as now
-from util.operator import smin
-from util.collection import omit_by
+from util.iterable import omit_by
 
 
 class Optimization(Estimator):
@@ -16,16 +16,16 @@ class Optimization(Estimator):
         self.algorithm = algorithm
         super().__init__(*args, **kwargs)
 
-        CORE_CACHE.best_point = None
+        self.start_stamp = None
         self.optimization_trace = []
+        CORE_CACHE.best_point = None
 
-    def launch(self, *args, **kwargs) -> Solution:
+    def launch(self, root: Backdoor, *args, **kwargs) -> Solution:
         self.start_stamp = now()
 
         awaited = self.algorithm.awaited_count
-        backdoor = self.space.get_root(self.instance)
         # todo: search root estimation in cache
-        point, handles = self.estimate(backdoor).result(), []
+        point, handles = self.estimate(root).result(), []
         assert point.estimated(), 'Root backdoor not estimated'
         with self.algorithm.start(point) as algorithm:
             while not self.limitation.exhausted():
@@ -45,7 +45,7 @@ class Optimization(Estimator):
             return algorithm.solution()
 
     def _await(self, *handles: Handle, count: int = None):
-        count = smin(count, len(handles))
+        count = count or len(handles)
         timeout = self.limitation.left()
         done = n_completed(handles, count, timeout)
         not_done = omit_by(handles, lambda h: h in done)

@@ -1,24 +1,39 @@
+from executor import Executor
+from instance import Instance
+from function import Function
+
 from ..static import CORE_CACHE
-from util.collection import pick_by
+from ..module.sampling import Sampling
+
+from typings.optional import Int
+from instance.module.variables import Backdoor
 from function.typings import Estimation, Results, WorkerArgs
+
+from typing import List
+from util.iterable import pick_by
 
 
 class Context:
-    def __init__(self, backdoor, instance, **kwargs):
+    def __init__(self,
+                 job_seed: Int,
+                 backdoor: Backdoor,
+                 instance: Instance,
+                 function: Function,
+                 sampling: Sampling,
+                 executor: Executor):
+        self.job_seed = job_seed
         self.backdoor = backdoor
         self.instance = instance
+        self.function = function
+        self.sampling = sampling
+        self.executor = executor
 
-        self.space = kwargs.get('space')
-        self.function = kwargs.get('function')
-        self.sampling = kwargs.get('sampling')
-        self.executor = kwargs.get('executor')
-        self.job_seed = kwargs.get('job_seed')
-
-        self.sample_size = min(backdoor.task_count(), self.sampling.max_size) \
+        # todo: change function.supbs_required to instance.input_overflow
+        self.sample_size = min(backdoor.power(), self.sampling.max_size) \
             if not self.function.supbs_required else self.sampling.max_size
         self.sample_state = self.sampling.get_state(0, self.sample_size)
 
-    def get_tasks(self, results: Results) -> list[WorkerArgs]:
+    def get_tasks(self, results: Results) -> List[WorkerArgs]:
         return [
             (self.job_seed, self.sample_size, offset, length)
             for offset, length in self.sample_state.chunks(results)

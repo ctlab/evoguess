@@ -9,7 +9,6 @@ except ModuleNotFoundError:
 
 class MPIExecutor(Executor):
     slug = 'executor:mpi'
-    name = "Executor: MPI"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

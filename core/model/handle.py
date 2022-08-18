@@ -1,7 +1,8 @@
 from .point import Point
 from .job import Job, n_completed as nc
 
-from util.error import CancelledError
+from typings.future import Timeout
+from typings.error import CancelledError
 
 
 def n_completed(handles, count, timeout=None):
@@ -23,7 +24,7 @@ class Handle:
     def cancel(self) -> bool:
         raise NotImplementedError
 
-    def result(self, timeout=None) -> Point:
+    def result(self, timeout: Timeout = None) -> Point:
         raise NotImplementedError
 
 
@@ -39,7 +40,7 @@ class JobHandle(Handle):
     def cancel(self) -> bool:
         return self.job.cancel()
 
-    def result(self, timeout=None) -> Point:
+    def result(self, timeout: Timeout = None) -> Point:
         results = None
         try:
             results = self.job.result(timeout)
@@ -60,7 +61,7 @@ class VoidHandle(Handle):
     def cancel(self) -> bool:
         return False
 
-    def result(self, timeout=None) -> Point:
+    def result(self, timeout: Timeout = None) -> Point:
         return self.estimated
 
 

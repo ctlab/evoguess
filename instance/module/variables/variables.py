@@ -33,7 +33,7 @@ class Variables:
             vars_data[self.filepath] = parse_vars_raw(vars_raw)
 
     def variables(self) -> List[Var]:
-        if self._variables:
+        if self._variables is not None:
             return self._variables
         elif self.filepath in vars_data:
             return vars_data[self.filepath]

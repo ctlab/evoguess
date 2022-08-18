@@ -2,10 +2,9 @@ import threading
 
 from enum import Enum
 
-from util.array import none
-from util.collection import for_each
+from util.iterable import list_of, for_each
 from function.typings import ChunkResult as Result
-from util.error import AlreadyRunning, CancelledError
+from typings.error import AlreadyRunning, CancelledError
 from typings.future import Future, Timeout, AcquireFutures
 
 
@@ -79,7 +78,7 @@ class Job(Future):
             is_reasonably = True
             with self._condition:
                 self._futures.append(future_all)
-                self._results.extend(none(iterables))
+                self._results.extend(list_of(None, iterables))
 
             while len(future_all) > 0 and is_reasonably:
                 for future in future_all.as_complete():

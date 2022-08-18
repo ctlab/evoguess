@@ -8,7 +8,7 @@ from numpy.random import RandomState
 def gad_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
     solver, measure, instance, _bytes = payload
     sample_seed, sample_size, offset, length = args
-    timestamp, backdoor = now(), Backdoor.unpack(_bytes)
+    timestamp, backdoor = now(), Backdoor.unpack()
 
     state = RandomState(sample_seed)
 
@@ -22,7 +22,7 @@ def gad_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
 
     times, values, statuses = {}, {}, {}
     for assumption_bits in assumption_set:
-        assumptions = get_assumptions(backdoor, assumption_bits)
+        # assumptions, constraints = instance.get_supplements()
         status, stats, _ = solver.solve(instance, assumptions, limit=measure.limits())
         time, (value, status) = stats['time'], measure.check_and_get(stats, status)
 
@@ -36,7 +36,6 @@ def gad_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
 
 class GuessAndDetermine(Function):
     slug = 'function:gad'
-    name = 'Function: Guess-and-Determine'
 
     def get_worker_fn(self) -> WorkerCallable:
         return gad_worker_fn

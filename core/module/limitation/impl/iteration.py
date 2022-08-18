@@ -4,9 +4,8 @@ from ..limitation import *
 class Iteration(Limitation):
     key = 'iteration'
     slug = 'limitation:iteration'
-    name = 'Iteration(Limitation)'
 
-    def __init__(self, value: int):
+    def __init__(self, value: Numeral):
         super().__init__(value)
 
 

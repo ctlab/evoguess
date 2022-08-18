@@ -1,6 +1,5 @@
 class Solver:
     slug = 'solver'
-    name = "Solver"
 
     def solve(self, clauses, assumptions, **kwargs):
         raise NotImplementedError
@@ -9,12 +8,11 @@ class Solver:
         raise NotImplementedError
 
     def __str__(self):
-        return self.name
+        return self.slug
 
     def __info__(self):
         return {
-            'slug': self.slug,
-            'name': self.name
+            'slug': self.slug
         }
 
 

@@ -31,9 +31,8 @@ def build(structure, **kwargs):
 __all__ = [
     'array',
     'const',
-    'error',
-    'bitmask',
     'numeral',
+    'lazy_file',
     'collection',
     'comparable',
     #

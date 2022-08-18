@@ -1,25 +1,25 @@
-from typing import Optional, NamedTuple
+from typing import NamedTuple, Tuple, Dict
 
 SampleSeed = int
 SampleSize = int
 ChunkOffset = int
 ChunkLength = int
 
-WorkerArgs = tuple[
+WorkerArgs = Tuple[
     SampleSeed,
     SampleSize,
     ChunkOffset,
     ChunkLength
 ]
 
-TimeMap = dict[str, float]
-ValueMap = dict[str, float]
-StatusMap = dict[str, int]
+TimeMap = Dict[str, float]
+ValueMap = Dict[str, float]
+StatusMap = Dict[str, int]
 
 ProcessId = int
 ProcessTime = float
 
-WorkerResult = tuple[
+WorkerResult = Tuple[
     TimeMap,
     ValueMap,
     StatusMap,

@@ -3,17 +3,15 @@ from ..sampling import *
 
 class Const(Sampling):
     slug = 'sampling:const'
-    name = 'Sampling: Const'
 
-    def __init__(self, count: int, *args, **kwargs):
+    def __init__(self, count: int, **kwargs):
         self.count = count
-        super().__init__(count, *args, **kwargs)
+        super().__init__(count, **kwargs)
 
-    def get_count(self, backdoor, values):
-        count = min(self.count, backdoor.task_count())
-        return max(0, count - len(values))
+    def get_count(self, offset: int, size: int, results: Results) -> int:
+        return max(0, min(self.count, size) - offset)
 
-    def summarize(self, values):
+    def summarize(self, results: Results):
         return {}
 
     def __info__(self):

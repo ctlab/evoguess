@@ -7,7 +7,7 @@ from time import time as now
 def ibs_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
     solver, measure, instance, _bytes = payload
     sample_seed, sample_size, offset, length = args
-    timestamp, backdoor = now(), Backdoor.unpack(_bytes)
+    timestamp, backdoor = now(), Backdoor.unpack()
 
     times, values, statuses = {}, {}, {}
     return times, values, statuses, args, getpid(), timestamp - now()
@@ -15,7 +15,6 @@ def ibs_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
 
 class InverseBackdoorSets(Function):
     slug = 'function:ibs'
-    name = 'Function: Inverse Backdoor Sets'
     supbs_required = True
 
     def get_worker_fn(self) -> WorkerCallable:

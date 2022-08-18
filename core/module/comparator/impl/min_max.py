@@ -5,7 +5,6 @@ from numpy import sign
 
 class MinValueMaxSize(Comparator):
     slug = 'comparator:min_max'
-    name = 'MinValueMaxSize(Comparator)'
 
     def compare(self, obj1, obj2):
         try:

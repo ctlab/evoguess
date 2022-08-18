@@ -1,4 +1,4 @@
-class Comparable:
+class Ordered:
     def __init__(self, comparator):
         self.comparator = comparator
 

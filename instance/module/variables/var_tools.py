@@ -2,7 +2,9 @@ import json
 
 from .vars import *
 from .operation import *
+
 from typing import Tuple, List
+from typings.optional import Int
 
 operations = {
     'xor': xor,
@@ -11,9 +13,12 @@ operations = {
 }
 
 
-def parse_range(string: str) -> Tuple[int, int]:
-    # todo: handle errors
-    return (int(x) for x in string.split('..'))
+def parse_range(string: str) -> Tuple[Int, Int]:
+    try:
+        st, end = string.split('..')
+        return int(st), int(end)
+    except ValueError:
+        return None, None
 
 
 def parse_indexes(string: str) -> List[int]:

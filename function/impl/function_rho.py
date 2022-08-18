@@ -4,7 +4,7 @@ from function.impl.function_gad import *
 def rho_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
     solver, measure, instance, _bytes = payload
     sample_seed, sample_size, offset, length = args
-    timestamp, backdoor = now(), Backdoor.unpack(_bytes)
+    timestamp, backdoor = now(), Backdoor.unpack()
 
     with solver.prototype(instance) as i_solver:
         # use incremental
@@ -16,7 +16,6 @@ def rho_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
 
 class RhoFunction(GuessAndDetermine):
     slug = 'function:rho'
-    name = 'Function: Rho'
 
     def get_worker_fn(self) -> WorkerCallable:
         return rho_worker_fn

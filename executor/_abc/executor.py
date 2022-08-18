@@ -32,9 +32,6 @@ class Executor:
     def __str__(self):
         return self.slug
 
-    def __len__(self):
-        return self.workers
-
     def __info__(self):
         return {
             'slug': self.slug,

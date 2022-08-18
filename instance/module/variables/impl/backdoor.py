@@ -1,11 +1,11 @@
-from typing import Union
-
 from ..variables import *
 
 from math import prod
 from copy import copy
 from itertools import compress
 from util.array import list_of
+from typings.optional import Str
+from typing import Optional, Tuple
 
 Mask = List[int]
 
@@ -55,6 +55,16 @@ class Backdoor(Variables):
             from_file=self.filepath,
             from_vars=self._variables,
         )._set_mask(mask)
+
+    def pack(self) -> Tuple[List[Var], Str, str]:
+        return self._variables, self.filepath, ''
+
+    @staticmethod
+    def unpack(variables: [List[Var]], filepath: Str, bytemask: str):
+        return Backdoor(
+            from_file=filepath,
+            from_vars=variables,
+        )._set_mask(bytemask)
 
     def __copy__(self):
         return self.get_copy(self._mask)

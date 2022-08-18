@@ -6,23 +6,21 @@ from ..model.job import Job
 from ..model.handle import *
 from ..model.contex import Context
 
-from ..module.space import Space
 from ..module.sampling import Sampling
 from ..module.comparator import Comparator
 
 
 class Estimator(Core):
     def __init__(self,
-                 space: Space,
                  sampling: Sampling,
                  function: Function,
                  comparator: Comparator,
                  *args, **kwargs):
-        self.space = space
         self.sampling = sampling
         self.function = function
         super().__init__(*args, **kwargs)
 
+        self.job_counter = 0
         CORE_CACHE.canceled = {}
         CORE_CACHE.estimated = {}
         CORE_CACHE.estimating = {}
@@ -47,9 +45,8 @@ class Estimator(Core):
 
         self.job_counter += 1
         job = Job(Context(
-            backdoor,
-            self.instance,
-            space=self.space,
+            backdoor=backdoor,
+            instance=self.instance,
             function=self.function,
             sampling=self.sampling,
             executor=self.executor,

@@ -9,7 +9,6 @@ from instance.module.variables import Backdoor
 
 class Function:
     slug = 'function'
-    name = 'Function'
     supbs_required = False
 
     def __init__(self, solver: Solver, measure: Measure, *args, **kwargs):
@@ -26,12 +25,11 @@ class Function:
         return self.solver, self.measure, instance, backdoor.pack()
 
     def __str__(self):
-        return self.name
+        return self.slug
 
     def __info__(self):
         return {
             'slug': self.slug,
-            'name': self.name,
             'solver': self.solver.__info__(),
             'measure': self.measure.__info__(),
         }

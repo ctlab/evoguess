@@ -1,15 +1,15 @@
 from . import worker_t
 from .worker_t import *
 
-from typing import Any, Callable
 from instance.impl.instance import Instance
 from function.module.solver.solver import Solver
 from function.module.measure.measure import Measure
+from typing import Any, Callable, List, Dict, Tuple
 
 # todo: import from backdoor
 BackdoorBytes = bytes
 
-Payload = tuple[
+Payload = Tuple[
     Solver,
     Measure,
     Instance,  # instance = cnf
@@ -22,8 +22,8 @@ WorkerCallable = Callable[
     WorkerResult
 ]
 
-Results = list[ChunkResult]
-Estimation = dict[str, Any]
+Results = List[ChunkResult]
+Estimation = Dict[str, Any]
 
 __all__ = [
     'Results',

@@ -5,7 +5,6 @@ from concurrent.futures.thread import ThreadPoolExecutor
 
 class ThreadExecutor(Executor):
     slug = 'executor:thread'
-    name = 'Executor: Thread'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

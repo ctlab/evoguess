@@ -1,43 +1,42 @@
 from ..sampling import *
 
 from math import sqrt
-from util.collection import pick_by
 
 
 class Epsilon(Sampling):
     slug = 'sampling:epsilon'
-    name = 'Sampling: Epsilon'
 
-    def __init__(self, step, epsilon, delta=0.05, *args, **kwargs):
+    def __init__(self,
+                 step: int, epsilon: float,
+                 min_count: int, max_count: int,
+                 delta: float = 0.05, **kwargs):
         self.step = step
         self.delta = delta
         self.epsilon = epsilon
-        self.min, self.max = kwargs['min'], kwargs['max']
-        super().__init__(self.max, *args, **kwargs)
+        self.min, self.max = min_count, max_count
+        super().__init__(self.max, **kwargs)
 
     def _n_e_d(self, values):
         n, e = len(values), sum(values) / len(values)
         return n, e, sum([(value - e) ** 2 for value in values]) / (n - 1)
 
-    def _get_eps(self, values):
+    def _get_eps(self, results: Results):
+        # todo: count eps using results instead values
         n, e, d = self._n_e_d(values)
         return sqrt(d / (self.delta * n)) / e
 
-    def get_count(self, offset, size, values):
-        count = len(values)
-        bd_count = backdoor.task_count()
-
-        if count == 0:
-            return min(self.min, bd_count)
-        elif count < bd_count and count < self.max:
-            if self._get_eps(pick_by(values)) > self.epsilon:
-                bound = min(count + self.step, self.max, bd_count)
-                return max(0, bound - count)
+    def get_count(self, offset: int, size: int, results: Results) -> int:
+        if offset == 0:
+            return min(self.min, size)
+        elif offset < size and offset < self.max:
+            if self._get_eps(results) > self.epsilon:
+                count = min(offset + self.step, self.max, size)
+                return max(0, count - offset)
         return 0
 
-    def summarize(self, values):
+    def summarize(self, results: Results):
         return {
-            'epsilon': self._get_eps(values)
+            'epsilon': self._get_eps(results)
         }
 
     def __info__(self):
