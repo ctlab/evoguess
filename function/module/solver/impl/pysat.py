@@ -1,199 +1,111 @@
 from ..solver import *
+from ...measure import Budget
 
-from pysat import solvers
+from typing import Type
 from threading import Timer
 from time import time as now
+from pysat import solvers as pysat
+
+from function.module.measure import Measure
+from instance.module.encoding import Encoding, CNFData, CNFPData
+from instance.module.variables.vars import Constraints, Supplements
 
 
-class PySat(Solver):
-    constructor = None
-    slug = 'solver:pysat'
+class PySatTimer:
+    def __init__(self, solver: pysat.Solver, budget: Budget):
+        self._timer = None
+        self._solver = solver
+        self._timestamp = None
+        self.key, self.value = budget
 
-    def prototype(self, clauses, **kwargs):
-        solver = self.constructor(bootstrap_with=clauses, use_timer=True)
-        for [literals, rhs] in kwargs.get('atmosts', []):
-            solver.add_atmost(literals, rhs)
-        return _IPySat(solver)
+    def get_time(self) -> float:
+        return now() - self._timestamp
 
-    def propagate(self, clauses, assumptions, **kwargs):
-        with self.constructor(bootstrap_with=clauses, use_timer=True) as solver:
-            for [literals, rhs] in kwargs.get('atmosts', []):
-                solver.add_atmost(literals, rhs)
-            status, statistics, literals = self.propagate_with(solver, assumptions, **kwargs)
-
-        return status, statistics, literals
-
-    def solve(self, clauses, assumptions, limits=None, **kwargs):
-        with self.constructor(bootstrap_with=clauses, use_timer=True) as solver:
-            for [literals, rhs] in kwargs.get('atmosts', []):
-                solver.add_atmost(literals, rhs)
-
-            if limits and limits.get('conf_budget', 0) > 0:
-                solver.conf_budget(limits['conf_budget'])
-            if limits and limits.get('prop_budget', 0) > 0:
-                solver.prop_budget(limits['prop_budget'])
-            status, statistics, solution = self.solve_with(solver, assumptions, limits, **kwargs)
-
-        return status, statistics, solution
-
-    @staticmethod
-    def propagate_with(solver, assumptions, **kwargs):
-        timestamp = now()
-        status, literals = solver.propagate(assumptions=assumptions)
-        full_time, time = now() - timestamp, solver.time()
-
-        statistics = {**solver.accum_stats(), 'time': time}
-        return status, statistics, literals
-
-    @staticmethod
-    def solve_with(solver, assumptions, limits, expect_interrupt=False):
-        if limits and limits.get('time_limit', 0) > 0:
-            timer = Timer(limits['time_limit'], solver.interrupt, ())
-            timer.start()
-
-            timestamp = now()
-            status = solver.solve_limited(assumptions, expect_interrupt=True)
-            time = now() - timestamp
-
-            if timer.is_alive():
-                timer.cancel()
-            del timer
-        else:
-            timestamp = now()
-            status = solver.solve_limited(assumptions, expect_interrupt)
-            time = now() - timestamp
-
-        if status is None:
-            solver.clear_interrupt()
-
-        solution = solver.get_model() if status else None
-        statistics = {**solver.accum_stats(), 'time': time}
-        return status, statistics, solution
-
-
-class _IPySat:
-    def __init__(self, solver):
-        self.stat = {}
-        self.solver = solver
+    def interrupt(self):
+        self._solver and self._solver.interrupt()
 
     def __enter__(self):
+        if self.value is not None:
+            if self.key == 'time':
+                self._timer = Timer(self.value, self.interrupt, ())
+                self._timer.start()
+            elif self.key == 'conflicts':
+                self._solver.conf_budget(int(self.value))
+            elif self.key == 'propagations':
+                self._solver.prop_budget(int(self.value))
+
+        self._timestamp = now()
         return self
 
-    def _fix_stat(self, stat):
-        for key, value in stat.items():
-            if key != 'time':
-                stat[key] -= self.stat.get(key, 0)
-                self.stat[key] = value
-        return stat
-
-    def solve(self, assumptions, limits=None, **kwargs):
-        st, stat, sol = PySat.solve_with(self.solver, assumptions, limits, **kwargs)
-        return st, self._fix_stat(stat), sol
-
-    def propagate(self, assumptions, **kwargs):
-        st, stat, liters = PySat.propagate_with(self.solver, assumptions, **kwargs)
-        return st, self._fix_stat(stat), liters
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        if self.solver:
-            self.solver.delete()
-            self.solver = None
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self._timer is not None:
+            if self._timer.is_alive():
+                self._timer.cancel()
+            self._timer = None
+        self._solver = None
 
 
-#
-# ----------------------------------------------------------------
-#
+class PySat(SPreset):
+    def __init__(self, constructor: Type, encoding: Encoding, measure: Measure):
+        self.constructor = constructor
+        super().__init__(encoding, measure)
+
+    def _create(self, constraints: Constraints = ()) -> pysat.Solver:
+        if isinstance(self.data, CNFData):
+            clauses = self.data.clauses(constraints)
+            solver = self.constructor(clauses, True)
+            if isinstance(self.data, CNFPData):
+                for literals, rhs in self.data.atmosts():
+                    solver.add_atmost(literals, rhs)
+        else:
+            raise TypeError('PySat works only with CNF or CNF+ encodings')
+        return solver
+
+    def solve(self, supplements: Supplements = ((), ()), add_model: bool = True) -> Report:
+        assumptions, constraints = supplements
+        with self._create(constraints) as solver:
+            with PySatTimer(solver, self.measure.get_budget()) as timer:
+                status = solver.solve_limited(assumptions, expect_interrupt=True)
+                stats = {**solver.accum_stats(), 'time': timer.get_time()}
+
+            value, status = self.measure.check_and_get(stats, status)
+            model = solver.get_model() if add_model and status else None
+            return Report(stats['time'], status, value, model)
+
+    def propagate(self, supplements: Supplements = ((), ()), add_model: bool = True) -> Report:
+        assumptions, constraints = supplements
+        with self._create(constraints) as solver:
+            with PySatTimer(solver, ('', None)) as timer:
+                status, literals = solver.propagate(assumptions)
+                time, stats = timer.get_time(), solver.accum_stats()
+
+            value, status = self.measure.check_and_get(stats, status)
+            return Report(time, status, value, literals)
 
 
-class Cadical(PySat):
+class Cadical(Solver):
     slug = 'solver:pysat:cd'
-    name = 'Solver: Cadical'
 
-    can_propagate = False
-    constructor = solvers.Cadical
+    def preset(self, encoding: Encoding, measure: Measure) -> SPreset:
+        return PySat(pysat.Cadical, encoding, measure)
 
 
-class Glucose3(PySat):
+class Glucose3(Solver):
     slug = 'solver:pysat:g3'
-    name = 'Solver: Glucose3'
 
-    can_propagate = True
-    constructor = solvers.Glucose3
+    def preset(self, encoding: Encoding, measure: Measure) -> SPreset:
+        return PySat(pysat.Glucose3, encoding, measure)
 
 
-class Glucose4(PySat):
+class Glucose4(Solver):
     slug = 'solver:pysat:g4'
-    name = 'Solver: Glucose4'
 
-    can_propagate = True
-    constructor = solvers.Glucose4
-
-
-class Lingeling(PySat):
-    slug = 'solver:pysat:lgl'
-    name = 'Solver: Lingeling'
-
-    can_propagate = False
-    constructor = solvers.Lingeling
-
-
-class MapleChrono(PySat):
-    slug = 'solver:pysat:mcb'
-    name = 'Solver: MapleChrono'
-
-    can_propagate = True
-    constructor = solvers.MapleChrono
-
-
-class MapleCM(PySat):
-    slug = 'solver:pysat:mcm'
-    name = 'Solver: MapleCM'
-
-    can_propagate = True
-    constructor = solvers.MapleCM
-
-
-class MapleSAT(PySat):
-    slug = 'solver:pysat:mpl'
-    name = 'Solver: MapleSAT'
-
-    can_propagate = True
-    constructor = solvers.Maplesat
-
-
-class Minicard(PySat):
-    slug = 'solver:pysat:mc'
-    name = 'Solver: Minicard'
-
-    can_propagate = True
-    constructor = solvers.Minicard
-
-
-class Minisat22(PySat):
-    slug = 'solver:pysat:m22'
-    name = 'Solver: Minisat22'
-
-    can_propagate = True
-    constructor = solvers.Minisat22
-
-
-class MinisatGH(PySat):
-    slug = 'solver:pysat:mgh'
-    name = 'Solver: MinisatGH'
-
-    can_propagate = True
-    constructor = solvers.MinisatGH
+    def preset(self, encoding: Encoding, measure: Measure) -> SPreset:
+        return PySat(pysat.Glucose4, encoding, measure)
 
 
 __all__ = [
     'Cadical',
     'Glucose3',
-    'Glucose4',
-    'Lingeling',
-    'MapleChrono',
-    'MapleCM',
-    'MapleSAT',
-    'Minicard',
-    'Minisat22',
-    'MinisatGH'
+    'Glucose4'
 ]

@@ -1,4 +1,4 @@
-from ._abc import Function
+from .abc import Function
 from .impl import functions
 from .module import modules, measure, solver
 

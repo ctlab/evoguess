@@ -1,7 +1,7 @@
 from .walltime import *
 from .iteration import *
 
-limits = {
+limitations = {
     WallTime.slug: WallTime,
     Iteration.slug: Iteration,
 }

@@ -1,4 +1,4 @@
-from typing import NamedTuple, Tuple, Dict
+from typing import NamedTuple, Tuple, Dict, List
 
 SampleSeed = int
 SampleSize = int
@@ -12,34 +12,41 @@ WorkerArgs = Tuple[
     ChunkLength
 ]
 
+ProcessId = int
+ProcessTime = float
+
 TimeMap = Dict[str, float]
 ValueMap = Dict[str, float]
 StatusMap = Dict[str, int]
 
-ProcessId = int
-ProcessTime = float
-
 WorkerResult = Tuple[
+    ProcessId,
+    ProcessTime,
+    # main info
     TimeMap,
     ValueMap,
     StatusMap,
     WorkerArgs,
-    ProcessId,
-    ProcessTime,
 ]
 
 
 class ChunkResult(NamedTuple):
+    pid: ProcessId
+    ptime: ProcessTime
+    # main info
     times: TimeMap
     values: ValueMap
     statuses: StatusMap
     arguments: WorkerArgs
-    # process info
-    pid: ProcessId
-    ptime: ProcessTime
 
+
+Results = List[ChunkResult]
 
 __all__ = [
+    'Results',
+    'TimeMap',
+    'ValueMap',
+    'StatusMap',
     'WorkerArgs',
     'ChunkResult',
     'WorkerResult',

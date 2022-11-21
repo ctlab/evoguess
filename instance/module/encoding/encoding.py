@@ -1,7 +1,5 @@
 from typing import Any
-from os.path import join
 
-from util.const import TEMPLATE_PATH
 from util.lazy_file import get_file_data
 
 
@@ -15,8 +13,7 @@ class Encoding:
         raise NotImplementedError
 
     def get_raw_data(self) -> str:
-        # todo: remove env PATHS
-        return get_file_data(join(TEMPLATE_PATH, self.filepath))
+        return get_file_data(self.filepath)
 
     def __info__(self):
         return {
@@ -27,5 +24,5 @@ class Encoding:
 
 __all__ = [
     'Any',
-    'Encoding'
+    'Encoding',
 ]

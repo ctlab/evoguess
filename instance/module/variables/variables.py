@@ -1,24 +1,32 @@
-from .vars import Var, VarDeps
+from .vars import Var, AnyVar
 from .var_tools import parse_vars_raw
 
-from typing import List
-from os.path import join
 from threading import Lock
 from itertools import chain
+from typing import List, Iterable
 
-from util.const import TEMPLATE_PATH
 from util.lazy_file import get_file_data
 
 vars_data = {}
 parse_lock = Lock()
 
 
+def get_var_deps(_vars: Iterable[Var]) -> Iterable[AnyVar]:
+    return set(chain(*(v.deps for v in _vars)))
+
+
+def get_var_bases(_vars: Iterable[AnyVar]) -> List[int]:
+    return [2 if isinstance(v, int) else v.base for v in _vars]
+
+
 class Variables:
     slug = 'variables'
 
-    def __init__(self, from_vars: List[Var] = None, from_file: str = None):
+    def __init__(self,
+                 from_file: str = None,
+                 from_vars: List[Var] = None):
+        self._vars = from_vars
         self.filepath = from_file
-        self._variables = from_vars
 
         self._var_deps = None
         self._var_bases = None
@@ -29,12 +37,12 @@ class Variables:
             if self.filepath in vars_data:
                 return
 
-            vars_raw = get_file_data(join(TEMPLATE_PATH, self.filepath))
+            vars_raw = get_file_data(self.filepath)
             vars_data[self.filepath] = parse_vars_raw(vars_raw)
 
     def variables(self) -> List[Var]:
-        if self._variables is not None:
-            return self._variables
+        if self._vars is not None:
+            return self._vars
         elif self.filepath in vars_data:
             return vars_data[self.filepath]
 
@@ -42,30 +50,23 @@ class Variables:
         return vars_data[self.filepath]
 
     def _upd_var_deps(self):
-        self._var_deps = list(set(chain(*[
-            v.deps for v in self.variables()
-        ])))
+        self._var_deps = get_var_deps(self.variables())
 
-    def get_var_deps(self) -> List[VarDeps]:
+    def _upd_var_bases(self):
+        self._var_bases = get_var_bases(self.variables())
+
+    def _upd_deps_bases(self):
+        self._deps_bases = get_var_bases(self.get_var_deps())
+
+    def get_var_deps(self) -> Iterable[AnyVar]:
         if not self._var_deps:
             self._upd_var_deps()
         return self._var_deps
-
-    def _upd_var_bases(self):
-        self._var_bases = [
-            v.base for v in self.variables()
-        ]
 
     def get_var_bases(self) -> List[int]:
         if not self._var_bases:
             self._upd_var_bases()
         return self._var_bases
-
-    def _upd_deps_bases(self):
-        self._deps_bases = [
-            2 if isinstance(v, int) else
-            v.base for v in self.get_var_deps()
-        ]
 
     def get_deps_bases(self) -> List[int]:
         if not self._deps_bases:
@@ -100,6 +101,9 @@ class Variables:
 __all__ = [
     'Var',
     'List',
-    'VarDeps',
+    'AnyVar',
     'Variables',
+    # tools
+    'get_var_deps',
+    'get_var_bases'
 ]

@@ -1,13 +1,12 @@
-from .all import *
-from .subset import *
-from . import subset
+from .input_set import *
+from .search_set import *
 
 spaces = {
-    All.slug: All,
-    **subset.subsets,
+    InputSet.slug: InputSet,
+    SearchSet.slug: SearchSet,
 }
 
 __all__ = [
-    'All',
-    *subset.__all__
+    'InputSet',
+    'SearchSet',
 ]

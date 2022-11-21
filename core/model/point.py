@@ -1,30 +1,37 @@
+from typing import List, Dict, Any
+
 from typings.ordered import Ordered
+from typings.optional import Primitive
+from core.module.comparator import Comparator
+from instance.module.variables import Backdoor
 
 
 class Point(Ordered):
-    def __init__(self, comparator, backdoor):
-        self.estimation = None
+    def __init__(self, backdoor: Backdoor, comparator: Comparator):
+        self.estimation = {}
         self.backdoor = backdoor
         super().__init__(comparator)
+
+    def new(self, backdoor: Backdoor) -> 'Point':
+        return Point(backdoor, self.comparator)
+
+    def set(self, **estimation: Primitive) -> 'Point':
+        if 'value' in self.estimation:
+            raise Exception('Estimation already set')
+        self.estimation.update(estimation)
+        return self
 
     def __len__(self):
         return len(self.backdoor)
 
-    def set(self, **estimation) -> 'Point':
-        if self.estimation is None:
-            self.estimation = estimation
-            return self
-        else:
-            raise Exception('Estimation already set')
+    def value(self) -> float:
+        return self.estimation.get('value')
 
     def estimated(self) -> bool:
-        return self.estimation is not None
-
-    def value(self) -> float:
-        return self.estimation.get('value', None)
+        return self.value() is not None
 
 
-Vector = [Point]
+Vector = List[Point]
 
 __all__ = [
     'Point',

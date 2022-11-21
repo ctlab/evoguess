@@ -1,4 +1,4 @@
-from .._abc.output import *
+from ..abc.output import *
 
 import json
 from uuid import uuid4
@@ -8,7 +8,6 @@ backdoor_cache = {}
 
 class JSONOut(Output):
     slug = 'output:json'
-    name = 'JSON Output'
 
     def make_replace(self, backdoors):
         replace, objects = {}, []
@@ -23,15 +22,6 @@ class JSONOut(Output):
 
         self.write('backdoors', *map(json.dumps, objects))
         return replace
-
-    def log(self, *objects):
-        self.write('log', *map(json.dumps, objects))
-
-    def error(self, module, exception):
-        self.write('errors', json.dumps({
-            'module': module,
-            'exception': repr(exception)
-        }))
 
 
 __all__ = [

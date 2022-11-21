@@ -1,20 +1,21 @@
 from . import worker_t
 from .worker_t import *
 
-from instance.impl.instance import Instance
-from function.module.solver.solver import Solver
-from function.module.measure.measure import Measure
-from typing import Any, Callable, List, Dict, Tuple
+from ..module.solver.solver import Solver
+from ..module.measure.measure import Measure
 
-# todo: import from backdoor
-BackdoorBytes = bytes
+from typing import Any, Callable, Dict, Tuple
+
+from core.module.space import Space
+from instance.impl.instance import Instance
+from instance.module.variables.impl.backdoor import ByteMask
 
 Payload = Tuple[
+    Space,
     Solver,
     Measure,
-    Instance,  # instance = cnf
-    BackdoorBytes,
-    # todo: parse cnf intervals in process runtime
+    Instance,
+    ByteMask
 ]
 
 WorkerCallable = Callable[
@@ -22,13 +23,11 @@ WorkerCallable = Callable[
     WorkerResult
 ]
 
-Results = List[ChunkResult]
 Estimation = Dict[str, Any]
 
 __all__ = [
-    'Results',
     'Payload',
     'Estimation',
     'WorkerCallable',
-    *worker_t.__all__,
+    *worker_t.__all__
 ]

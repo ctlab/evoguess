@@ -1,7 +1,7 @@
-from .evolution import *
+from . import mutation, crossover, selection
 
 modules = {
-    **mutation.mutations,
-    **crossover.crossovers,
-    **selection.selections,
+    **mutation.impls,
+    **crossover.impls,
+    **selection.impls,
 }

@@ -29,12 +29,9 @@ def build(structure, **kwargs):
 
 
 __all__ = [
-    'array',
     'const',
-    'numeral',
+    'iterable',
     'lazy_file',
-    'collection',
-    'comparable',
     #
     'build',
     'load_modules',

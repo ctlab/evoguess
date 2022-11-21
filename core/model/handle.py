@@ -29,7 +29,7 @@ class Handle:
 
 
 class JobHandle(Handle):
-    def __init__(self, point: Point, job: Job):
+    def __init__(self, job: Job, point: Point):
         self.job = job
         self.point = point
         self.context = job.context

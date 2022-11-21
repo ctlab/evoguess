@@ -1,9 +1,14 @@
-from .json_out import JSONOut
+from .vector_diff import VectorDiff
+from .vector_full import VectorFull
 
 outputs = {
-    JSONOut.slug: JSONOut
+    VectorFull.slug: VectorFull,
+    VectorDiff.slug: VectorDiff
 }
 
 __all__ = [
-    'JSONOut'
+    'outputs',
+    # impls
+    'VectorFull',
+    'VectorDiff'
 ]

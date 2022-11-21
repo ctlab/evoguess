@@ -7,11 +7,11 @@ class Index(Var):
         super().__init__(2, str(index))
 
     @property
-    def deps(self) -> VarDeps:
+    def deps(self) -> List[AnyVar]:
         return [self.index]
 
-    def supplements(self, value_dict) -> Supplements:
-        return [self.index if value_dict[self.index] else -self.index], []
+    def supplements(self, var_map: VarMap) -> Supplements:
+        return [self.index if var_map[self.index] else -self.index], []
 
     def __hash__(self):
         return self.index

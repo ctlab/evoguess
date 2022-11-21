@@ -1,6 +1,6 @@
-from .cipher_b import *
-from .cipher_s import *
 from .instance import *
+from .cipher_s import *
+from .cipher_b import *
 
 instances = {
     Instance.slug: Instance,
@@ -9,6 +9,8 @@ instances = {
 }
 
 __all__ = [
+    'instances',
+    # impls
     'Instance',
     'BlockCipher',
     'StreamCipher',

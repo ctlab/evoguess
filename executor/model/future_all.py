@@ -19,7 +19,7 @@ class _Tracker:
         self.finished_futures = []
         self.lock = threading.Lock()
 
-        with AcquireFutures(futures):
+        with AcquireFutures(*futures):
             self.pending_futures = 0
             for future in futures:
                 if future._state in NOTIFIED_STATES:
@@ -59,6 +59,8 @@ class FutureAll:
         self._futures = set(futures)
         self._tracker = _Tracker(futures)
 
+        # print(f'-- create <FutureAll-{id(self)}> of {len(futures)} futures')
+
     def _release_futures(self) -> List[Future]:
         with self._tracker.lock:
             finished = self._tracker.finished_futures
@@ -66,16 +68,17 @@ class FutureAll:
             self._tracker.event = None
         self._futures -= set(finished)
 
+        # print(f'-- release <FutureAll-{id(self)}> of {len(finished)} futures')
         for future in finished:
-            with future._condition:
-                future._waiters.remove(self._tracker)
+            if self._tracker in future._waiters:
+                with future._condition:
+                    future._waiters.remove(self._tracker)
         return finished
 
     # noinspection PyProtectedMember
     def as_complete(self, count: Int = None, timeout: Float = None) -> List[Future]:
         assert self._tracker.event is None, "not thread safety!"
         assert count is None or count >= 0, "not uint!"
-        count = count or len(self._futures)
 
         if timeout is not None:
             if timeout <= 0:

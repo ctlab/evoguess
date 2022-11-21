@@ -1,28 +1,39 @@
-from typing import Dict, Tuple
+from typing import Tuple
+from typings.optional import Float, Str
 
-from typings.optional import Float
+Budget = Tuple[Str, Float]
+
+STATUSES = {
+    True: 'SAT',
+    None: 'UNDET',
+    False: 'UNSAT'
+}
 
 
 class Measure:
     key = None
     slug = 'measure'
 
-    def __init__(self, budget: Float, at_least: Float, **kwargs):
+    def __init__(self,
+                 budget: Float = None,
+                 at_least: Float = None,
+                 over_status: Str = 'OVER',
+                 under_status: Str = 'UNDER'):
         self.budget = budget
         self.at_least = at_least
-        # status for over budget case
-        self.over = kwargs.get('over', 'OVER')
-        # status for under least case
-        self.under = kwargs.get('under', 'UNDER')
+        self.over_status = over_status
+        self.under_status = under_status
+
+    def get_budget(self) -> Budget:
+        return self.key, self.budget
 
     def check_and_get(self, stats, status) -> Tuple[Float, str]:
-        value = stats.get(self.key, 0)
+        value = stats.get(self.key)
+        if self.budget and status is None:
+            return value, self.over_status
         if self.at_least and value < self.at_least:
-            status = self.over
-        return value, status or self.under
-
-    def limits(self) -> Dict[str, Float]:
-        return {self.key: self.budget} if self.budget else {}
+            return value, self.under_status
+        return value, STATUSES[status]
 
     def __str__(self):
         return self.slug
@@ -39,5 +50,6 @@ class Measure:
 
 
 __all__ = [
+    'Budget',
     'Measure'
 ]

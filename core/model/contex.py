@@ -3,6 +3,7 @@ from instance import Instance
 from function import Function
 
 from ..static import CORE_CACHE
+from ..module.space import Space
 from ..module.sampling import Sampling
 
 from typings.optional import Int
@@ -15,40 +16,41 @@ from util.iterable import pick_by
 
 class Context:
     def __init__(self,
-                 job_seed: Int,
-                 backdoor: Backdoor,
+                 space: Space,
                  instance: Instance,
                  function: Function,
                  sampling: Sampling,
-                 executor: Executor):
-        self.job_seed = job_seed
+                 executor: Executor,
+                 backdoor: Backdoor,
+                 sample_seed: Int):
+        self.space = space
         self.backdoor = backdoor
         self.instance = instance
         self.function = function
         self.sampling = sampling
         self.executor = executor
 
-        # todo: change function.supbs_required to instance.input_overflow
+        self.sample_seed = sample_seed
         self.sample_size = min(backdoor.power(), self.sampling.max_size) \
-            if not self.function.supbs_required else self.sampling.max_size
+            if not self.instance.input_dependent else self.sampling.max_size
         self.sample_state = self.sampling.get_state(0, self.sample_size)
 
     def get_tasks(self, results: Results) -> List[WorkerArgs]:
         return [
-            (self.job_seed, self.sample_size, offset, length)
+            (self.sample_seed, self.sample_size, offset, length)
             for offset, length in self.sample_state.chunks(results)
         ]
 
     def get_estimation(self, results: Results = None) -> Estimation:
         del CORE_CACHE.estimating[self.backdoor]
         if results is None:
-            CORE_CACHE.canceled[self.backdoor] = self.job_seed
-            return {'job_seed': self.job_seed, 'canceled': True}
+            CORE_CACHE.canceled[self.backdoor] = self.sample_seed
+            return {'sample_seed': self.sample_seed, 'canceled': True}
 
         picked = pick_by(results)
         estimation = CORE_CACHE.estimated[self.backdoor] = {
-            'job_seed': self.job_seed,
             'accuracy': len(picked) / len(results),
+            'sample_seed': self.sample_seed,
             **self.sampling.summarize(picked),
             **self.function.calculate(self.backdoor, picked),
         }

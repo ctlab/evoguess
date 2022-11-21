@@ -3,17 +3,18 @@ from ..variables import *
 from math import prod
 from copy import copy
 from itertools import compress
-from util.array import list_of
-from typings.optional import Str
-from typing import Optional, Tuple
+from util.iterable import concat, list_of, slice_by, to_oct, to_bin
 
 Mask = List[int]
+ByteMask = bytes
 
 
 class Backdoor(Variables):
     slug = 'variables:backdoor'
 
-    def __init__(self, from_vars: List[Var] = None, from_file: str = None):
+    def __init__(self,
+                 from_file: str = None,
+                 from_vars: List[Var] = None):
         super().__init__(from_vars=from_vars, from_file=from_file)
         self._length = len(super().variables())
         self._mask = list_of(1, self._length)
@@ -52,19 +53,16 @@ class Backdoor(Variables):
 
     def get_copy(self, mask: Mask) -> 'Backdoor':
         return Backdoor(
+            from_vars=self._vars,
             from_file=self.filepath,
-            from_vars=self._variables,
         )._set_mask(mask)
 
-    def pack(self) -> Tuple[List[Var], Str, str]:
-        return self._variables, self.filepath, ''
+    def pack(self) -> ByteMask:
+        return bytes(map(to_oct, slice_by(self._mask, 8)))
 
     @staticmethod
-    def unpack(variables: [List[Var]], filepath: Str, bytemask: str):
-        return Backdoor(
-            from_file=filepath,
-            from_vars=variables,
-        )._set_mask(bytemask)
+    def unpack(bytemask: ByteMask) -> Mask:
+        return concat(*(to_bin(number, 8) for number in bytemask))
 
     def __copy__(self):
         return self.get_copy(self._mask)
@@ -72,5 +70,6 @@ class Backdoor(Variables):
 
 __all__ = [
     'Mask',
+    'ByteMask',
     'Backdoor'
 ]

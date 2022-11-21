@@ -1,37 +1,79 @@
-from .._abc.function import *
+from ..abc.function import *
 
 from os import getpid
+from math import ceil
 from time import time as now
+from pysat.solvers import Glucose3
 from numpy.random import RandomState
+from typing import Callable, Iterable, List
+
+from util.iterable import concat
+from instance.impl.instance import Instance
+from instance.module.variables import Backdoor
+from instance.module.variables.vars import Supplements, compress
+
+
+def sequence_mapper(var_bases: List[int]) -> Callable[[int], List[int]]:
+    reversed_var_bases = var_bases[::-1]
+
+    def map_substitution(number: int) -> List[int]:
+        substitution = []
+        for base in reversed_var_bases:
+            number, value = divmod(number, base)
+            substitution.insert(0, value)
+        return substitution
+
+    return map_substitution
+
+
+def gad_supplements(args: WorkerArgs, instance: Instance,
+                    backdoor: Backdoor) -> Iterable[Supplements]:
+    sample_seed, sample_size, offset, length = args
+    sample_state = RandomState(sample_seed)
+    var_bases = backdoor.get_var_bases()
+    var_power = backdoor.power()
+
+    if sample_size >= var_power:
+        sequence = concat(*(
+            sample_state.permutation(var_power)
+            for _ in range(ceil(sample_size / var_power))
+        ))[offset:offset + length]
+        substitutions = list(map(sequence_mapper(var_bases), sequence))
+    else:
+        shape = (offset + length, len(var_bases))
+        substitutions = sample_state.randint(0, var_bases, shape)[offset:]
+
+    if instance.input_dependent:
+        encoding_data = instance.encoding.get_data()
+        instance_vars = instance.get_instance_vars()
+        with Glucose3(encoding_data.clauses()) as solver:
+            for substitution in substitutions:
+                values = {var: value for var, value in zip(backdoor, substitution)}
+                assumptions, _ = instance_vars.get_propagation(sample_state)
+                yield compress(
+                    *(var.supplements(values) for var in backdoor),
+                    instance_vars.get_dependent(solver.propagate(assumptions)[1])
+                )
+    else:
+        for substitution in substitutions:
+            values = {var: value for var, value in zip(backdoor, substitution)}
+            yield compress(*(var.supplements(values) for var in backdoor))
 
 
 def gad_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
-    solver, measure, instance, _bytes = payload
-    sample_seed, sample_size, offset, length = args
-    timestamp, backdoor = now(), Backdoor.unpack()
-
-    state = RandomState(sample_seed)
-
-    if backdoor.task_count() == sample_size:
-        sequence = state.permutation(sample_size)
-        sequence = sequence[offset:offset + length]
-        assumption_set = decimal_to_base(sequence, backdoor)
-    else:
-        # todo: make to chunk random sampling module?
-        assumption_set = []
+    space, solver, measure, instance, bytemask = payload
+    backdoor, timestamp = space.unpack(instance, bytemask), now()
 
     times, values, statuses = {}, {}, {}
-    for assumption_bits in assumption_set:
-        # assumptions, constraints = instance.get_supplements()
-        status, stats, _ = solver.solve(instance, assumptions, limit=measure.limits())
-        time, (value, status) = stats['time'], measure.check_and_get(stats, status)
+    preset = solver.preset(instance.encoding, measure)
+    for supplements in gad_supplements(args, instance, backdoor):
+        time, status, value, _ = preset.solve(supplements, add_model=False)
 
         times[status] = times.get(status, 0.) + time
         values[status] = values.get(status, 0.) + value
         statuses[status] = statuses.get(status, 0) + 1
-
     # todo: (optimize) dumps dict to str?
-    return times, values, statuses, args, getpid(), timestamp - now()
+    return getpid(), now() - timestamp, times, values, statuses, args
 
 
 class GuessAndDetermine(Function):
@@ -41,27 +83,31 @@ class GuessAndDetermine(Function):
         return gad_worker_fn
 
     def calculate(self, backdoor: Backdoor, results: Results) -> Estimation:
-        time, value, task_count = None, None, backdoor.task_count()
-        ptime_sum, time_sum, value_sum, status_map = self._aggregate(results)
+        times, values, statuses, count = aggregate_results(results)
+        time_sum, value_sum = sum(times.values()), sum(values.values())
+        power, value = backdoor.power(), value_sum if count else None
 
-        if len(results) == task_count:
-            time, value = time_sum, value_sum
-        elif len(results) > 0:
-            time = float(time_sum) / len(results) * task_count
-            value = float(value_sum) / len(results) * task_count
+        if count != power:
+            value = float(value_sum) / count * power
 
         return {
-            'time': time,
             'value': value,
-            'count': len(results),
-            'status_map': status_map,
-            'job_time': round(time_sum, 2),
-            'job_value': round(value_sum, 2),
-            'process_time': round(ptime_sum, 2)
+            'count': count,
+            'statuses': statuses,
+            'time_sum': round(time_sum, 4),
+            'value_sum': round(value_sum, 4),
         }
 
 
 __all__ = [
     'GuessAndDetermine',
-    *typings.__all__,
+    # types
+    'Payload',
+    'Results',
+    'WorkerArgs',
+    'Estimation',
+    'WorkerResult',
+    'WorkerCallable',
+    # utils
+    'gad_supplements'
 ]

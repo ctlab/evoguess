@@ -11,5 +11,8 @@ encodings = {
 __all__ = [
     # 'AIG',
     'CNF',
-    'CNFP'
+    'CNFP',
+    # types
+    'CNFData',
+    'CNFPData'
 ]

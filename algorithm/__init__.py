@@ -1,10 +1,11 @@
+from .abc import Algorithm
 from .impl import algorithms
-from .module import modules, evolution
+from .module import modules, mutation, crossover, selection
 
 from util import load_modules
 
 
-def Algorithm(configuration, **kwargs):
+def AlgorithmBuilder(configuration, **kwargs):
     slug = configuration.pop('slug')
     loaded_modules = load_modules(modules, **configuration)
     return algorithms.get(slug)(**kwargs, **loaded_modules)
@@ -13,5 +14,9 @@ def Algorithm(configuration, **kwargs):
 __all__ = [
     'Algorithm',
     # modules
-    'evolution'
+    'mutation',
+    'crossover',
+    'selection',
+    # builder
+    'AlgorithmBuilder'
 ]

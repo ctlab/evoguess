@@ -1,4 +1,4 @@
-from ._abc import Core
+from .abc import Core
 from .impl import cores
 from .module import modules, limitation, sampling, comparator
 

@@ -25,6 +25,11 @@ class Epsilon(Sampling):
         n, e, d = self._n_e_d(values)
         return sqrt(d / (self.delta * n)) / e
 
+    def summarize(self, results: Results) -> Dict[str, Any]:
+        return {
+            'epsilon': self._get_eps(results)
+        }
+
     def get_count(self, offset: int, size: int, results: Results) -> int:
         if offset == 0:
             return min(self.min, size)
@@ -33,11 +38,6 @@ class Epsilon(Sampling):
                 count = min(offset + self.step, self.max, size)
                 return max(0, count - offset)
         return 0
-
-    def summarize(self, results: Results):
-        return {
-            'epsilon': self._get_eps(results)
-        }
 
     def __info__(self):
         return {

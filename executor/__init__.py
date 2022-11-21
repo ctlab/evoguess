@@ -1,4 +1,4 @@
-from ._abc import Executor
+from .abc import Executor
 from .impl import executors
 
 

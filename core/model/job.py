@@ -1,8 +1,10 @@
 import threading
 
 from enum import Enum
+from typing import List
 
-from util.iterable import list_of, for_each
+from .contex import Context
+from util.iterable import list_of
 from function.typings import ChunkResult as Result
 from typings.error import AlreadyRunning, CancelledError
 from typings.future import Future, Timeout, AcquireFutures
@@ -15,6 +17,12 @@ class JobState(Enum):
         FINISHED,
         CANCELLED
     ] = range(4)
+
+
+DONE_STATES = [
+    JobState.FINISHED,
+    JobState.CANCELLED
+]
 
 
 class JobException(Exception):
@@ -49,7 +57,7 @@ class _NCompletedWaiter(_Waiter):
 
 
 class Job(Future):
-    def __init__(self, context, job_id):
+    def __init__(self, context: Context, job_id: int):
         self.job_id = job_id
         self.context = context
 
@@ -64,10 +72,11 @@ class Job(Future):
             target=self._process, args=(context,)
         )
 
-    def _process(self, context):
-        fn = context.function.get_function()
+    # noinspection PyProtectedMember
+    def _process(self, context: Context):
+        fn = context.function.get_worker_fn()
         payload = context.function.get_payload(
-            context.instance, context.backdoor
+            context.space, context.instance, context.backdoor
         )
 
         tasks = context.get_tasks(self._results)
@@ -84,11 +93,11 @@ class Job(Future):
                 for future in future_all.as_complete():
                     with self._condition:
                         if future._exception is not None:
+                            print(future._exception)
                             self._exceptions.append(future._exception)
                         elif future._result is not None:
-                            idx = self._futures.index(None)
+                            idx = self._results.index(None)
                             self._results[idx] = Result(*future._result)
-
             tasks = context.get_tasks(self._results)
             iterables = [(args, payload) for args in tasks]
 
@@ -127,7 +136,7 @@ class Job(Future):
 
     def done(self) -> bool:
         with self._condition:
-            return self._state > JobState.RUNNING
+            return self._state in DONE_STATES
 
     def running(self) -> bool:
         with self._condition:
@@ -176,15 +185,15 @@ class Job(Future):
 
 
 # noinspection PyProtectedMember
-def n_completed(jobs: list[Job], count: int, timeout: Timeout = None) -> list[Job]:
+def n_completed(jobs: List[Job], count: int, timeout: Timeout = None) -> List[Job]:
     with AcquireFutures(*jobs):
-        done = set(j for j in jobs if j._state > JobState.RUNNING)
+        done = set(j for j in jobs if j._state in DONE_STATES)
         not_done = set(jobs) - done
         count = min(count - len(done), len(not_done))
 
         if count > 0:
             waiter = _NCompletedWaiter(count)
-            for_each(not_done, lambda j: j._waiters.append(waiter))
+            [j._waiters.append(waiter) for j in not_done]
         else:
             return list(done)
 
@@ -197,11 +206,11 @@ def n_completed(jobs: list[Job], count: int, timeout: Timeout = None) -> list[Jo
     return list(done)
 
 
-def all_completed(jobs: list[Job], timeout: Timeout = None) -> list[Job]:
+def all_completed(jobs: List[Job], timeout: Timeout = None) -> List[Job]:
     return n_completed(jobs, len(jobs), timeout)
 
 
-def first_completed(jobs: list[Job], timeout: Timeout = None) -> list[Job]:
+def first_completed(jobs: List[Job], timeout: Timeout = None) -> List[Job]:
     return n_completed(jobs, 1, timeout)
 
 

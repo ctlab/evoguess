@@ -13,13 +13,19 @@ def compress(*args: Supplements) -> Supplements:
 
 
 __all__ = [
-    'Var',
     'Index',
-    'Switch',
     'Domain',
-    'VarDeps',
-    'compress',
+    'Switch',
+    'XorSwitch',
+    'Bent4Switch',
+    'MajoritySwitch',
+    # types
+    'Var',
+    'AnyVar',
+    'VarMap',
     'Assumptions',
     'Constraints',
-    'Supplements'
+    'Supplements',
+    # utils
+    'compress'
 ]

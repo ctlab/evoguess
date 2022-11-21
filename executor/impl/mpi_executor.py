@@ -1,4 +1,4 @@
-from .._abc.executor import *
+from ..abc.executor import *
 
 try:
     from mpi4py import MPI
@@ -10,10 +10,9 @@ except ModuleNotFoundError:
 class MPIExecutor(Executor):
     slug = 'executor:mpi'
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self):
         self.mpi_size = MPI.COMM_WORLD.Get_size()
-        self.workers = max(1, self.mpi_size - 1)
+        super().__init__(workers=max(1, self.mpi_size - 1))
         self.executor = MPIPoolExecutor(max_workers=self.workers)
 
     def submit(self, fn: Callable, *args, **kwargs) -> Future:

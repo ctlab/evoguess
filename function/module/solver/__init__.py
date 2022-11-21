@@ -6,5 +6,5 @@ solvers = impl.solvers
 
 __all__ = [
     'Solver',
-    impl.__all__
+    *impl.__all__
 ]

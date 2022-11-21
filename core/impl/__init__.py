@@ -1,5 +1,5 @@
-from .optimization import *
+from .optimize import *
 
 cores = {
-    Optimization.slug: Optimization
+    Optimize.slug: Optimize
 }
