@@ -1,8 +1,9 @@
-from ..encoding import *
-from ...variables.vars import Supplements, Constraints
-
 from threading import Lock
 from typing import List, Tuple
+
+from ..encoding import Encoding, EncodingData
+
+from instance.module.variables.vars import Constraints, Supplements
 
 Clause = List[int]
 Clauses = List[Clause]
@@ -11,7 +12,7 @@ cnf_data = {}
 parse_lock = Lock()
 
 
-class CNFData:
+class CNFData(EncodingData):
     def __init__(self, clauses: Clauses, lines: str = None, max_lit: int = None):
         self._lines = lines
         self._clauses = clauses
@@ -42,6 +43,10 @@ class CNFData:
             lines, *(f'{x} 0\n' for x in assumptions),
             *(' '.join(map(str, c)) + ' 0\n' for c in constraints),
         ])
+
+    @property
+    def max_literal(self) -> int:
+        return self._max_lit
 
 
 class CNF(Encoding):

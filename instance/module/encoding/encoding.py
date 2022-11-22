@@ -1,6 +1,13 @@
-from typing import Any
-
 from util.lazy_file import get_file_data
+
+
+class EncodingData:
+    def source(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def max_literal(self) -> int:
+        raise NotImplementedError
 
 
 class Encoding:
@@ -9,7 +16,7 @@ class Encoding:
     def __init__(self, from_file: str = None):
         self.filepath = from_file
 
-    def get_data(self) -> Any:
+    def get_data(self) -> EncodingData:
         raise NotImplementedError
 
     def get_raw_data(self) -> str:
@@ -23,6 +30,6 @@ class Encoding:
 
 
 __all__ = [
-    'Any',
     'Encoding',
+    'EncodingData'
 ]
