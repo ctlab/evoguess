@@ -2,6 +2,7 @@ from typing import Tuple
 from typings.optional import Float, Str
 
 Budget = Tuple[Str, Float]
+EMPTY_BUDGET = ('', None)
 
 STATUSES = {
     True: 'SAT',
@@ -51,5 +52,7 @@ class Measure:
 
 __all__ = [
     'Budget',
-    'Measure'
+    'Measure',
+    # const
+    'EMPTY_BUDGET'
 ]

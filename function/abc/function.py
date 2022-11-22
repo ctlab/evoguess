@@ -1,11 +1,11 @@
-from ..module.measure import Measure
-from ..typings import WorkerArgs, WorkerResult, WorkerCallable, \
-    Payload, Results, TimeMap, ValueMap, StatusMap, Estimation
-
 from typing import Tuple
+
+from ..typings import WorkerCallable, Payload, \
+    Results, TimeMap, ValueMap, StatusMap, Estimation
 
 from core.module.space import Space
 from function.module.solver import Solver
+from function.module.measure import Measure
 from instance.impl.instance import Instance
 from instance.module.variables import Backdoor
 
@@ -52,13 +52,6 @@ class Function:
 
 __all__ = [
     'Function',
-    # types
-    'Payload',
-    'Results',
-    'Estimation',
-    'WorkerArgs',
-    'WorkerResult',
-    'WorkerCallable',
     # utils
     'aggregate_results'
 ]

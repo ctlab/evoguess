@@ -1,8 +1,8 @@
 from typing import NamedTuple, Any, Optional
 
 from function.module.measure import Measure
-from instance.module.encoding import Encoding
-from instance.module.variables.vars import Supplements
+from instance.module.encoding import EncodingData
+from instance.module.variables.vars import Assumptions, Supplements
 
 
 class Report(NamedTuple):
@@ -12,22 +12,35 @@ class Report(NamedTuple):
     model: Optional[Any]
 
 
-class SPreset:
-    def __init__(self, encoding: Encoding, measure: Measure):
-        self.data = encoding.get_data()
-        self.measure = measure
+class IncrSolver:
+    def __init__(self, data: EncodingData, measure: Measure):
+        self.data, self.measure = data, measure
 
-    def solve(self, supplements: Supplements, add_model: bool = True) -> Report:
+    def __enter__(self):
         raise NotImplementedError
 
-    def propagate(self, supplements: Supplements, add_model: bool = True) -> Report:
+    def __exit__(self, exc_type, exc_value, traceback):
+        raise NotImplementedError
+
+    def solve(self, assumptions: Assumptions, add_model: bool = True) -> Report:
+        raise NotImplementedError
+
+    def propagate(self, assumptions: Assumptions, add_model: bool = True) -> Report:
         raise NotImplementedError
 
 
 class Solver:
     slug = 'solver'
 
-    def preset(self, encoding: Encoding, measure: Measure) -> SPreset:
+    def solve(self, data: EncodingData, measure: Measure,
+              supplements: Supplements, add_model: bool) -> Report:
+        raise NotImplementedError
+
+    def propagate(self, data: EncodingData, measure: Measure,
+                  supplements: Supplements, add_model: bool) -> Report:
+        raise NotImplementedError
+
+    def use_incremental(self, data: EncodingData, measure: Measure) -> IncrSolver:
         raise NotImplementedError
 
     def __str__(self):
@@ -42,5 +55,5 @@ class Solver:
 __all__ = [
     'Report',
     'Solver',
-    'SPreset',
+    'IncrSolver',
 ]

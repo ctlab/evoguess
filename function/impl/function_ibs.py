@@ -1,8 +1,10 @@
-from ..abc.function import *
-
 from os import getpid
 from typing import Iterable
 from time import time as now
+
+from ..typings import WorkerArgs, WorkerResult, \
+    WorkerCallable, Payload, Results, Estimation
+from ..abc.function import Function, aggregate_results
 
 from instance import Instance
 from instance.module.variables import Backdoor
@@ -20,9 +22,10 @@ def ibs_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
     backdoor, timestamp = space.unpack(instance, bytemask), now()
 
     times, values, statuses = {}, {}, {}
-    preset = solver.preset(instance.encoding, measure)
+    encoding_data = instance.encoding.get_data()
     for supplements in ibs_supplements(args, instance, backdoor):
-        time, status, value, _ = preset.solve(supplements, add_model=False)
+        time, status, value, _ = solver.solve(
+            encoding_data, measure, supplements, add_model=False)
 
         times[status] = times.get(status, 0.) + time
         values[status] = values.get(status, 0.) + value
@@ -33,6 +36,7 @@ def ibs_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
 
 class InverseBackdoorSets(Function):
     slug = 'function:ibs'
+    supbs_required = True
 
     def get_worker_fn(self) -> WorkerCallable:
         return ibs_worker_fn
@@ -58,11 +62,6 @@ class InverseBackdoorSets(Function):
 
 __all__ = [
     'InverseBackdoorSets',
-    # types
-    # 'Payload',
-    # 'Results',
-    # 'WorkerArgs',
-    # 'Estimation',
-    # 'WorkerResult',
-    # 'WorkerCallable'
+    # utils
+    'ibs_supplements'
 ]

@@ -12,7 +12,7 @@ from instance.module.encoding import CNF
 from instance.module.variables import Interval
 
 from function.impl import GuessAndDetermine
-from function.module.measure import SolvingTime
+from function.module.measure import Propagations
 from function.module.solver.impl.pysat import Glucose3
 
 from algorithm.impl import MuPlusLambda
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     solution = Optimize(
         space=InputSet(),
         logger=VectorFull(exps_path),
-        executor=ThreadExecutor(workers=4),
+        executor=ThreadExecutor(workers=1),
         sampling=Const(count=64, split_into=16),
         instance=StreamCipher(
             encoding=CNF(from_file=temps_path.to_file('a5_1.cnf')),
@@ -38,7 +38,7 @@ if __name__ == '__main__':
         ),
         function=GuessAndDetermine(
             solver=Glucose3(),
-            measure=SolvingTime(budget=2)
+            measure=Propagations()
         ),
         algorithm=MuPlusLambda(
             mu_size=1,

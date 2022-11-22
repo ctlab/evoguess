@@ -1,11 +1,13 @@
-from ..abc.function import *
-
 from os import getpid
 from math import ceil
 from time import time as now
 from pysat.solvers import Glucose3
 from numpy.random import RandomState
 from typing import Callable, Iterable, List
+
+from ..typings import WorkerArgs, WorkerResult, \
+    WorkerCallable, Payload, Results, Estimation
+from ..abc.function import Function, aggregate_results
 
 from util.iterable import concat
 from instance.impl.instance import Instance
@@ -46,6 +48,8 @@ def gad_supplements(args: WorkerArgs, instance: Instance,
     if instance.input_dependent:
         encoding_data = instance.encoding.get_data()
         instance_vars = instance.get_instance_vars()
+        # todo: use solver.DEFAULT instead of Glucose3
+        # todo: improve function package typing
         with Glucose3(encoding_data.clauses()) as solver:
             for substitution in substitutions:
                 values = {var: value for var, value in zip(backdoor, substitution)}
@@ -65,9 +69,10 @@ def gad_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
     backdoor, timestamp = space.unpack(instance, bytemask), now()
 
     times, values, statuses = {}, {}, {}
-    preset = solver.preset(instance.encoding, measure)
+    encoding_data = instance.encoding.get_data()
     for supplements in gad_supplements(args, instance, backdoor):
-        time, status, value, _ = preset.solve(supplements, add_model=False)
+        time, status, value, _ = solver.solve(
+            encoding_data, measure, supplements, add_model=False)
 
         times[status] = times.get(status, 0.) + time
         values[status] = values.get(status, 0.) + value
@@ -101,13 +106,6 @@ class GuessAndDetermine(Function):
 
 __all__ = [
     'GuessAndDetermine',
-    # types
-    'Payload',
-    'Results',
-    'WorkerArgs',
-    'Estimation',
-    'WorkerResult',
-    'WorkerCallable',
     # utils
     'gad_supplements'
 ]
