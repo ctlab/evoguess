@@ -12,9 +12,9 @@ from util.iterable import pick_by, omit_by
 class MuPlusLambda(Evolution):
     slug = 'evolution:plus'
 
-    def __init__(self, mu_size: int, lambda_size: int, selection: Selection,
-                 mutation: Mutation, min_update_size: int = 1, max_queue_size: Int = None):
-        super().__init__(min_update_size, max_queue_size, selection, mutation)
+    def __init__(self, mu_size: int, lambda_size: int, mutation: Mutation,
+                 selection: Selection, min_update_size: int = 1, max_queue_size: Int = None):
+        super().__init__(min_update_size, max_queue_size, mutation, selection)
         self.mu_size, self.lambda_size = mu_size, lambda_size
 
     def join(self, parents: Vector, offspring: Vector) -> Vector:

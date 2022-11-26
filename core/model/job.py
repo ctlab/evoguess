@@ -5,7 +5,7 @@ from typing import List
 
 from .contex import Context
 from util.iterable import list_of
-from function.typings import ChunkResult as Result
+from function.models import ChunkResult as Result
 from typings.error import AlreadyRunning, CancelledError
 from typings.future import Future, Timeout, AcquireFutures
 

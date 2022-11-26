@@ -1,4 +1,4 @@
-from function.typings import Results
+from function.models import Results
 
 from typing import List, Tuple, Dict, Any
 

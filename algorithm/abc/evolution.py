@@ -14,7 +14,7 @@ class Evolution(Algorithm):
     tweak_size = 1
 
     def __init__(self, min_update_size: int, max_queue_size: Int,
-                 selection: Selection, mutation: Mutation):
+                 mutation: Mutation, selection: Selection):
         super().__init__(min_update_size, max_queue_size)
         self.selection = selection
         self.mutation = mutation
@@ -30,7 +30,7 @@ class Evolution(Algorithm):
 
     def next(self, vector: Vector, count: int) -> List[Backdoor]:
         count = self.tweak_size * ceil(count / self.tweak_size)
-        selected = self.selection.breed(vector, count)
+        selected = self.selection.select(vector, count)
         return self.tweak([p.backdoor for p in selected])
 
     def __info__(self):

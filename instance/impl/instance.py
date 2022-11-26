@@ -50,6 +50,7 @@ class Instance:
 
     def get_instance_vars(self, *deps: Variables) -> Optional[InstanceVars]:
         dependent_vars = self.get_dependent_vars(*deps)
+        # todo: zero check is needed?
         return InstanceVars(
             dependent_vars=dependent_vars,
             propagation_vars=self.get_propagation_vars(),

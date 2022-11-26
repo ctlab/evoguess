@@ -1,4 +1,24 @@
+from enum import Enum
 from typing import NamedTuple, Tuple, Dict, List
+
+
+class Status(Enum):
+    [
+        SOLVED,  # in SAT solvers it usually defines UNSAT
+        RESOLVED,  # in SAT solvers it usually defines SAT
+        EXHAUSTED,  # if measure budget limit has been exhausted
+        NOT_REACHED,  # if at least measure limit don't reached
+        INTERRUPTED,  # in SAT solvers it always defines INDET
+    ] = range(5)
+
+    def __hash__(self):
+        return self.value
+
+    def __eq__(self, other):
+        if isinstance(other, int):
+            return self.value == other
+        return super().__eq__(other)
+
 
 SampleSeed = int
 SampleSize = int
@@ -15,9 +35,9 @@ WorkerArgs = Tuple[
 ProcessId = int
 ProcessTime = float
 
-TimeMap = Dict[str, float]
-ValueMap = Dict[str, float]
-StatusMap = Dict[str, int]
+TimeMap = Dict[Status, float]
+ValueMap = Dict[Status, float]
+StatusMap = Dict[Status, int]
 
 WorkerResult = Tuple[
     ProcessId,
@@ -43,6 +63,7 @@ class ChunkResult(NamedTuple):
 Results = List[ChunkResult]
 
 __all__ = [
+    'Status',
     'Results',
     'TimeMap',
     'ValueMap',

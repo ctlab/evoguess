@@ -1,9 +1,11 @@
 from os import getpid
 from typing import Iterable
 from time import time as now
+from pysat.solvers import Glucose3
+from numpy.random import RandomState
 
-from ..typings import WorkerArgs, WorkerResult, \
-    WorkerCallable, Payload, Results, Estimation
+from ..models import WorkerArgs, WorkerResult, \
+    WorkerCallable, Payload, Results, Estimation, Status
 from ..abc.function import Function, aggregate_results
 
 from instance import Instance
@@ -13,8 +15,21 @@ from instance.module.variables.vars import Supplements
 
 def ibs_supplements(args: WorkerArgs, instance: Instance,
                     backdoor: Backdoor) -> Iterable[Supplements]:
-    # todo: add ibs_supplements realisation!
-    return []
+    # IBS function works only with input dependent formulas
+    if not instance.input_dependent:
+        return ()
+
+    sample_seed, _, offset, length = args
+    sample_state = RandomState(sample_seed)
+    encoding_data = instance.encoding.get_data()
+    instance_vars = instance.get_instance_vars(backdoor)
+    # todo: use solver.DEFAULT instead of Glucose3
+    # todo: improve function package typing
+    with Glucose3(encoding_data.clauses()) as solver:
+        for index in range(offset + length):
+            assumptions, _ = instance_vars.get_propagation(sample_state)
+            if index >= offset:
+                yield instance_vars.get_dependent(solver.propagate(assumptions)[1])
 
 
 def ibs_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
@@ -24,13 +39,12 @@ def ibs_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
     times, values, statuses = {}, {}, {}
     encoding_data = instance.encoding.get_data()
     for supplements in ibs_supplements(args, instance, backdoor):
-        time, status, value, _ = solver.solve(
-            encoding_data, measure, supplements, add_model=False)
-
-        times[status] = times.get(status, 0.) + time
-        values[status] = values.get(status, 0.) + value
-        statuses[status] = statuses.get(status, 0) + 1
-    # todo: (optimize) dumps dict to str?
+        time, value, status, _ = solver.solve(
+            encoding_data, measure, supplements, add_model=False
+        )
+        times[status.value] = times.get(status.value, 0.) + time
+        values[status.value] = values.get(status.value, 0.) + value
+        statuses[status.value] = statuses.get(status.value, 0) + 1
     return getpid(), now() - timestamp, times, values, statuses, args
 
 
@@ -42,18 +56,17 @@ class InverseBackdoorSets(Function):
         return ibs_worker_fn
 
     def calculate(self, backdoor: Backdoor, results: Results) -> Estimation:
-        times, values, statuses, count = aggregate_results(results)
+        times, values, statuses, count, ptime = aggregate_results(results)
         time_sum, value_sum = sum(times.values()), sum(values.values())
         power, budget, value = backdoor.power(), self.measure.budget, float('inf')
-        solved_count = sum(statuses[key] for key in ['SAT', 'UNSAT'])
 
-        if solved_count > 0:
-            xi = float(solved_count) / len(results)
-            value = power * budget * (3 / xi)
+        if statuses[Status.RESOLVED] > 0:
+            value = power * budget * (3. * count / statuses[Status.RESOLVED])
 
         return {
-            'value': value,
             'count': count,
+            'value': round(value, 2),
+            'ptime': round(ptime, 4),
             'statuses': statuses,
             'time_sum': round(time_sum, 4),
             'value_sum': round(value_sum, 4),

@@ -11,7 +11,7 @@ class Tournament(Selection):
         self.rounds = rounds
         super().__init__(random_seed)
 
-    def breed(self, vector: Vector, size: int) -> Vector:
+    def select(self, vector: Vector, size: int) -> Vector:
         pass
 
     def __info__(self):

@@ -1,15 +1,15 @@
-from .best import *
 from .roulette import *
-from .tournament import *
+from .best_point import *
+# from .tournament import *
 
 selections = {
-    Best.slug: Best,
     Roulette.slug: Roulette,
-    Tournament.slug: Tournament
+    BestPoint.slug: BestPoint,
+    # Tournament.slug: Tournament
 }
 
 __all__ = [
-    'Best',
+    'BestPoint',
     'Roulette',
-    'Tournament'
+    # 'Tournament'
 ]

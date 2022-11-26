@@ -15,8 +15,8 @@ class Genetic(Evolution):
     tweak_size = 2
 
     def __init__(self, min_update_size: int, max_queue_size: Int,
-                 selection: Selection, mutation: Mutation, crossover: Crossover):
-        super().__init__(min_update_size, max_queue_size, selection, mutation)
+                 mutation: Mutation, crossover: Crossover, selection: Selection):
+        super().__init__(min_update_size, max_queue_size, mutation, selection)
         self.crossover = crossover
 
     def join(self, parents: Vector, offspring: Vector) -> Vector:

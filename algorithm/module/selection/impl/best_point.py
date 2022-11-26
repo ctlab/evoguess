@@ -4,14 +4,14 @@ from typings.optional import Int
 from core.model.point import Vector
 
 
-class Best(Selection):
-    slug = 'selection:best'
+class BestPoint(Selection):
+    slug = 'selection:best-point'
 
     def __init__(self, best_count: int, random_seed: Int = None):
         self.best_count = best_count
         super().__init__(random_seed)
 
-    def breed(self, vector: Vector, size: int) -> Vector:
+    def select(self, vector: Vector, size: int) -> Vector:
         mx = min(self.best_count, len(vector))
         return [
             sorted(vector)[i % mx] for i in
@@ -26,5 +26,5 @@ class Best(Selection):
 
 
 __all__ = [
-    'Best'
+    'BestPoint'
 ]

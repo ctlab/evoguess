@@ -65,7 +65,7 @@ def solve(solver: pysat.Solver, measure: Measure,
 
     value, status = measure.check_and_get(stats, status)
     model = solver.get_model() if add_model and status else None
-    return Report(stats['time'], status, value, model)
+    return Report(stats['time'], value, status, model)
 
 
 def propagate(solver: pysat.Solver, measure: Measure, max_literal: int,
@@ -74,9 +74,15 @@ def propagate(solver: pysat.Solver, measure: Measure, max_literal: int,
         status, literals = solver.propagate(assumptions)
         stats = {**solver.accum_stats(), 'time': timer.get_time()}
 
+    # pysat: The status is ``True`` if NO conflict arisen
+    # during propagation. Otherwise, the status is ``False``.
+
+    # evoguess: The status is ``True`` if conflict arisen
+    # during propagation or all literals in formula assigned.
+    # Otherwise, the status is ``False``.
     status = not (status and len(literals) < max_literal)
     value, status = measure.check_and_get(stats, status)
-    return Report(stats['time'], status, value, literals if add_model else None)
+    return Report(stats['time'], value, status, literals if add_model else None)
 
 
 class IncrPySAT(IncrSolver):
@@ -92,9 +98,10 @@ class IncrPySAT(IncrSolver):
         if self.measure.key == 'time':
             return report
 
-        value = report.value - self.last_fixed_value
+        time, value, status, model = report
+        value -= self.last_fixed_value
         self.last_fixed_value = report.value
-        return Report(report.time, report.status, value, report.model)
+        return Report(time, value, status, model)
 
     def __enter__(self):
         self.solver = init(self.constructor, self.data)

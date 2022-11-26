@@ -11,11 +11,11 @@ class Space:
         self.by_mask = by_mask
         self.by_string = by_string
 
-    def get_backdoor(self, instance) -> Backdoor:
+    def get_backdoor(self, instance: Instance) -> Backdoor:
         raise NotImplementedError
 
     # noinspection PyProtectedMember
-    def get_initial(self, instance) -> Backdoor:
+    def get_initial(self, instance: Instance) -> Backdoor:
         backdoor = self.get_backdoor(instance)
         if self.by_mask is not None:
             backdoor._set_mask(self.by_mask)
@@ -28,7 +28,7 @@ class Space:
         return backdoor
 
     # noinspection PyProtectedMember
-    def unpack(self, instance, bytemask: ByteMask) -> Backdoor:
+    def unpack(self, instance: Instance, bytemask: ByteMask) -> Backdoor:
         backdoor = self.get_backdoor(instance)
         return backdoor._set_mask(Backdoor.unpack(bytemask))
 

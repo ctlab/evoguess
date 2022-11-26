@@ -5,7 +5,7 @@ from pysat.solvers import Glucose3
 from numpy.random import RandomState
 from typing import Callable, Iterable, List
 
-from ..typings import WorkerArgs, WorkerResult, \
+from ..models import WorkerArgs, WorkerResult, \
     WorkerCallable, Payload, Results, Estimation
 from ..abc.function import Function, aggregate_results
 
@@ -71,13 +71,12 @@ def gad_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
     times, values, statuses = {}, {}, {}
     encoding_data = instance.encoding.get_data()
     for supplements in gad_supplements(args, instance, backdoor):
-        time, status, value, _ = solver.solve(
-            encoding_data, measure, supplements, add_model=False)
-
-        times[status] = times.get(status, 0.) + time
-        values[status] = values.get(status, 0.) + value
-        statuses[status] = statuses.get(status, 0) + 1
-    # todo: (optimize) dumps dict to str?
+        time, value, status, _ = solver.solve(
+            encoding_data, measure, supplements, add_model=False
+        )
+        times[status.value] = times.get(status.value, 0.) + time
+        values[status.value] = values.get(status.value, 0.) + value
+        statuses[status.value] = statuses.get(status.value, 0) + 1
     return getpid(), now() - timestamp, times, values, statuses, args
 
 
@@ -88,16 +87,17 @@ class GuessAndDetermine(Function):
         return gad_worker_fn
 
     def calculate(self, backdoor: Backdoor, results: Results) -> Estimation:
-        times, values, statuses, count = aggregate_results(results)
+        times, values, statuses, count, ptime = aggregate_results(results)
         time_sum, value_sum = sum(times.values()), sum(values.values())
         power, value = backdoor.power(), value_sum if count else None
 
-        if count != power:
+        if count > 0 and count != power:
             value = float(value_sum) / count * power
 
         return {
-            'value': value,
             'count': count,
+            'value': round(value, 2),
+            'ptime': round(ptime, 4),
             'statuses': statuses,
             'time_sum': round(time_sum, 4),
             'value_sum': round(value_sum, 4),

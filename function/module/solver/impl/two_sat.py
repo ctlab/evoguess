@@ -5,6 +5,7 @@ from pysat import solvers as pysat
 from ..solver import Report
 from .pysat import IncrPySAT, PySAT
 
+from function.models import Status
 from function.module.measure import Measure
 from instance.module.encoding.impl.cnf import Clause
 from instance.module.encoding import EncodingData, CNFData, CNFPData
@@ -26,8 +27,7 @@ def is2sat(clause: Clause, value_map: Dict[int, int]) -> bool:
 
 
 def check(data: EncodingData, report: Report, add_model: bool = True) -> Report:
-    # todo: make report status as bool
-    if report.status == 'SAT':
+    if report.status == Status.RESOLVED:
         return report
 
     time, status, value, literals = report
@@ -37,8 +37,8 @@ def check(data: EncodingData, report: Report, add_model: bool = True) -> Report:
         for clause in data.clauses():
             # todo: handle constraints
             if not is2sat(clause, value_map):
-                return Report(now() - stamp, 'UNSAT', value, model)
-        return Report(now() - stamp, 'SAT', value, model)
+                return Report(now() - stamp, value, Status.SOLVED, model)
+        return Report(now() - stamp, value, Status.RESOLVED, model)
     else:
         raise TypeError('TwoSAT works only with CNF encodings')
 

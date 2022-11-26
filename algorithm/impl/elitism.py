@@ -13,10 +13,10 @@ from util.iterable import pick_by, omit_by
 class Elitism(Genetic):
     slug = 'genetic:elitism'
 
-    def __init__(self, population_size: int, elites_count: int, selection: Selection,
-                 mutation: Mutation, crossover: Crossover, min_update_size: int = 1,
+    def __init__(self, population_size: int, elites_count: int, mutation: Mutation,
+                 crossover: Crossover, selection: Selection, min_update_size: int = 1,
                  max_queue_size: Int = None):
-        super().__init__(min_update_size, max_queue_size, selection, mutation, crossover)
+        super().__init__(min_update_size, max_queue_size, mutation, crossover, selection)
         self.population_size = population_size
         self.elites_count = elites_count
 

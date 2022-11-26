@@ -8,8 +8,8 @@ from core.model.point import Point
 class Uniform(Crossover):
     slug = 'crossover:uniform'
 
-    def __init__(self, flip_prob: float = 0.5, random_seed: Int = None):
-        self.flip_prob = flip_prob
+    def __init__(self, swap_prob: float = 0.5, random_seed: Int = None):
+        self.swap_prob = swap_prob
         super().__init__(random_seed)
 
     def cross(self, p1: Point, p2: Point) -> Tuple[Point, Point]:
@@ -19,7 +19,7 @@ class Uniform(Crossover):
         # todo: use _distribution from tool funcs
         distribution = self.random_state.rand(len(mask1))
         for i, value in enumerate(distribution):
-            if self.flip_prob >= value:
+            if self.swap_prob >= value:
                 mask1[i], mask2[i] = mask2[i], mask1[i]
 
         return p1.new(bd1.get_copy(mask1)), p2.new(bd2.get_copy(mask2))
@@ -27,7 +27,7 @@ class Uniform(Crossover):
     def __info__(self):
         return {
             **super().__info__(),
-            'flip_prob': self.flip_prob
+            'swap_prob': self.swap_prob
         }
 
 

@@ -11,8 +11,8 @@ from instance.impl import StreamCipher
 from instance.module.encoding import CNF
 from instance.module.variables import Interval
 
-from function.impl import GuessAndDetermine
-from function.module.measure import Propagations
+from function.impl import InverseBackdoorSets
+from function.module.measure import SolvingTime
 from function.module.solver.impl.pysat import Glucose3
 
 from algorithm.impl import MuPlusLambda
@@ -36,9 +36,9 @@ if __name__ == '__main__':
             input_set=Interval(start=1, length=64),
             output_set=Interval(start=8298, length=128)
         ),
-        function=GuessAndDetermine(
+        function=InverseBackdoorSets(
             solver=Glucose3(),
-            measure=Propagations()
+            measure=SolvingTime(budget=1.)
         ),
         algorithm=MuPlusLambda(
             mu_size=1,

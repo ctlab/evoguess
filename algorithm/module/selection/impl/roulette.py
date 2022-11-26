@@ -6,7 +6,7 @@ from core.model.point import Vector
 class Roulette(Selection):
     slug = 'selection:roulette'
 
-    def breed(self, vector: Vector, size: int) -> Vector:
+    def select(self, vector: Vector, size: int) -> Vector:
         ranges, rng, count = [], 0, len(vector)
         for i, point1 in enumerate(vector):
             w = 0.

@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from ..typings import WorkerCallable, Payload, \
+from ..models import WorkerCallable, Payload, \
     Results, TimeMap, ValueMap, StatusMap, Estimation
 
 from core.module.space import Space
@@ -10,16 +10,17 @@ from instance.impl.instance import Instance
 from instance.module.variables import Backdoor
 
 
-def aggregate_results(results: Results) -> Tuple[TimeMap, ValueMap, StatusMap, int]:
-    all_times, all_values, all_statuses = {}, {}, {}
-    for _, _, times, values, statuses, _ in results:
+def aggregate_results(results: Results) -> Tuple[TimeMap, ValueMap, StatusMap, int, int]:
+    all_times, all_values, all_statuses, full_ptime = {}, {}, {}, 0
+    for _, ptime, times, values, statuses, _ in results:
+        full_ptime += ptime
         for status, time in times.items():
             all_times[status] = all_times.get(status, 0.) + time
         for status, value in values.items():
             all_values[status] = all_values.get(status, 0.) + value
         for status, count in statuses.items():
             all_statuses[status] = all_statuses.get(status, 0) + count
-    return all_times, all_values, all_statuses, sum(all_statuses.values())
+    return all_times, all_values, all_statuses, sum(all_statuses.values()), full_ptime
 
 
 class Function:
@@ -53,5 +54,5 @@ class Function:
 __all__ = [
     'Function',
     # utils
-    'aggregate_results'
+    'aggregate_results',
 ]

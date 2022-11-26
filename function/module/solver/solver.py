@@ -1,5 +1,6 @@
 from typing import NamedTuple, Any, Optional
 
+from function.models import Status
 from function.module.measure import Measure
 from instance.module.encoding import EncodingData
 from instance.module.variables.vars import Assumptions, Supplements
@@ -7,8 +8,8 @@ from instance.module.variables.vars import Assumptions, Supplements
 
 class Report(NamedTuple):
     time: float
-    status: str
     value: float
+    status: Status
     model: Optional[Any]
 
 

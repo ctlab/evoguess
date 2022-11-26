@@ -8,7 +8,7 @@ from ..module.sampling import Sampling
 
 from typings.optional import Int
 from instance.module.variables import Backdoor
-from function.typings import Estimation, Results, WorkerArgs
+from function.models import Estimation, Results, WorkerArgs
 
 from typing import List
 from util.iterable import pick_by
