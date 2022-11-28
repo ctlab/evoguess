@@ -6,8 +6,8 @@ class Status(Enum):
     [
         SOLVED,  # in SAT solvers it usually defines UNSAT
         RESOLVED,  # in SAT solvers it usually defines SAT
-        EXHAUSTED,  # if measure budget limit has been exhausted
-        NOT_REACHED,  # if at least measure limit don't reached
+        EXHAUSTED,  # if measure budget limit exhausted
+        NOT_REACHED,  # if at least measure limit didn't reach
         INTERRUPTED,  # in SAT solvers it always defines INDET
     ] = range(5)
 
