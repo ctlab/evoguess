@@ -7,49 +7,44 @@ from core.module.comparator import MinValueMaxSize
 from output.impl import VectorLogs
 from executor.impl import ThreadExecutor
 
-from instance.impl import StreamCipher
+from instance.impl import Instance
 from instance.module.encoding import CNF
 from instance.module.variables import Interval
 
-from function.impl import InverseBackdoorSets
+from function.impl import GuessAndDetermine
 from function.module.measure import SolvingTime
 from function.module.solver.impl.pysat import Glucose3
 
-from algorithm.impl import Elitism
+from algorithm.impl import MuPlusLambda
 from algorithm.module.mutation import Doer
-from algorithm.module.crossover import TwoPoint
 from algorithm.module.selection import Roulette
 
 from typings.work_path import WorkPath
 
 if __name__ == '__main__':
-    root_path = WorkPath('examples')
-    logs_path = root_path.to_path('logs')
-    data_path = root_path.to_path('data')
+    data_path = WorkPath('examples', 'data')
+    logs_path = WorkPath('examples', 'logs')
 
     solution = Optimize(
         space=InputSet(),
         logger=VectorLogs(logs_path),
-        executor=ThreadExecutor(workers=2),
-        sampling=Const(count=64, split_into=16),
-        instance=StreamCipher(
-            encoding=CNF(from_file=data_path.to_file('a5_1.cnf')),
-            input_set=Interval(start=1, length=64),
-            output_set=Interval(start=8298, length=128)
+        executor=ThreadExecutor(workers=4),
+        sampling=Const(count=128, split_into=32),
+        instance=Instance(
+            encoding=CNF(from_file=data_path.to_file('sgen_150.cnf'))
         ),
-        function=InverseBackdoorSets(
+        function=GuessAndDetermine(
             solver=Glucose3(),
-            measure=SolvingTime(budget=1.)
+            measure=SolvingTime()
         ),
-        algorithm=Elitism(
-            elites_count=2,
-            population_size=4,
+        algorithm=MuPlusLambda(
+            mu_size=1,
+            lambda_size=1,
             mutation=Doer(),
-            crossover=TwoPoint(),
             selection=Roulette()
         ),
         comparator=MinValueMaxSize(),
-        limitation=WallTime(from_string='00:01:00')
+        limitation=WallTime(from_string='00:20:00')
     ).launch()
 
     for point in solution:

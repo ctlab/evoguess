@@ -16,8 +16,8 @@ def serialize(point: Point) -> Dict[str, Any]:
     }
 
 
-class VectorFull(Logger):
-    slug = 'logger:vector-full'
+class VectorLogs(Logger):
+    slug = 'logger:vector-logs'
 
     def write(self, vector: Vector, **kwargs: Any) -> 'Logger':
         # todo: move object formatting to Logger.write
@@ -28,5 +28,5 @@ class VectorFull(Logger):
 
 
 __all__ = [
-    'VectorFull'
+    'VectorLogs'
 ]
