@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List
 
 from typings.ordered import Ordered
 from typings.optional import Primitive
@@ -12,6 +12,12 @@ class Point(Ordered):
         self.backdoor = backdoor
         super().__init__(comparator)
 
+    def value(self) -> float:
+        return self.estimation.get('value')
+
+    def estimated(self) -> bool:
+        return self.value() is not None
+
     def new(self, backdoor: Backdoor) -> 'Point':
         return Point(backdoor, self.comparator)
 
@@ -24,11 +30,8 @@ class Point(Ordered):
     def __len__(self):
         return len(self.backdoor)
 
-    def value(self) -> float:
-        return self.estimation.get('value')
-
-    def estimated(self) -> bool:
-        return self.value() is not None
+    def __str__(self):
+        return f'{repr(self.backdoor)} by {self.value():.7g}'
 
 
 Vector = List[Point]

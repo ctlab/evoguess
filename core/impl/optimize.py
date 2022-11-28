@@ -61,6 +61,7 @@ class Optimize(Estimate):
                         self.estimate(backdoor) for backdoor in
                         point_manager.collect(len(handles), 1)
                     ])
+                    # todo: count available point slots
                     estimated, handles = self._await(*handles)
                     insertion = point_manager.insert(*estimated)
 
