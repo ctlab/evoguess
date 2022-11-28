@@ -12,17 +12,19 @@
 #
 import os
 import sys
+import datetime
 
 sys.path.insert(0, os.path.abspath('../..'))
 
 # -- Project information -----------------------------------------------------
 
 project = 'EvoGuess'
-copyright = '2021, Artyom Pavlenko'
-author = 'Artyom Pavlenko'
+year = datetime.date.today().year
+copyright = f'{year}, Artem Pavlenko'
+author = 'Artem Pavlenko'
 
 # The full version, including alpha/beta/rc tags
-release = '2.0.0'
+release = '3.0.0-alpha'
 
 # -- General configuration ---------------------------------------------------
 

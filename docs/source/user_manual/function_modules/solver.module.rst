@@ -3,42 +3,24 @@ Solver
 
 SAT-solver.
 
-PySat solver
-------------
-
-.. code-block:: none
-
-    'solver': {
-        'slug': 'solver:pysat:<name>'
-    }
-
-.. code-block:: none
-
-    Names: cd, g3, g4, lgl, mcb, mcm, mpl, mc, m22, mgh.
-
-Native solver
+PySAT solvers
 -------------
 
-Native solvers should be built in the appropriate directories.
+Wrapper of pysat solvers
 
-.. code-block:: none
+.. code-block:: python
 
-    'solver': {
-        'slug': 'solver:native:<name>'
-    }
+    from function.module.solver.impl.pysat import Glucose3
 
-.. code-block:: none
+    solver = Glucose3()
 
-    Names: kissat
+2SAT Check
+----------
 
+Solver to check cnf instance is 2SAT or not.
 
-Linear solver
--------------
+.. code-block:: python
 
-Linear solver should be built in the directory *<SOLVER_PATH>/linear/propagate* (SOLVER_PATH from .env file).
+    from function.module.solver import TwoSAT
 
-.. code-block:: none
-
-    'solver': {
-        'slug': 'solver:linear'
-    }
+    solver = TwoSAT()

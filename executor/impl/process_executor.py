@@ -1,25 +1,20 @@
-from .._abc.executor import *
+from os import cpu_count
+from concurrent.futures import ProcessPoolExecutor
 
-from concurrent.futures import as_completed
-from concurrent.futures.process import ProcessPoolExecutor
+from ..abc.executor import *
 
 
 class ProcessExecutor(Executor):
     slug = 'executor:process'
-    name = "Executor: Process"
 
-    awaiter_dict = {
-        'as_completed': as_completed,
-    }
+    def __init__(self, max_workers: int = None):
+        super().__init__(max_workers or cpu_count())
+        self.executor = ProcessPoolExecutor(max_workers=self.max_workers)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.executor = ProcessPoolExecutor(max_workers=self.workers)
-
-    def submit(self, fn: Callable, *args, **kwargs):
+    def submit(self, fn: Callable, *args, **kwargs) -> Future:
         return self.executor.submit(fn, *args, **kwargs)
 
-    def shutdown(self, wait=True):
+    def shutdown(self, wait: bool = True):
         self.executor.shutdown(wait)
 
 

@@ -1,6 +1,0 @@
-printf "# Node settings\nMAIN_PATH=" > ".env"
-pwd >> ".env"
-printf "DATA_PATH=\${MAIN_PATH}/data\n" >> ".env"
-printf "SOLVER_PATH=\${DATA_PATH}/solvers\n" >> ".env"
-printf "TEMPLATE_PATH=\${DATA_PATH}/templates\n" >> ".env"
-printf "EXPERIMENT_PATH=\${DATA_PATH}/experiments\n" >> ".env"

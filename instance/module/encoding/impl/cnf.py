@@ -1,8 +1,9 @@
-from ..encoding import *
-from ...variables.vars import Assumptions, Constraints
-
 from threading import Lock
 from typing import List, Tuple
+
+from ..encoding import Encoding, EncodingData
+
+from instance.module.variables.vars import Constraints, Supplements
 
 Clause = List[int]
 Clauses = List[Clause]
@@ -11,7 +12,7 @@ cnf_data = {}
 parse_lock = Lock()
 
 
-class CNFData:
+class CNFData(EncodingData):
     def __init__(self, clauses: Clauses, lines: str = None, max_lit: int = None):
         self._lines = lines
         self._clauses = clauses
@@ -33,7 +34,8 @@ class CNFData:
     def clauses(self, constraints: Constraints = ()) -> Clauses:
         return [*self._clauses, *constraints]
 
-    def source(self, assumptions: Assumptions = (), constraints: Constraints = ()) -> str:
+    def source(self, supplements: Supplements = ((), ())) -> str:
+        assumptions, constraints = supplements
         lines, max_lit = self._get_lines_and_max_lit()
         payload_len = len(constraints) + len(assumptions)
         return ''.join([
@@ -42,14 +44,20 @@ class CNFData:
             *(' '.join(map(str, c)) + ' 0\n' for c in constraints),
         ])
 
+    @property
+    def max_literal(self) -> int:
+        return self._max_lit
+
 
 class CNF(Encoding):
     slug = 'encoding:cnf'
     comment_lead = ['p', 'c']
 
-    def __init__(self, from_clauses: Clauses = None, **kwargs):
+    def __init__(self,
+                 from_file: str = None,
+                 from_clauses: Clauses = None):
         self.clauses = from_clauses
-        super().__init__(**kwargs)
+        super().__init__(from_file)
 
     def _parse_raw_data(self, raw_data: str):
         lines, clauses, max_lit = [], [], 0
@@ -96,7 +104,8 @@ class CNF(Encoding):
 
 __all__ = [
     'CNF',
+    'CNFData',
+    # types
     'Clause',
     'Clauses',
-    'CNFData'
 ]

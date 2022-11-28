@@ -2,21 +2,20 @@ from .var import *
 
 
 class Domain(Var):
-    def __init__(self, name: str, group: list):
+    def __init__(self, name: str, group: List[int]):
         self.group = group
         super().__init__(len(group), name)
 
     @property
-    def deps(self) -> VarDeps:
+    def deps(self) -> List[AnyVar]:
         return [self]
 
-    def supplements(self, value_dict) -> Supplements:
-        if self.name in value_dict:
-            value = value_dict[self.name]
-            return [var if value == i else -var for i, var
-                    in enumerate(self.group)], []
+    def supplements(self, var_map: VarMap) -> Supplements:
+        if self in var_map:
+            return [var if var_map[self] == i else -var
+                    for i, var in enumerate(self.group)], []
         else:
-            return [value_dict[i] for i in self.group], []
+            return [var_map[i] for i in self.group], []
 
 
 __all__ = [

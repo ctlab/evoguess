@@ -1,62 +1,42 @@
 Executor
 ========
 
+This package is used для распределения задач в многопоточных и распределенных вычислительных среда.
+
 Thread Executor
 ---------------
 
-.. code-block:: none
+Реализация c использованием стандартного `ThreadPoolExecutor <https://docs.python.org/3/library/concurrent.futures.html>`_. Параметр **max_workers** определяет максимальное число потоков, которое будет создано. По умолчанию равно `os.cpu_count <https://docs.python.org/3/library/os.html>`_.
 
-    'executor': {
-        'slug': 'executor:thread',
-        'workers': <number>,
-        'shaping': <module>
-    }
+.. code-block:: python
+
+    from executor.impl import ThreadExecutor
+
+    executor = ThreadExecutor(
+        max_workers: Optional[int]
+    )
 
 Process Executor
 ----------------
 
-.. code-block:: none
+Реализация c использованием стандартного `ProcessPoolExecutor <https://docs.python.org/3/library/concurrent.futures.html>`_. Параметр **max_workers** определяет максимальное число процессов, которое будет создано. По умолчанию равно `os.cpu_count <https://docs.python.org/3/library/os.html>`_.
 
-    'executor': {
-        'slug': 'executor:process',
-        'workers': <number>,
-        'shaping': <module>
-    }
+.. code-block:: python
+
+    from executor.impl import ProcessExecutor
+
+    executor = ProcessExecutor(
+        max_workers: Optional[int]
+    )
 
 MPI Executor
 ------------
 
-.. code-block:: none
+Реализация для распределенных вычислений посредством MPI. Автоматически определяет число ресурсов, которые были выделены при запуске.
 
-    'executor': {
-        'slug': 'executor:mpi',
-        'shaping': <module>
-    }
+.. code-block:: python
 
-MPI Thread Executor
--------------------
+    from executor.impl import MPIExecutor
 
-.. code-block:: none
+    executor = MPIExecutor()
 
-    'executor': {
-        'slug': 'executor:thread:mpi',
-        'shaping': <module>
-    }
-
-MPI Process Executor
---------------------
-
-.. code-block:: none
-
-    'executor': {
-        'slug': 'executor:process:mpi',
-        'shaping': <module>
-    }
-
-Executor modules
-----------------
-
-.. toctree::
-    :maxdepth: 1
-
-    executor_modules/shaping.module

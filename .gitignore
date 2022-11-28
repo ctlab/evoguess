@@ -2,8 +2,5 @@
 docs/build
 data/experiments
 
-# Local scripts
-test.py
-
-# Environment
-.env
+tools/
+examples/logs

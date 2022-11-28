@@ -8,32 +8,19 @@ First clone the repository:
 .. code-block:: console
 
     $ git clone git@github.com:ctlab/evoguess.git
+    $ cd evoguess
 
 Dependencies
 ------------
 
-Next check the list of python3 dependencies:
+Install python3 requirements:
 
 .. code-block:: console
 
-    $ pip install numpy
-    $ pip install python-sat
-    $ pip install python-dotenv
+    $ pip install -r requirements.txt
 
 To use the EvoGuess in MPI mode, you also need to install:
 
 .. code-block:: console
 
-    $ pip install mpi4py
-
-
-Environment
------------
-
-Create **.env** file using **create_env.sh** script
-
-.. code-block:: console
-
-    $ cd evoguess
-    $ ./create_env.sh
-
+    $ pip install -r requirements-mpi.txt

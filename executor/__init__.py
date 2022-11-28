@@ -1,16 +1,14 @@
+from .abc import Executor
 from .impl import executors
-from .module import modules, shaping
-
-from util import load_modules
 
 
-def Executor(configuration, **kwargs):
+def ExecutorBuilder(configuration, **kwargs):
     slug = configuration.pop('slug')
-    loaded_modules = load_modules(modules, **configuration)
-    return executors.get(slug)(**kwargs, **loaded_modules)
+    return executors.get(slug)(**kwargs)
 
 
 __all__ = [
-    'shaping',
-    'Executor'
+    'Executor',
+    # builder
+    'ExecutorBuilder'
 ]

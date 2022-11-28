@@ -1,39 +1,45 @@
 from .cipher_s import *
 
-from util.array import concat
-from ..module.variables import Variables
-from ..module.variables.vars import Supplements, compress
+from typing import Optional, List
 
-from numpy.random import RandomState
+from ..module.variables.vars import Var
+from ..module.encoding.encoding import Encoding
+from ..module.variables import Variables, Indexes
 
 
 class BlockCipher(StreamCipher):
     slug = 'cipher:block'
 
-    def __init__(self, plain_set: Variables, **kwargs):
+    def __init__(
+            self,
+            encoding: Encoding,
+            input_set: Indexes,
+            plain_set: Indexes,
+            output_set: Indexes,
+            extra_set: Optional[Variables] = None
+    ):
         self.plain_set = plain_set
-        super().__init__(**kwargs)
+        super().__init__(encoding, input_set, output_set, extra_set)
 
-    def _get_inversion_deps(self, *args: Variables):
+    def get_propagation_vars(self) -> List[Var]:
         return [
             *self.plain_set.variables(),
-            *super()._get_inversion_vars(*args)
+            *super().get_propagation_vars()
         ]
 
-    def _get_propagation_sups(self, state: RandomState) -> Supplements:
-        var_deps = self.plain_set.get_var_deps()
-        deps_bases = self.plain_set.get_deps_bases()
-        deps_values = {
-            var: value for var, value in
-            zip(var_deps, state.randint(0, deps_bases))
-        }
-        return compress(
-            super()._get_propagation_sups(state),
-            *(var.supplements(deps_values) for var in self.input_set)
-        )
+    def get_dependent_vars(self, *args: Variables) -> List[Var]:
+        return [
+            *self.plain_set.variables(),
+            *super().get_dependent_vars(*args)
+        ]
 
     def __info__(self):
         return {
             **super().__info__(),
             'plain_set': self.plain_set.__info__(),
         }
+
+
+__all__ = [
+    'BlockCipher'
+]

@@ -1,6 +1,6 @@
-from .cnf import *
-
 from typing import List, Tuple
+
+from .cnf import CNF, CNFData, Clause, Clauses
 
 Atmost = Tuple[List[int], int]
 Atmosts = List[Atmost]
@@ -90,9 +90,10 @@ class CNFP(CNF):
 
 __all__ = [
     'CNFP',
+    'CNFPData',
+    # types
     'Clause',
     'Atmost',
     'Clauses',
     'Atmosts',
-    'CNFPData'
 ]

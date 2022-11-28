@@ -1,10 +1,11 @@
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Dict
 
 Assumptions = List[int]
 Constraints = List[List[int]]
 Supplements = Tuple[Assumptions, Constraints]
 
-VarDeps = List[Union['Var', int]]
+AnyVar = Union['Var', int]
+VarMap = Dict[AnyVar, int]
 
 
 class Var:
@@ -13,10 +14,10 @@ class Var:
         self.name = name
 
     @property
-    def deps(self) -> VarDeps:
+    def deps(self) -> List[AnyVar]:
         raise NotImplementedError
 
-    def supplements(self, value_dict) -> Supplements:
+    def supplements(self, var_map: VarMap) -> Supplements:
         raise NotImplementedError
 
     def __str__(self):
@@ -34,7 +35,10 @@ class Var:
 
 __all__ = [
     'Var',
-    'VarDeps',
+    # types
+    'List',
+    'AnyVar',
+    'VarMap',
     'Assumptions',
     'Constraints',
     'Supplements'

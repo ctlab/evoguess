@@ -1,42 +1,61 @@
 Instance
 ========
 
-.. code-block:: none
+| Определяющие параметры:
 
-    'instance': {
-        'slug': 'instance',
-        'encoding': <encoding module>,
-        'search_set': <variables module>
-    }
+* **encoding** -- Instance of `Encoding <instance_modules/encoding.module.html>`_ module.
+
+.. code-block:: python
+
+    from instance.impl import Instance
+
+    instance = Instance(
+        encoding: Encoding
+    )
 
 Stream Cipher
 -------------
 
-.. code-block:: none
+| Определяющие параметры:
 
-    'instance': {
-        'slug': 'cipher:stream',
-        'encoding': <encoding module>,
-        'input_set': <variables module>,
-        'extra_set': <optional variables module>
-        'output_set': <variables module>,
-        'search_set': <variables module>,
-    }
+* **encoding** -- Instance of `Encoding <instance_modules/encoding.module.html>`_ module.
+* **input_set** -- Instance of `Variables <instance_modules/variables.module.html>`_ module.
+* **output_set** -- Instance of Indexes in `Variables <instance_modules/variables.module.html>`_ module.
+* **extra_set** -- Instance of `Variables <instance_modules/variables.module.html>`_ module.
+
+.. code-block:: python
+
+    from instance.impl import StreamCipher
+
+    instance = StreamCipher(
+        encoding: Encoding,
+        input_set: Indexes,
+        output_set: Variables,
+        extra_set: Optional[Variables]
+    )
 
 Block Cipher
 -------------
 
-.. code-block:: none
+| Определяющие параметры:
 
-    'instance': {
-        'slug': 'cipher:block',
-        'encoding': <encoding module>,
-        'input_set': <variables module>,
-        'plain_set': <variables module>,
-        'extra_set': <optional variables module>
-        'output_set': <variables module>,
-        'search_set': <variables module>,
-    }
+* **encoding** -- Instance of `Encoding <instance_modules/encoding.module.html>`_ module.
+* **input_set** -- Instance  of Indexes `Variables <instance_modules/variables.module.html>`_ module.
+* **plain_set** -- Instance  of Indexes `Variables <instance_modules/variables.module.html>`_ module.
+* **output_set** -- Instance of `Variables <instance_modules/variables.module.html>`_ module.
+* **extra_set** -- Instance of `Variables <instance_modules/variables.module.html>`_ module.
+
+.. code-block:: python
+
+    from instance.impl import BlockCipher
+
+    instance = BlockCipher(
+        encoding: Encoding,
+        input_set: Indexes,
+        plain_set: Indexes,
+        output_set: Variables,
+        extra_set: Optional[Variables]
+    )
 
 Instance modules
 ----------------

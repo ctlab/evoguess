@@ -1,14 +1,17 @@
+from .abc import Logger, Parser
 from .impl import outputs
-
 from util import load_modules
 
 
-def Output(configuration, **kwargs):
+def OutputBuilder(configuration, **kwargs):
     slug = configuration.pop('slug')
     loaded_modules = load_modules(**configuration)
     return outputs.get(slug)(**kwargs, **loaded_modules)
 
 
 __all__ = [
-    'Output'
+    'Logger',
+    'Parser',
+    # builder
+    'OutputBuilder'
 ]

@@ -50,29 +50,16 @@ Calculating
     :caption: Getting started
 
     getting_started/installation
-    getting_started/how_use
-    getting_started/configuration
+    getting_started/typical_use
     getting_started/citations
 
 .. toctree::
     :maxdepth: 1
     :caption: User manual
 
-    user_manual/algorithm
+    user_manual/core
     user_manual/instance
-    user_manual/executor
     user_manual/function
-    user_manual/method
+    user_manual/algorithm
+    user_manual/executor
     user_manual/output
-    user_manual/backdoors
-    user_manual/example_configuration
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Advanced usage
-
-    advanced_usage/preliminaries
-    advanced_usage/algorithm.abstract
-    advanced_usage/executor.abstract
-    advanced_usage/function.abstract
-    advanced_usage/output.abstract

@@ -1,10 +1,7 @@
-from .evolution import *
-from . import limit, tuner
+from . import mutation, crossover, selection
 
 modules = {
-    **limit.limits,
-    **tuner.tuners,
-    **mutation.mutations,
-    **crossover.crossovers,
-    **selection.selections,
+    **mutation.impls,
+    **crossover.impls,
+    **selection.impls,
 }

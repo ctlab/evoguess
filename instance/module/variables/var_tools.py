@@ -2,7 +2,9 @@ import json
 
 from .vars import *
 from .operation import *
+
 from typing import Tuple, List
+from typings.optional import Int
 
 operations = {
     'xor': xor,
@@ -11,9 +13,12 @@ operations = {
 }
 
 
-def parse_range(string: str) -> Tuple[int, int]:
-    # todo: handle errors
-    return (int(x) for x in string.split('..'))
+def parse_range(string: str) -> Tuple[Int, Int]:
+    try:
+        st, end = string.split('..')
+        return int(st), int(end)
+    except ValueError:
+        return None, None
 
 
 def parse_indexes(string: str) -> List[int]:
@@ -30,6 +35,7 @@ def parse_indexes(string: str) -> List[int]:
 
 def parse_vars_raw(vars_raw: str) -> List[Var]:
     variables = []
+    # todo: refactor!
     var_scheme = json.loads(vars_raw)
     for key, value in var_scheme.items():
         if key.startswith('index'):
@@ -38,7 +44,7 @@ def parse_vars_raw(vars_raw: str) -> List[Var]:
             prefix = value['prefix']
             op = operations[value['op']]
             variables.extend([
-                Switch(f'{prefix}{i}', op, group)
+                Switch(f'{prefix}{i}', group, op)
                 for i, group in enumerate(value['groups'])
             ])
         elif key.startswith('domain'):

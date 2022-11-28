@@ -1,13 +1,16 @@
-from ._async import *
-from .iterable import *
-from . import _async, iterable
+from .elitism import *
+from .m_plus_l import *
+from .m_comma_l import *
 
 algorithms = {
-    **_async.algorithms,
-    **iterable.algorithms,
+    Elitism.slug: Elitism,
+    MuPlusLambda.slug: MuPlusLambda,
+    MuCommaLambda.slug: MuCommaLambda
 }
 
 __all__ = [
-    *_async.__all__,
-    *iterable.__all__,
+    'algorithms',
+    # impls
+    'Elitism',
+    'MuPlusLambda'
 ]
