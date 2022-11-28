@@ -1,14 +1,14 @@
-from ..vars import Index
-from ..variables import *
-from ..var_tools import parse_indexes
-
 from typing import Iterable
+
+from ..vars import Index
+from ..variables import Variables
+from ..var_tools import parse_indexes
 
 
 class Indexes(Variables):
     slug = 'variables:indexes'
 
-    def __init__(self, from_iterable: Iterable = None, from_string: str = None):
+    def __init__(self, from_iterable: Iterable[int] = None, from_string: str = None):
         self.from_string = from_string
         if from_iterable:
             indexes = list(from_iterable)

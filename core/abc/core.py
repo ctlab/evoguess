@@ -31,8 +31,8 @@ class Core:
 
     def __config__(self):
         return {
-            'instance': self.instance.__config__(),
-            'executor': self.instance.__config__(),
+            # 'instance': self.instance.__config__(),
+            # 'executor': self.executor.__config__(),
             'random_seed': self.random_seed,
         }
 

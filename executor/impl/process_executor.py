@@ -1,15 +1,15 @@
-from ..abc.executor import *
-
 from os import cpu_count
-from concurrent.futures.process import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
+
+from ..abc.executor import *
 
 
 class ProcessExecutor(Executor):
     slug = 'executor:process'
 
-    def __init__(self, workers: int = None):
-        super().__init__(workers=workers or cpu_count())
-        self.executor = ProcessPoolExecutor(max_workers=self.workers)
+    def __init__(self, max_workers: int = None):
+        super().__init__(max_workers or cpu_count())
+        self.executor = ProcessPoolExecutor(max_workers=self.max_workers)
 
     def submit(self, fn: Callable, *args, **kwargs) -> Future:
         return self.executor.submit(fn, *args, **kwargs)

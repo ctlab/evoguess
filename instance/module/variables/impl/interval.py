@@ -1,4 +1,4 @@
-from .indexes import *
+from .indexes import Indexes
 from ..var_tools import parse_range
 
 

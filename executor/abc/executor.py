@@ -7,8 +7,8 @@ from typings.future import Future
 class Executor:
     slug = 'executor'
 
-    def __init__(self, workers: int):
-        self.workers = workers
+    def __init__(self, max_workers: int):
+        self.max_workers = max_workers
         # using only for submit_all utilisation tracking
         self._trackers = []
 
@@ -39,7 +39,7 @@ class Executor:
     def __info__(self):
         return {
             'slug': self.slug,
-            'workers': self.workers,
+            'max_workers': self.max_workers,
         }
 
 

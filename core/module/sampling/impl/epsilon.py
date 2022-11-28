@@ -6,15 +6,13 @@ from math import sqrt
 class Epsilon(Sampling):
     slug = 'sampling:epsilon'
 
-    def __init__(self,
-                 step: int, epsilon: float,
-                 min_count: int, max_count: int,
-                 delta: float = 0.05, **kwargs):
+    def __init__(self, step: int, epsilon: float, min_count: int,
+                 max_count: int, split_into: int, delta: float = 0.05):
         self.step = step
         self.delta = delta
         self.epsilon = epsilon
         self.min, self.max = min_count, max_count
-        super().__init__(self.max, **kwargs)
+        super().__init__(self.max, split_into)
 
     def _n_e_d(self, values):
         n, e = len(values), sum(values) / len(values)

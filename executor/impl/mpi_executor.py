@@ -12,8 +12,8 @@ class MPIExecutor(Executor):
 
     def __init__(self):
         self.mpi_size = MPI.COMM_WORLD.Get_size()
-        super().__init__(workers=max(1, self.mpi_size - 1))
-        self.executor = MPIPoolExecutor(max_workers=self.workers)
+        super().__init__(max(1, self.mpi_size - 1))
+        self.executor = MPIPoolExecutor(max_workers=self.max_workers)
 
     def submit(self, fn: Callable, *args, **kwargs) -> Future:
         return self.executor.submit(fn, *args, **kwargs)

@@ -30,8 +30,8 @@ if __name__ == '__main__':
     solution = Optimize(
         space=InputSet(),
         logger=VectorLogs(logs_path),
-        executor=ThreadExecutor(workers=2),
-        sampling=Const(count=64, split_into=16),
+        executor=ThreadExecutor(max_workers=2),
+        sampling=Const(value=64, split_into=16),
         instance=StreamCipher(
             encoding=CNF(from_file=data_path.to_file('a5_1.cnf')),
             input_set=Interval(start=1, length=64),

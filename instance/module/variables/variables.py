@@ -1,9 +1,9 @@
-from .vars import Var, AnyVar
-from .var_tools import parse_vars_raw
-
 from threading import Lock
 from itertools import chain
 from typing import List, Iterable
+
+from .vars import Var, AnyVar
+from .var_tools import parse_vars_raw
 
 from util.lazy_file import get_file_data
 

@@ -15,7 +15,7 @@ class StreamCipher(Instance):
             self,
             encoding: Encoding,
             input_set: Indexes,
-            output_set: Indexes,
+            output_set: Variables,
             extra_set: Optional[Variables] = None
     ):
         super().__init__(encoding)

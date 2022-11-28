@@ -5,21 +5,22 @@ class Const(Sampling):
     slug = 'sampling:const'
 
     def __init__(self,
-                 count: int,
+                 value: int,
                  split_into: int):
-        self.count = count
-        super().__init__(count, split_into)
+        self.value = value
+        super().__init__(value, split_into)
 
     def summarize(self, results: Results) -> Dict[str, Any]:
         return {}
 
     def get_count(self, offset: int, size: int, results: Results) -> int:
-        return max(0, min(self.count, size) - offset)
+        return max(0, min(self.value, size) - offset)
 
     def __info__(self):
         return {
             **super().__info__(),
-            'count': self.count
+            'value': self.value,
+            'split_into': self.split_into
         }
 
 
