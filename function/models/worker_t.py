@@ -71,4 +71,7 @@ __all__ = [
     'WorkerArgs',
     'ChunkResult',
     'WorkerResult',
+    # workers args
+    'ChunkOffset',
+    'ChunkLength'
 ]

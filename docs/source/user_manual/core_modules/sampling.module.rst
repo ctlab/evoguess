@@ -1,19 +1,27 @@
 Sampling
 ========
 
-Define sampling size.
+This module determines the sample size and is used to prepare chunk parameters for **worker_func** of `Function <../function.html>`_. Метод **get_state(...)** создает экземпляр **SamplingState** с параметрами **offset** and **size** для конкретного процесса оценки. Метод **chunks(...)** возвращает список из **SampleChunk** в зависимости от уже полученных **Results**. Каждый **SampleChunk** имеет формат (**ChunkOffset**, **ChunkLength**).
+
+.. code-block:: python
+
+    class Sampling:
+        def get_state(offset: int, size: int) -> SamplingState
+
+    class SamplingState:
+        def chunks(results: Results) -> List[SampleChunk]
 
 Const sampling
 --------------
 
-Constant sample size.
+This implementation defines a sample of constant **size**. During the estimation, the selection will be split into **value/split_into** chunks of size equals to **split_into**.
 
 .. code-block:: python
 
     from core.module.sampling import Const
 
     sampling = Sampling(
-        value: int,
+        size: int,
         split_into: int
     )
 
@@ -27,9 +35,9 @@ Epsilon sampling
 
     sampling = Epsilon(
         step: int,
+        min_size: int,
+        max_size: int,
         epsilon: float,
-        min_count: int,
-        max_count: int,
         split_into: int,
         delta: float = 0.5
     )

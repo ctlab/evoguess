@@ -1,25 +1,25 @@
-from ..sampling import *
+from typing import Dict, Any
+
+from ..sampling import Sampling
+from function.models import Results
 
 
 class Const(Sampling):
     slug = 'sampling:const'
 
-    def __init__(self,
-                 value: int,
-                 split_into: int):
-        self.value = value
-        super().__init__(value, split_into)
+    def __init__(self, size: int, split_into: int):
+        super().__init__(size, split_into)
 
     def summarize(self, results: Results) -> Dict[str, Any]:
         return {}
 
     def get_count(self, offset: int, size: int, results: Results) -> int:
-        return max(0, min(self.value, size) - offset)
+        return max(0, min(self.max_size, size) - offset)
 
-    def __info__(self):
+    def __config__(self):
         return {
-            **super().__info__(),
-            'value': self.value,
+            'slug': self.slug,
+            'size': self.max_size,
             'split_into': self.split_into
         }
 

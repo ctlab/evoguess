@@ -1,3 +1,4 @@
+from typings.optional import Str
 from instance.impl.instance import Instance
 from instance.module.variables import Mask, ByteMask, Backdoor
 
@@ -5,9 +6,7 @@ from instance.module.variables import Mask, ByteMask, Backdoor
 class Space:
     slug = 'space'
 
-    def __init__(self,
-                 by_mask: Mask = None,
-                 by_string: str = None):
+    def __init__(self, by_mask: Mask = None, by_string: Str = None):
         self.by_mask = by_mask
         self.by_string = by_string
 
@@ -34,13 +33,6 @@ class Space:
 
     def __str__(self):
         return self.slug
-
-    def __info__(self):
-        return {
-            'slug': self.slug,
-            'by_mask': self.by_mask,
-            'by_string': self.by_string
-        }
 
 
 __all__ = [

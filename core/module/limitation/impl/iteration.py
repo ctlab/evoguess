@@ -5,8 +5,11 @@ class Iteration(Limitation):
     key = 'iteration'
     slug = 'limitation:iteration'
 
-    def __init__(self, value: Numeral):
-        super().__init__(value)
+    def __config__(self):
+        return {
+            'slug': self.slug,
+            'value': self.limit
+        }
 
 
 __all__ = [

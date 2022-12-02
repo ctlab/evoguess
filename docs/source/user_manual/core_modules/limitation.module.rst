@@ -3,6 +3,15 @@ Limitation
 
 Limits the resources used by algorithms in the optimization process.
 
+.. code-block:: python
+
+    class Limitation:
+        def exhausted() -> bool:
+        def left(key: str) -> Optional[Numeral]
+        def set(key: str, value: Numeral) -> Numeral
+        def get(key: str, default: Numeral) -> Numeral
+        def increase(key: str, value: Numeral) -> Numeral
+
 WallTime
 --------
 

@@ -1,6 +1,8 @@
 from operator import getitem
 from functools import reduce
 
+from . import iterable, lazy_file
+
 
 def _key(function):
     return str(function).split()[1].lower()

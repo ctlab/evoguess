@@ -18,9 +18,9 @@ class WallTime(Limitation):
         super().__init__(value)
         self.from_string = from_string
 
-    def __info__(self):
+    def __config__(self):
         return {
-            **super().__info__(),
+            'slug': self.slug,
             'from_string': self.from_string
         }
 

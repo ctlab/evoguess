@@ -1,6 +1,8 @@
-from function.models import Results
-
 from typing import List, Tuple, Dict, Any
+
+from function.models import Results, ChunkOffset, ChunkLength
+
+SampleChunk = Tuple[ChunkOffset, ChunkLength]
 
 
 class SamplingState:
@@ -9,7 +11,7 @@ class SamplingState:
         self.offset = offset
         self.sampling = sampling
 
-    def chunks(self, results: Results) -> List[Tuple[int, int]]:
+    def chunks(self, results: Results) -> List[SampleChunk]:
         count = self.sampling.get_count(self.offset, self.size, results)
         sample_chunks, chunk_size = [], self.sampling.split_into
         chunk_count, remainder = divmod(count, chunk_size)
@@ -41,16 +43,10 @@ class Sampling:
     def __str__(self):
         return self.slug
 
-    def __info__(self):
-        return {
-            'slug': self.slug,
-        }
-
 
 __all__ = [
-    'Any',
-    'Dict',
-    'Results',
     'Sampling',
-    'SamplingState'
+    # types
+    'SampleChunk',
+    'SamplingState',
 ]

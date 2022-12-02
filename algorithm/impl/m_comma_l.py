@@ -6,7 +6,6 @@ from ..module.selection import Selection
 
 from typings.optional import Int
 from core.model.point import Vector
-from util.iterable import pick_by, omit_by
 
 
 class MuCommaLambda(Evolution):
