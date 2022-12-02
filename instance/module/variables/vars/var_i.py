@@ -19,8 +19,10 @@ class Index(Var):
     def __eq__(self, other):
         if isinstance(other, int):
             return self.index == other
-        else:
+        elif isinstance(other, Index):
             return self.index == other.index
+        else:
+            return super().__eq__(other)
 
 
 __all__ = [

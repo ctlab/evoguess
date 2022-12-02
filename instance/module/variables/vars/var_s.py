@@ -59,5 +59,9 @@ __all__ = [
     'Switch',
     'XorSwitch',
     'Bent4Switch',
-    'MajoritySwitch'
+    'MajoritySwitch',
+    # operations
+    'xor',
+    'bent4',
+    'majority'
 ]

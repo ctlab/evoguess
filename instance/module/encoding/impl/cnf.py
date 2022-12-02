@@ -46,7 +46,7 @@ class CNFData(EncodingData):
 
     @property
     def max_literal(self) -> int:
-        return self._max_lit
+        return self._get_lines_and_max_lit()[1]
 
 
 class CNF(Encoding):

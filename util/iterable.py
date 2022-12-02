@@ -55,7 +55,7 @@ def slice_by(iterable: Iterable[T], size: int) -> Iterable[Tuple[T]]:
     return iter(lambda: tuple(islice(iterator, size)), ())
 
 
-def split_by(iterable: Iterable[T], predicate: Predicate = identity) -> Tuple[Iterable[T], Iterable[T]]:
+def split_by(iterable: Iterable[T], predicate: Predicate = identity) -> Tuple[List[T], List[T]]:
     left, right = [], []
     for i, item in enumerate(iterable):
         if isinstance(predicate, Callable):
@@ -66,9 +66,3 @@ def split_by(iterable: Iterable[T], predicate: Predicate = identity) -> Tuple[It
             raise TypeError(f'unexpected predicate type: \'{type(predicate).__name__}\'')
 
     return left, right
-
-
-def for_each(iterable: Iterable[T], fn: Callable[[T], None]) -> None:
-    # todo: unused, remove this
-    for item in iterable:
-        fn(item)

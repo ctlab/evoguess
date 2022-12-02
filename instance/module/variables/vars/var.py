@@ -29,8 +29,10 @@ class Var:
     def __eq__(self, other):
         if isinstance(other, str):
             return self.name == other
-        else:
+        elif isinstance(other, Var):
             return self.name == other.name
+        else:
+            return False
 
 
 __all__ = [

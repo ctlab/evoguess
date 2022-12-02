@@ -1,14 +1,14 @@
 import json
 
 from .vars import *
-from .operation import *
+from .vars.var_s import xor, bent4, majority
 
 from typing import Tuple, List
 from typings.optional import Int
 
 operations = {
     'xor': xor,
-    'bent_4': bent_4,
+    'bent_4': bent4,
     'majority': majority
 }
 
