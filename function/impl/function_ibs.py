@@ -60,7 +60,7 @@ class InverseBackdoorSets(Function):
         time_sum, value_sum = sum(times.values()), sum(values.values())
         power, budget, value = backdoor.power(), self.measure.budget, float('inf')
 
-        if statuses[Status.RESOLVED] > 0:
+        if statuses.get(Status.RESOLVED, 0) > 0:
             value = power * budget * (3. * count / statuses[Status.RESOLVED])
 
         return {

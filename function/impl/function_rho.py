@@ -20,7 +20,7 @@ def rho_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
     with solver.use_incremental(encoding_data, measure) as incremental:
         for assumptions, _ in gad_supplements(args, instance, backdoor):
             # todo: use constraints with incremental propagation?
-            time, value, status, _ = incremental.propagate(assumptions)
+            time, value, status, _ = incremental.propagate(assumptions,  add_model=False)
 
             times[status.value] = times.get(status.value, 0.) + time
             values[status.value] = values.get(status.value, 0.) + value

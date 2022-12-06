@@ -30,7 +30,7 @@ def check(data: EncodingData, report: Report, add_model: bool = True) -> Report:
     if report.status == Status.RESOLVED:
         return report
 
-    time, status, value, literals = report
+    time, value, status, literals = report
     if isinstance(data, CNFData) and not isinstance(data, CNFPData):
         value_map = {abs(lit): lit for lit in literals}
         stamp, model = now() - time, literals if add_model else None
@@ -45,10 +45,11 @@ def check(data: EncodingData, report: Report, add_model: bool = True) -> Report:
 
 class IncrTwoSAT(IncrPySAT):
     def solve(self, assumptions: Assumptions, add_model: bool = True) -> Report:
-        return self.solve(assumptions, add_model)
+        # todo: maybe raise Exception?
+        return self.propagate(assumptions, add_model)
 
     def propagate(self, assumptions: Assumptions, add_model: bool = True) -> Report:
-        return check(self.data, super().propagate(assumptions, add_model), add_model)
+        return check(self.data, super().propagate(assumptions), add_model)
 
 
 class TwoSAT(PySAT):
