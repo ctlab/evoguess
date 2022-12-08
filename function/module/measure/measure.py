@@ -3,7 +3,6 @@ from typing import Tuple
 from ...models import Status
 from typings.optional import Float, Str, Bool
 
-
 STATUS_MAP = {
     False: Status.SOLVED,
     True: Status.RESOLVED,
@@ -50,8 +49,7 @@ class Measure:
 __all__ = [
     'Measure',
     # types
-    'Status',
     'Budget',
     # const
-    'EMPTY_BUDGET'
+    'EMPTY_BUDGET',
 ]

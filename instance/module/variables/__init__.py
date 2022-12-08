@@ -9,5 +9,5 @@ variables = {
 
 __all__ = [
     'Variables',
-    *impl.__all__
+    *impl.__all__,
 ]

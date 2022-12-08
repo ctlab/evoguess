@@ -9,10 +9,10 @@ variables = {
 }
 
 __all__ = [
-    'Mask',
-    'ByteMask',
-    #
     'Indexes',
     'Interval',
-    'Backdoor'
+    'Backdoor',
+    # types
+    'Mask',
+    'ByteMask'
 ]

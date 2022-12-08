@@ -10,11 +10,9 @@ measures = {
     LearnedLiterals.slug: LearnedLiterals
 }
 
-# assert len(set(map(attr('idx'), measures.values()))) == len(measures)
-
 __all__ = [
     'Conflicts',
     'SolvingTime',
     'Propagations',
-    'LearnedLiterals'
+    'LearnedLiterals',
 ]

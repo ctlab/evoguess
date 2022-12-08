@@ -13,6 +13,10 @@ __all__ = [
     'CNF',
     'CNFP',
     # types
+    'Clause',
+    'Atmost',
+    'Clauses',
+    'Atmosts',
     'CNFData',
-    'CNFPData'
+    'CNFPData',
 ]

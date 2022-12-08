@@ -37,9 +37,10 @@ class CNFPData(CNFData):
 class CNFP(CNF):
     slug = 'encoding:cnf+'
 
-    def __init__(self, from_atmosts: Atmosts = (), **kwargs):
-        self.atmosts = list(from_atmosts)
-        super().__init__(**kwargs)
+    def __init__(self, from_clauses: Clauses = None,
+                 from_atmosts: Atmosts = None, from_file: str = None):
+        super().__init__(from_clauses, from_file)
+        self.atmosts = from_atmosts
 
     def _parse_raw_data(self, raw_data: str):
         lines, clauses, atmosts, max_lit = [], [], [], 0
@@ -66,7 +67,7 @@ class CNFP(CNF):
         )
 
     def get_data(self) -> CNFPData:
-        if self.clauses:
+        if self.clauses and self.atmosts:
             return CNFPData(self.clauses, self.atmosts)
         elif self.filepath in cnfp_data:
             return cnfp_data[self.filepath]
@@ -92,8 +93,6 @@ __all__ = [
     'CNFP',
     'CNFPData',
     # types
-    'Clause',
     'Atmost',
-    'Clauses',
     'Atmosts',
 ]

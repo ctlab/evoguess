@@ -53,11 +53,9 @@ class CNF(Encoding):
     slug = 'encoding:cnf'
     comment_lead = ['p', 'c']
 
-    def __init__(self,
-                 from_file: str = None,
-                 from_clauses: Clauses = None):
-        self.clauses = from_clauses
+    def __init__(self, from_clauses: Clauses = None, from_file: str = None):
         super().__init__(from_file)
+        self.clauses = from_clauses
 
     def _parse_raw_data(self, raw_data: str):
         lines, clauses, max_lit = [], [], 0
@@ -107,5 +105,5 @@ __all__ = [
     'CNFData',
     # types
     'Clause',
-    'Clauses',
+    'Clauses'
 ]

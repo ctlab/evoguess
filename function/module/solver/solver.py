@@ -54,7 +54,8 @@ class Solver:
 
 
 __all__ = [
-    'Report',
     'Solver',
     'IncrSolver',
+    # types
+    'Report',
 ]

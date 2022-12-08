@@ -82,7 +82,7 @@ class Optimize(Estimate):
     def _log_insertion(self, insertion: Tuple[int, Vector], spent: float):
         if insertion is not None:
             index, vector = insertion
-            self.logger.write(vector, index=index, spent=spent)
+            self.logger.write(vector, index=index, spent=round(spent, 2))
 
     def __config__(self):
         return {}

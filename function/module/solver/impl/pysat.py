@@ -90,9 +90,9 @@ class IncrPySAT(IncrSolver):
     last_fixed_value = None
 
     def __init__(self, constructor: Type, data: EncodingData, measure: Measure):
+        super().__init__(data, measure)
         # todo: add constraints to constructor
         self.constructor = constructor
-        super().__init__(data, measure)
 
     def _fix(self, report: Report) -> Report:
         if self.measure.key == 'time':
@@ -162,10 +162,66 @@ class Glucose4(PySAT):
         super().__init__(pysat.Glucose4)
 
 
+class Lingeling(PySAT):
+    slug = 'solver:pysat:lgl'
+
+    def __init__(self):
+        super().__init__(pysat.Lingeling)
+
+
+class MapleCM(PySAT):
+    slug = 'solver:pysat:mcm'
+
+    def __init__(self):
+        super().__init__(pysat.MapleCM)
+
+
+class MapleSAT(PySAT):
+    slug = 'solver:pysat:mpl'
+
+    def __init__(self):
+        super().__init__(pysat.Maplesat)
+
+
+class MapleChrono(PySAT):
+    slug = 'solver:pysat:mcb'
+
+    def __init__(self):
+        super().__init__(pysat.MapleChrono)
+
+
+class Minicard(PySAT):
+    slug = 'solver:pysat:mc'
+
+    def __init__(self):
+        super().__init__(pysat.Minicard)
+
+
+class Minisat22(PySAT):
+    slug = 'solver:pysat:mgh'
+
+    def __init__(self):
+        super().__init__(pysat.Minisat22)
+
+
+class MinisatGH(PySAT):
+    slug = 'solver:pysat:m22'
+
+    def __init__(self):
+        super().__init__(pysat.MinisatGH)
+
+
 __all__ = [
     'Cadical',
     'Glucose3',
     'Glucose4',
+    'Lingeling',
+    'MapleCM',
+    'MapleSAT',
+    'MapleChrono',
+    'Minicard',
+    'Minisat22',
+    'MinisatGH',
     # types
     'PySAT',
     'IncrPySAT'
