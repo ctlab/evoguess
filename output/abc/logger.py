@@ -5,7 +5,7 @@ from typing import Any
 from datetime import datetime
 from time import sleep, time as now
 
-from .output import Output, LogFormat, Configuration
+from .output import Output, LogFormat, Module, Configuration
 
 from typings.work_path import WorkPath
 from typings.error import OutputSessionError
@@ -45,6 +45,15 @@ class Logger(Output):
         os.rename(path, path.replace(self._name, name))
         self._session, self._name = None, None
         self.session_enter = None
+
+    def var_set(self, var_set: Configuration, filename: str = 'var_set.json') -> 'Logger':
+        if self._session is None:
+            raise OutputSessionError
+
+        filepath = self._session.to_file(filename)
+        with open(filepath, 'w+') as handle:
+            json.dump(var_set, handle, indent=2)
+        return self
 
     def config(self, config: Configuration, filename: str = 'config.json') -> 'Logger':
         if self._session is None:

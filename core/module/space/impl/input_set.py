@@ -1,3 +1,5 @@
+from typing import Dict, Any
+
 from ..space import Space
 
 from instance.module.variables import Backdoor
@@ -14,7 +16,7 @@ class InputSet(Space):
             from_file=cipher.input_set.filepath,
         )
 
-    def __config__(self):
+    def __config__(self) -> Dict[str, Any]:
         return {
             'slug': self.slug,
             'by_mask': self.by_mask,

@@ -1,3 +1,5 @@
+from typing import Dict, Any
+
 from ..space import Space
 
 from typings.optional import Str
@@ -19,7 +21,7 @@ class SearchSet(Space):
             from_file=self.variables.filepath,
         )
 
-    def __config__(self):
+    def __config__(self) -> Dict[str, Any]:
         return {
             'slug': self.slug,
             'by_mask': self.by_mask,

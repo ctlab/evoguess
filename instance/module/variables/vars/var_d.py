@@ -1,7 +1,11 @@
+from typing import Dict, Any
+
 from .var import *
 
 
 class Domain(Var):
+    slug = 'var:domain'
+
     def __init__(self, name: str, group: List[int]):
         self.group = group
         super().__init__(len(group), name)
@@ -16,6 +20,13 @@ class Domain(Var):
                     for i, var in enumerate(self.group)], []
         else:
             return [var_map[i] for i in self.group], []
+
+    def __config__(self) -> Dict[str, Any]:
+        return {
+            'slug': self.slug,
+            'name': self.name,
+            'group': self.group
+        }
 
 
 __all__ = [

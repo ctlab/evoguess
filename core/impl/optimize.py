@@ -50,8 +50,9 @@ class Optimize(Estimate):
         with self.logger:
             self.start_stamp = now()
             # self.logger.config(self.__config__())
-            # todo: search root estimation in cache
             initial = self.space.get_initial(self.instance)
+            self.logger.var_set(initial.__config__())
+            # todo: search root estimation in cache
             point, handles = self.estimate(initial).result(), []
             assert point.estimated(), 'initial isn\'t estimated!'
             self._log_insertion((0, [point]), now() - self.start_stamp)

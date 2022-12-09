@@ -11,8 +11,6 @@ class EncodingData:
 
 
 class Encoding:
-    slug = 'encoding'
-
     def __init__(self, from_file: str = None):
         self.filepath = from_file
 

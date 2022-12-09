@@ -1,3 +1,5 @@
+from typing import Dict, Any
+
 from typings.optional import Str
 from instance.impl.instance import Instance
 from instance.module.variables import Mask, ByteMask, Backdoor
@@ -33,6 +35,9 @@ class Space:
 
     def __str__(self):
         return self.slug
+
+    def __config__(self) -> Dict[str, Any]:
+        raise NotImplementedError
 
 
 __all__ = [

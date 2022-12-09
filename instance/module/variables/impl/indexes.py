@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Dict, Any
 
 from ..vars import Index
 from ..variables import Variables
@@ -19,7 +19,7 @@ class Indexes(Variables):
             indexes = parse_indexes(from_string)
         super().__init__(from_vars=[Index(i) for i in indexes])
 
-    def __info__(self):
+    def __config__(self) -> Dict[str, Any]:
         return {
             'slug': self.slug,
             'from_string': self.from_string,

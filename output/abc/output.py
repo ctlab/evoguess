@@ -32,6 +32,9 @@ class Output:
     def __exit__(self, exc_type, exc_val, exc_tb):
         raise NotImplementedError
 
+    def var_set(self, filename: str) -> Any:
+        raise NotImplementedError
+
     def config(self, filename: str) -> Any:
         raise NotImplementedError
 
@@ -46,6 +49,7 @@ class Output:
 __all__ = [
     'Output',
     # types
+    'Module',
     'LogFormat',
     'Configuration'
 ]

@@ -1,10 +1,12 @@
 from .var import *
 
-from typing import Callable
+from typing import Callable, Any, Dict
 from util.iterable import to_bin
 
 
 class Switch(Var):
+    slug = 'var:switch'
+
     def __init__(self, name: str, group: List[int], fn: Callable):
         self.fn = fn
         self.group = group
@@ -27,12 +29,21 @@ class Switch(Var):
                 ])
         return [], constraints
 
+    def __config__(self) -> Dict[str, Any]:
+        return {
+            'slug': self.slug,
+            'name': self.name,
+            'group': self.group,
+        }
+
 
 def xor(*args):
     return sum(args) % 2 == 1
 
 
 class XorSwitch(Switch):
+    slug = 'var:switch:xor'
+
     def __init__(self, name: str, group: List[int]):
         super().__init__(name, group, xor)
 
@@ -42,6 +53,8 @@ def bent4(x1, x2, x3, x4):
 
 
 class Bent4Switch(Switch):
+    slug = 'var:switch:bent4'
+
     def __init__(self, name: str, group: List[int]):
         super().__init__(name, group, bent4)
 
@@ -51,6 +64,8 @@ def majority(*args):
 
 
 class MajoritySwitch(Switch):
+    slug = 'var:switch:majority'
+
     def __init__(self, name: str, group: List[int]):
         super().__init__(name, group, majority)
 

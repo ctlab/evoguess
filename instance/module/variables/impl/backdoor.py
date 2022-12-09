@@ -12,9 +12,7 @@ ByteMask = bytes
 class Backdoor(Variables):
     slug = 'variables:backdoor'
 
-    def __init__(self,
-                 from_file: str = None,
-                 from_vars: List[Var] = None):
+    def __init__(self, from_file: str = None, from_vars: List[Var] = None):
         super().__init__(from_vars=from_vars, from_file=from_file)
         self._length = len(super().variables())
         self._mask = list_of(1, self._length)

@@ -1,7 +1,11 @@
+from typing import Dict, Any
+
 from .var import *
 
 
 class Index(Var):
+    slug = 'var:index'
+
     def __init__(self, index: int):
         self.index = index
         super().__init__(2, str(index))
@@ -23,6 +27,12 @@ class Index(Var):
             return self.index == other.index
         else:
             return super().__eq__(other)
+
+    def __config__(self) -> Dict[str, Any]:
+        return {
+            'slug': self.slug,
+            'index': self.index,
+        }
 
 
 __all__ = [

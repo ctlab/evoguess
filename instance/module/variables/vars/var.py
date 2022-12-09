@@ -1,4 +1,4 @@
-from typing import Union, List, Tuple, Dict
+from typing import Union, List, Tuple, Dict, Any
 
 Assumptions = List[int]
 Constraints = List[List[int]]
@@ -33,6 +33,9 @@ class Var:
             return self.name == other.name
         else:
             return False
+
+    def __config__(self) -> Dict[str, Any]:
+        raise NotImplementedError
 
 
 __all__ = [

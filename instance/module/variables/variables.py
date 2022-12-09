@@ -1,6 +1,6 @@
 from threading import Lock
 from itertools import chain
-from typing import List, Iterable
+from typing import Any, List, Dict, Iterable
 
 from .vars import Var, AnyVar
 from .var_tools import parse_vars_raw
@@ -91,10 +91,13 @@ class Variables:
     def __str__(self):
         return ' '.join(map(str, self.variables()))
 
-    def __info__(self):
+    def __config__(self) -> Dict[str, Any]:
         return {
             'slug': self.slug,
             'from_file': self.filepath,
+            'from_vars': [
+                var.__config__() for var in self._vars
+            ] if self._vars is not None else None
         }
 
 
