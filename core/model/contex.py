@@ -42,7 +42,10 @@ class Context:
         ]
 
     def get_estimation(self, results: Results = None) -> Estimation:
-        del CORE_CACHE.estimating[self.backdoor]
+        if self.backdoor in CORE_CACHE.estimating:
+            # todo: avoid this check
+            del CORE_CACHE.estimating[self.backdoor]
+
         if results is None:
             # todo: add cancel info
             estimation = CORE_CACHE.canceled[self.backdoor] = {
