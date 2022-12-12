@@ -32,8 +32,7 @@ def rho_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
 class RhoFunction(GuessAndDetermine):
     slug = 'function:rho'
 
-    def __init__(self, solver: Solver, measure: Measure,
-                 penalty_power: float = 0.):
+    def __init__(self, solver: Solver, measure: Measure, penalty_power: float):
         super().__init__(solver, measure)
         self.penalty_power = penalty_power
 

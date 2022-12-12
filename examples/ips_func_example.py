@@ -10,8 +10,9 @@ from function.module.solver import TwoSAT
 from function.module.measure import Propagations
 
 # instance module imports
-from instance.impl import Instance
+from instance.impl import StreamCipher
 from instance.module.encoding import CNF
+from instance.module.variables import Interval
 from typings.work_path import WorkPath
 
 # space submodule imports
@@ -45,11 +46,13 @@ if __name__ == '__main__':
     root_path = WorkPath('examples')
     data_path = root_path.to_path('data')
     cnf_file = data_path.to_file('a5_1_64.cnf')
-    instance = Instance(
-        encoding=CNF(from_file=cnf_file)
+    instance = StreamCipher(
+        encoding=CNF(from_file=cnf_file),
+        input_set=Interval(start=1, length=64),
+        output_set=Interval(start=14375, length=64)
     )
     space = InputSet()
-    executor = ProcessExecutor(max_workers=36)
+    executor = ProcessExecutor(max_workers=16)
     sampling = Const(size=1024, split_into=256)
     limitation = WallTime(from_string='04:00:00')
 

@@ -6,7 +6,7 @@ from ..space import Space
 from util.iterable import pick_by
 from typings.optional import Str
 
-from instance import Instance
+from instance.impl import Instance
 from function.module.solver import pysat
 from function.module.measure import Propagations
 from instance.module.variables import Backdoor, Variables, Indexes, Mask

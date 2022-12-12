@@ -37,8 +37,10 @@ class InversePolynomialSets(InverseBackdoorSets):
         time_sum, value_sum = sum(times.values()), sum(values.values())
         power, value = backdoor.power(), float('inf')
 
-        if statuses.get(Status.RESOLVED, 0) > 0:
-            value = power * (3. * count / statuses[Status.RESOLVED])
+        solved = statuses.get(Status.SOLVED, 0)
+        resolved = statuses.get(Status.RESOLVED, 0)
+        if solved + resolved > 0:
+            value = power * (3. * count / (solved + resolved))
 
         return {
             'count': count,

@@ -1,7 +1,8 @@
 from typing import Dict, Any, Optional
 
 from typings.optional import Str
-from instance.impl.instance import Instance
+
+from instance.impl import Instance
 from instance.module.variables import Mask, ByteMask, Backdoor
 
 

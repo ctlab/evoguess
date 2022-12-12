@@ -44,8 +44,7 @@ class PySatTimer:
         self._solver = None
 
 
-def init(constructor: Type, data: EncodingData,
-         constraints: Constraints = ()) -> pysat.Solver:
+def init(constructor: Type, data: EncodingData, constraints: Constraints) -> pysat.Solver:
     if isinstance(data, CNFData):
         clauses = data.clauses(constraints)
         solver = constructor(clauses, True)
@@ -89,10 +88,11 @@ class IncrPySAT(IncrSolver):
     solver = None
     last_fixed_value = None
 
-    def __init__(self, constructor: Type, data: EncodingData, measure: Measure):
+    def __init__(self, data: EncodingData, measure: Measure,
+                 constructor: Type, constraints: Constraints):
         super().__init__(data, measure)
-        # todo: add constraints to constructor
         self.constructor = constructor
+        self.constraints = constraints
 
     def _fix(self, report: Report) -> Report:
         if self.measure.key == 'time':
@@ -104,7 +104,7 @@ class IncrPySAT(IncrSolver):
         return Report(time, value, status, model)
 
     def __enter__(self):
-        self.solver = init(self.constructor, self.data)
+        self.solver = init(self.constructor, self.data, self.constraints)
         self.last_fixed_value = 0
         return self
 
@@ -138,8 +138,9 @@ class PySAT(Solver):
         with init(self.constructor, data, constraints) as solver:
             return propagate(solver, measure, data.max_literal, assumptions, add_model)
 
-    def use_incremental(self, data: EncodingData, measure: Measure) -> IncrPySAT:
-        return IncrPySAT(self.constructor, data, measure)
+    def use_incremental(self, data: EncodingData, measure: Measure,
+                        constraints: Constraints = ()) -> IncrPySAT:
+        return IncrPySAT(data, measure, self.constructor, constraints)
 
 
 class Cadical(PySAT):

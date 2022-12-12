@@ -7,23 +7,22 @@ from .pysat import IncrPySAT, PySAT
 
 from function.models import Status
 from function.module.measure import Measure
-from instance.module.encoding.impl.cnf import Clause
-from instance.module.encoding import EncodingData, CNFData, CNFPData
-from instance.module.variables.vars import Supplements, Assumptions
+from instance.module.encoding import EncodingData, CNFData, CNFPData, Clause
+from instance.module.variables.vars import Supplements, Assumptions, Constraints
 
 
-def is2sat(clause: Clause, value_map: Dict[int, int]) -> bool:
-    count = len(clause)
-    for literal in clause:
+def is2clause(clause: Clause, value_map: Dict[int, int]) -> bool:
+    index, size = 0, len(clause)
+    while size > 2 and index < len(clause):
+        literal = clause[index]
         value = value_map.get(abs(literal))
-        if value is None:
-            continue
         if literal == value:
             return True
-        else:
-            count -= 1
+        if value is not None:
+            size -= 1
+        index += 1
 
-    return count <= 2
+    return size <= 2
 
 
 def check(data: EncodingData, threshold: float, report: Report, add_model: bool = True) -> Report:
@@ -37,16 +36,17 @@ def check(data: EncodingData, threshold: float, report: Report, add_model: bool 
     false_limit = (1 - threshold) * len(clauses)
     value_map = {abs(lit): lit for lit in literals}
     stamp, model = now() - time, literals if add_model else None
-    for clause in data.clauses():  # todo: constraints not supported
-        false_count += not is2sat(clause, value_map)
+    for clause in clauses:  # todo: constraints not supported
+        false_count += not is2clause(clause, value_map)
         if false_count > false_limit:
-            return Report(now() - stamp, value, Status.SOLVED, model)
-    return Report(now() - stamp, value, Status.RESOLVED, model)
+            return Report(now() - stamp, value, Status.EXHAUSTED, model)
+    return Report(now() - stamp, value, Status.SOLVED, model)
 
 
 class IncrTwoSAT(IncrPySAT):
-    def __init__(self, threshold: float, constructor: Type, data: EncodingData, measure: Measure):
-        super().__init__(constructor, data, measure)
+    def __init__(self, data: EncodingData, measure: Measure,
+                 constructor: Type, constraints: Constraints, threshold: float):
+        super().__init__(data, measure, constructor, constraints)
         self.threshold = threshold
 
     def solve(self, assumptions: Assumptions, add_model: bool = True) -> Report:
@@ -62,20 +62,24 @@ class TwoSAT(PySAT):
 
     def __init__(self, threshold: float = 1.0):
         super().__init__(pysat.Glucose3)
+        # todo: move threshold to func
         self.threshold = threshold
 
     def solve(self, data: EncodingData, measure: Measure,
               supplements: Supplements, add_model: bool = True) -> Report:
-        return self.propagate(data, measure, supplements)
+        return self.propagate(data, measure, supplements, add_model)
 
     def propagate(self, data: EncodingData, measure: Measure,
                   supplements: Supplements, add_model: bool = True) -> Report:
         return check(data, self.threshold, super().propagate(data, measure, supplements), add_model)
 
-    def use_incremental(self, data: EncodingData, measure: Measure) -> IncrTwoSAT:
-        return IncrTwoSAT(self.threshold, self.constructor, data, measure)
+    def use_incremental(self, data: EncodingData, measure: Measure,
+                        constraints: Constraints = ()) -> IncrTwoSAT:
+        return IncrTwoSAT(data, measure, self.constructor, constraints, self.threshold)
 
 
 __all__ = [
     'TwoSAT',
+    # utils
+    'is2clause'
 ]

@@ -54,7 +54,7 @@ if __name__ == '__main__':
         by_mask=[],
         variables=Interval(start=1, length=150)
     )  # for search space of 150 “off” vars
-    executor = ProcessExecutor(max_workers=36)
+    executor = ProcessExecutor(max_workers=16)
     sampling = Const(size=1024, split_into=256)
     limitation = WallTime(from_string='04:00:00')
 

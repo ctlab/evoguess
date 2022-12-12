@@ -2,8 +2,8 @@ from typing import Dict, Any
 
 from ..space import Space
 
+from instance.impl import StreamCipher
 from instance.module.variables import Backdoor
-from instance.impl.cipher_s import StreamCipher
 
 
 class InputSet(Space):

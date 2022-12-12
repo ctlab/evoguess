@@ -55,7 +55,7 @@ if __name__ == '__main__':
         of_size=100,
         variables=Interval(start=1, length=1213)
     )  # reduce to subset of 100 “off” var
-    executor = ProcessExecutor(max_workers=36)
+    executor = ProcessExecutor(max_workers=16)
     sampling = Const(size=1024, split_into=256)
     limitation = WallTime(from_string='04:00:00')
 

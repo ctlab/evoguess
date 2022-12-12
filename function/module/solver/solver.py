@@ -3,7 +3,7 @@ from typing import NamedTuple, Any, Optional
 from function.models import Status
 from function.module.measure import Measure
 from instance.module.encoding import EncodingData
-from instance.module.variables.vars import Assumptions, Supplements
+from instance.module.variables.vars import Assumptions, Supplements, Constraints
 
 
 class Report(NamedTuple):
@@ -41,7 +41,8 @@ class Solver:
                   supplements: Supplements, add_model: bool) -> Report:
         raise NotImplementedError
 
-    def use_incremental(self, data: EncodingData, measure: Measure) -> IncrSolver:
+    def use_incremental(self, data: EncodingData, measure: Measure,
+                        constraints: Constraints = ()) -> IncrSolver:
         raise NotImplementedError
 
     def __str__(self):
