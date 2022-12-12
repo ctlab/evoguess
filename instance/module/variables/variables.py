@@ -85,6 +85,10 @@ class Variables:
     def __hash__(self):
         return hash(tuple(self.variables()))
 
+    def __eq__(self, other):
+        # todo: more effective eq
+        return str(self) == str(other)
+
     def __repr__(self):
         return f"[{str(self)}]({len(self)})"
 

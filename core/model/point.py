@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from typings.ordered import Ordered
 from typings.optional import Primitive
@@ -12,11 +12,11 @@ class Point(Ordered):
         self.backdoor = backdoor
         super().__init__(comparator)
 
-    def value(self) -> float:
-        return self.estimation.get('value')
-
     def estimated(self) -> bool:
         return self.value() is not None
+
+    def value(self) -> Optional[float]:
+        return self.estimation.get('value')
 
     def new(self, backdoor: Backdoor) -> 'Point':
         return Point(backdoor, self.comparator)

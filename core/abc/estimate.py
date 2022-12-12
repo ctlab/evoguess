@@ -53,11 +53,11 @@ class Estimate(Core):
 
     def _estimate(self, point: Point) -> Handle:
         if point.backdoor in CORE_CACHE.canceled:
-            _, estimation = CORE_CACHE.canceled[point.backdoor]
+            estimation = CORE_CACHE.canceled[point.backdoor]
             return VoidHandle(point.set(**estimation))
 
         if point.backdoor in CORE_CACHE.estimated:
-            _, estimation = CORE_CACHE.estimated[point.backdoor]
+            estimation = CORE_CACHE.estimated[point.backdoor]
             return VoidHandle(point.set(**estimation))
 
         self._job_number += 1

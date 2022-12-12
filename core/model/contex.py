@@ -44,16 +44,19 @@ class Context:
     def get_estimation(self, results: Results = None) -> Estimation:
         del CORE_CACHE.estimating[self.backdoor]
         if results is None:
-            CORE_CACHE.canceled[self.backdoor] = self.sample_seed
-            return {'sample_seed': self.sample_seed, 'canceled': True}
-
-        picked = pick_by(results)
-        estimation = CORE_CACHE.estimated[self.backdoor] = {
-            'accuracy': len(picked) / len(results),
-            'sample_seed': self.sample_seed,
-            **self.sampling.summarize(picked),
-            **self.function.calculate(self.backdoor, picked),
-        }
+            # todo: add cancel info
+            estimation = CORE_CACHE.canceled[self.backdoor] = {
+                'canceled': True,
+                'sample_seed': self.sample_seed,
+            }
+        else:
+            picked = pick_by(results)
+            estimation = CORE_CACHE.estimated[self.backdoor] = {
+                'accuracy': len(picked) / len(results),
+                'sample_seed': self.sample_seed,
+                **self.sampling.summarize(picked),
+                **self.function.calculate(self.backdoor, picked),
+            }
         return estimation
 
     # def get_limits(self, results: Results) -> tuple[int, Optional[int]]:

@@ -1,6 +1,6 @@
 from .abc import Function
 from .impl import functions
-from .module import modules, measure, solver
+from .module import modules
 
 from util import load_modules
 
@@ -13,9 +13,6 @@ def FunctionBuilder(configuration, **kwargs):
 
 __all__ = [
     'Function',
-    # modules
-    'solver',
-    'measure',
     # builder
     'FunctionBuilder'
 ]

@@ -1,5 +1,3 @@
-from numpy import argsort
-
 from ..abc import Evolution
 from ..module.mutation import Mutation
 from ..module.selection import Selection

@@ -1,5 +1,5 @@
 from .impl import Instance, instances
-from .module import modules, encoding, variables
+from .module import modules
 
 from util import load_modules
 
@@ -12,9 +12,6 @@ def InstanceBuilder(configuration, **kwargs):
 
 __all__ = [
     'Instance',
-    # modules
-    'encoding',
-    'variables',
     # builder
     'InstanceBuilder'
 ]

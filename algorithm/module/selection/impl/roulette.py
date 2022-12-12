@@ -1,12 +1,15 @@
+from typing import TYPE_CHECKING
+
 from ..selection import *
 
-from core.model.point import Vector
+if TYPE_CHECKING:
+    from core.model.point import Vector
 
 
 class Roulette(Selection):
     slug = 'selection:roulette'
 
-    def select(self, vector: Vector, size: int) -> Vector:
+    def select(self, vector: 'Vector', size: int) -> 'Vector':
         ranges, rng, count = [], 0, len(vector)
         for i, point1 in enumerate(vector):
             w = 0.

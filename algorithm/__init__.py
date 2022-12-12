@@ -1,6 +1,6 @@
 from .abc import Algorithm
 from .impl import algorithms
-from .module import modules, mutation, crossover, selection
+from .module import modules
 
 from util import load_modules
 
@@ -13,10 +13,6 @@ def AlgorithmBuilder(configuration, **kwargs):
 
 __all__ = [
     'Algorithm',
-    # modules
-    'mutation',
-    'crossover',
-    'selection',
     # builder
     'AlgorithmBuilder'
 ]
