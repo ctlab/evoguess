@@ -2,16 +2,17 @@ from executor import Executor
 from instance import Instance
 from function import Function
 
+from typing import List, Optional
+
 from ..static import CORE_CACHE
 from ..module.space import Space
 from ..module.sampling import Sampling
 
 from typings.optional import Int
+from util.iterable import pick_by
+
 from instance.module.variables import Backdoor
 from function.models import Estimation, Results, WorkerArgs
-
-from typing import List
-from util.iterable import pick_by
 
 
 class Context:
@@ -41,12 +42,9 @@ class Context:
             for offset, length in self.sample_state.chunks(results)
         ]
 
-    def get_estimation(self, results: Results = None) -> Estimation:
-        if self.backdoor in CORE_CACHE.estimating:
-            # todo: avoid this check
-            del CORE_CACHE.estimating[self.backdoor]
-
-        if results is None:
+    def get_estimation(self, results: Optional[Results] = None) -> Estimation:
+        del CORE_CACHE.estimating[self.backdoor]
+        if not len(results):
             # todo: add cancel info
             estimation = CORE_CACHE.canceled[self.backdoor] = {
                 'canceled': True,

@@ -1,3 +1,6 @@
+from typing import Optional
+
+from function.models import Results
 from .point import Point
 from .job import Job, n_completed as nc
 
@@ -40,15 +43,19 @@ class JobHandle(Handle):
     def cancel(self) -> bool:
         return self.job.cancel()
 
-    def result(self, timeout: Timeout = None) -> Point:
-        results = None
+    def _await_results(self, timeout: Timeout) -> Optional[Results]:
         try:
-            results = self.job.result(timeout)
+            return self.job.result(timeout)
         except CancelledError:
-            pass
-        finally:
-            estimation = self.context.get_estimation(results)
-            return self.point.set(**estimation)
+            return None
+
+    def result(self, timeout: Timeout = None) -> Point:
+        if self.point.estimated():
+            return self.point
+
+        results = self._await_results(timeout)
+        estimation = self.context.get_estimation(results)
+        return self.point.set(**estimation)
 
 
 class VoidHandle(Handle):

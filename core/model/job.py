@@ -1,11 +1,11 @@
 import threading
-
 from enum import Enum
 from typing import List
 
 from .contex import Context
+
 from util.iterable import list_of
-from function.models import ChunkResult as Result
+from function.models import ChunkResult, Results
 from typings.error import AlreadyRunning, CancelledError
 from typings.future import Future, Timeout, AcquireFutures
 
@@ -96,8 +96,9 @@ class Job(Future):
                             print(future._exception)
                             self._exceptions.append(future._exception)
                         elif future._result is not None:
-                            idx = self._results.index(None)
-                            self._results[idx] = Result(*future._result)
+                            index = self._results.index(None)
+                            result = ChunkResult(*future._result)
+                            self._results[index] = result
             tasks = context.get_tasks(self._results)
             iterables = [(args, payload) for args in tasks]
 
@@ -150,7 +151,7 @@ class Job(Future):
         pass
 
     # noinspection DuplicatedCode
-    def result(self, timeout: Timeout = None) -> object:
+    def result(self, timeout: Timeout = None) -> Results:
         with self._condition:
             if self._state == JobState.CANCELLED:
                 raise CancelledError()
