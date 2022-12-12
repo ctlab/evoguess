@@ -1,3 +1,4 @@
+from math import ceil
 from typing import List, Tuple, Dict, Any
 
 from function.models import Results, ChunkOffset, ChunkLength
@@ -39,6 +40,10 @@ class Sampling:
 
     def get_count(self, offset: int, size: int, results: Results) -> int:
         raise NotImplementedError
+
+    @property
+    def max_chunks(self) -> int:
+        return ceil(self.max_size / self.split_into)
 
     def __str__(self):
         return self.slug

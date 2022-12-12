@@ -28,8 +28,8 @@ if __name__ == '__main__':
     solution = Optimize(
         space=InputSet(),
         logger=VectorLogs(logs_path),
-        executor=ThreadExecutor(workers=8),
-        sampling=Const(count=256, split_into=64),
+        executor=ThreadExecutor(max_workers=8),
+        sampling=Const(size=256, split_into=64),
         instance=StreamCipher(
             input_set=Interval(start=1, length=64),
             output_set=Interval(start=8298, length=128),
@@ -37,7 +37,7 @@ if __name__ == '__main__':
         ),
         function=GuessAndDetermine(
             solver=Glucose3(),
-            measure=SolvingTime(budget=1.)
+            measure=SolvingTime()
         ),
         algorithm=MuPlusLambda(
             mu_size=1,

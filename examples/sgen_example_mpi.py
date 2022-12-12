@@ -29,7 +29,7 @@ if __name__ == '__main__':
         space=InputSet(),
         logger=VectorLogs(logs_path),
         executor=MPIExecutor(),
-        sampling=Const(count=4096, split_into=256),
+        sampling=Const(size=4096, split_into=256),
         instance=Instance(
             encoding=CNF(from_file=data_path.to_file('sgen_150.cnf'))
         ),

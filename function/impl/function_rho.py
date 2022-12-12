@@ -1,3 +1,4 @@
+from math import log2
 from os import getpid
 from time import time as now
 
@@ -20,7 +21,7 @@ def rho_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
     with solver.use_incremental(encoding_data, measure) as incremental:
         for assumptions, _ in gad_supplements(args, instance, backdoor):
             # todo: use constraints with incremental propagation?
-            time, value, status, _ = incremental.propagate(assumptions,  add_model=False)
+            time, value, status, _ = incremental.propagate(assumptions, add_model=False)
 
             times[status.value] = times.get(status.value, 0.) + time
             values[status.value] = values.get(status.value, 0.) + value
@@ -41,27 +42,23 @@ class RhoFunction(GuessAndDetermine):
 
     def calculate(self, backdoor: Backdoor, results: Results) -> Estimation:
         times, values, statuses, count, ptime = aggregate_results(results)
-        time_sum, value_sum = sum(times.values()), sum(values.values())
-        bases, value = backdoor.get_var_bases(), value_sum if count else None
+        power, time_sum = backdoor.power(), sum(times.values())
 
-        # todo: implement rho calculate function
-        raise NotImplementedError
-        # if count > 0 and count != power:
-        #     propagated = float(statuses[Status.RESOLVED]) / count
-        #     # try avoid overflow exception
-        #     if 0 < self.penalty_power < power:
-        #         power_scale = power / self.penalty_power
-        #
-        #     value = log2(propagated / count * power + (1. - propagated / count) * penalty_power)
+        if count > 0 and self.penalty_power > power:
+            rho_value = float(statuses.get(Status.RESOLVED, 0)) / count
+            penalty_value = (1. - rho_value) * self.penalty_power
+            value = rho_value * power + penalty_value
+        else:
+            value = float('inf')
 
-        # return {
-        #     'count': count,
-        #     'ptime': round(ptime, 4),
-        #     'value': round(value, 6),
-        #     'statuses': statuses,
-        #     'time_sum': round(time_sum, 4),
-        #     'value_sum': round(value_sum, 4),
-        # }
+        return {
+            'count': count,
+            'value': round(value, 6),
+            'ptime': round(ptime, 4),
+            'size': len(backdoor),
+            'statuses': statuses,
+            'time_sum': round(time_sum, 4),
+        }
 
 
 __all__ = [

@@ -1,4 +1,4 @@
-from math import sqrt
+from math import sqrt, ceil
 from typing import Dict, Any
 
 from ..sampling import Sampling
@@ -9,11 +9,12 @@ from function.models import Results
 class Epsilon(Sampling):
     slug = 'sampling:epsilon'
 
-    def __init__(self, step: int, min_size: int, max_size: int,
-                 epsilon: float, split_into: int, delta: float = 0.05):
+    def __init__(self, step_size: int, epsilon: float,
+                 max_size: int, split_into: int, delta: float = 0.05):
         super().__init__(max_size, split_into)
-        self.epsilon, self.delta = epsilon, delta
-        self.min_size, self.step = min_size, step
+        self.step_size = step_size
+        self.epsilon = step_size
+        self.delta = delta
 
     def _get_epsilon(self, results: Results):
         values = concat(*[r.values.values() for r in results])
@@ -28,21 +29,24 @@ class Epsilon(Sampling):
 
     def get_count(self, offset: int, size: int, results: Results) -> int:
         if offset == 0:
-            return min(self.min_size, size)
+            return min(self.step_size, size)
         elif offset < size and offset < self.max_size:
             if self._get_epsilon(results) > self.epsilon:
-                count = min(offset + self.step, self.max_size, size)
+                count = min(offset + self.step_size, self.max_size, size)
                 return max(0, count - offset)
         return 0
+
+    @property
+    def max_chunks(self) -> int:
+        return ceil(self.step_size / self.split_into)
 
     def __config__(self):
         return {
             'slug': self.slug,
-            'step': self.step,
             'delta': self.delta,
             'epsilon': self.epsilon,
-            'min_size': self.min_size,
             'max_size': self.max_size,
+            'step_size': self.step_size,
             'split_into': self.split_into
         }
 

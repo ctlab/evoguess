@@ -118,7 +118,8 @@ class IncrPySAT(IncrSolver):
 
     def propagate(self, assumptions: Assumptions, add_model: bool = True) -> Report:
         return self._fix(
-            propagate(self.solver, self.measure, self.data.max_literal, assumptions, add_model))
+            propagate(self.solver, self.measure, self.data.max_literal, assumptions, add_model)
+        )
 
 
 class PySAT(Solver):

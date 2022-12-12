@@ -12,8 +12,9 @@ class WorkPath:
     def to_path(self, *dirs: str) -> 'WorkPath':
         return WorkPath(*dirs, root=self.base)
 
-    def to_file(self, filename: str) -> str:
-        return os.path.join(self.base, filename)
+    def to_file(self, filename: str, *dirs: str) -> str:
+        return self.to_path(*dirs).to_file(filename) \
+            if len(dirs) else os.path.join(self.base, filename)
 
     def __str__(self) -> str:
         return self.base

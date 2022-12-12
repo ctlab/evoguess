@@ -16,19 +16,15 @@ class Executor:
         raise NotImplementedError
 
     def submit_all(self, fn: Callable, *iterables) -> FutureAll:
-        # for iterable in iterables:
-        #     print(iterable)
-        # print('iterables')
-        # for args in zip(*iterables):
-        #     print(args)
-        # print('zip iterables')
         return FutureAll([
             self.submit(fn, *args) for args in iterables
         ]).append_tracker_to(self._trackers)
 
-    # todo: implement executor.free()
-    # def free(self):
-    #     raise NotImplementedError
+    def free(self) -> int:
+        available = self.max_workers
+        for tracker in self._trackers:
+            available -= tracker.pending_futures
+        return available
 
     def shutdown(self, wait: bool = True):
         raise NotImplementedError

@@ -1,11 +1,12 @@
 Sampling
 ========
 
-This module determines the sample size and is used to prepare chunk parameters for **worker_func** of `Function <../function.html>`_. Метод **get_state(...)** создает экземпляр **SamplingState** с параметрами **offset** and **size** для конкретного процесса оценки. Метод **chunks(...)** возвращает список из **SampleChunk** в зависимости от уже полученных **Results**. Каждый **SampleChunk** имеет формат (**ChunkOffset**, **ChunkLength**).
+This module determines the sample size and is used to prepare chunk parameters for **worker_func** of `Function <../function.html>`_. Метод **get_state(...)** создает экземпляр **SamplingState** с параметрами **offset** and **size** для конкретного процесса оценки. Метод **chunks(...)** возвращает список из **SampleChunk**, размер которого зависит от уже полученных **Results**. Каждый **SampleChunk** имеет формат (**ChunkOffset**, **ChunkLength**).
 
 .. code-block:: python
 
     class Sampling:
+        def max_chunks() -> int
         def get_state(offset: int, size: int) -> SamplingState
 
     class SamplingState:
@@ -34,10 +35,9 @@ Epsilon sampling
     from core.module.sampling import Epsilon
 
     sampling = Epsilon(
-        step: int,
-        min_size: int,
-        max_size: int,
+        step_size: int,
         epsilon: float,
+        max_size: int,
         split_into: int,
         delta: float = 0.5
     )

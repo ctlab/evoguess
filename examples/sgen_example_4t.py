@@ -9,7 +9,6 @@ from executor.impl import ThreadExecutor
 
 from instance.impl import Instance
 from instance.module.encoding import CNF
-from instance.module.variables import Interval
 
 from function.impl import GuessAndDetermine
 from function.module.measure import SolvingTime
@@ -28,8 +27,8 @@ if __name__ == '__main__':
     solution = Optimize(
         space=InputSet(),
         logger=VectorLogs(logs_path),
-        executor=ThreadExecutor(workers=4),
-        sampling=Const(count=128, split_into=32),
+        executor=ThreadExecutor(max_workers=4),
+        sampling=Const(size=128, split_into=32),
         instance=Instance(
             encoding=CNF(from_file=data_path.to_file('sgen_150.cnf'))
         ),

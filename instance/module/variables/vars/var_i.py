@@ -15,7 +15,8 @@ class Index(Var):
         return [self.index]
 
     def supplements(self, var_map: VarMap) -> Supplements:
-        return [self.index if var_map[self.index] else -self.index], []
+        value = var_map.get(self.index, var_map[self])
+        return [self.index if value else -self.index], []
 
     def __hash__(self):
         return self.index

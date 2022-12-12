@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from ..space import Space
 
@@ -10,8 +10,9 @@ from instance.module.variables import Mask, Variables, Backdoor
 class SearchSet(Space):
     slug = 'space:search_set'
 
-    def __init__(self, variables: Variables, by_mask: Mask = None, by_string: Str = None):
-        super().__init__(by_mask, by_string)
+    def __init__(self, variables: Variables, by_string: Str = None,
+                 by_mask: Optional[Mask] = None):
+        super().__init__(by_string, by_mask)
         self.variables = variables
 
     # noinspection PyProtectedMember

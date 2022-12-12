@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from typings.optional import Str
 from instance.impl.instance import Instance
@@ -8,7 +8,7 @@ from instance.module.variables import Mask, ByteMask, Backdoor
 class Space:
     slug = 'space'
 
-    def __init__(self, by_mask: Mask = None, by_string: Str = None):
+    def __init__(self, by_string: Str = None, by_mask: Optional[Mask] = None):
         self.by_mask = by_mask
         self.by_string = by_string
 

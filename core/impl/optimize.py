@@ -3,6 +3,7 @@ from function import Function
 from instance import Instance
 from algorithm import Algorithm
 
+from math import ceil
 from time import time as now
 from typing import Tuple, List
 
@@ -50,6 +51,7 @@ class Optimize(Estimate):
         with self.logger:
             self.start_stamp = now()
             # self.logger.config(self.__config__())
+
             initial = self.space.get_initial(self.instance)
             self.logger.var_set(initial.__config__())
             # todo: search root estimation in cache
@@ -57,12 +59,13 @@ class Optimize(Estimate):
             assert point.estimated(), 'initial isn\'t estimated!'
             self._log_insertion((0, [point]), now() - self.start_stamp)
             with self.algorithm.start(point) as point_manager:
+                point_chunks = self.sampling.max_chunks
                 while not self.limitation.exhausted():
+                    available = ceil(self.executor.free() / point_chunks)
                     handles.extend([
                         self.estimate(backdoor) for backdoor in
-                        point_manager.collect(len(handles), 1)
+                        point_manager.collect(len(handles), max(0, available))
                     ])
-                    # todo: count available point slots
                     estimated, handles = self._await(*handles)
                     insertion = point_manager.insert(*estimated)
 

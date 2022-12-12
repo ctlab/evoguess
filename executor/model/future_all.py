@@ -107,8 +107,8 @@ class FutureAll:
             canceled += int(future.cancel())
         return canceled / len(self._futures)
 
-    def append_tracker_to(self, _list: list) -> 'FutureAll':
-        _list.append(self._tracker)
+    def append_tracker_to(self, trackers: List[_Tracker]) -> 'FutureAll':
+        trackers.append(self._tracker)
         return self
 
     @property

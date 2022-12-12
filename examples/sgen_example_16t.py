@@ -28,8 +28,8 @@ if __name__ == '__main__':
     solution = Optimize(
         space=InputSet(),
         logger=VectorLogs(logs_path),
-        executor=ThreadExecutor(workers=16),
-        sampling=Const(count=1024, split_into=128),
+        executor=ThreadExecutor(max_workers=16),
+        sampling=Const(size=1024, split_into=128),
         instance=Instance(
             encoding=CNF(from_file=data_path.to_file('sgen_150.cnf'))
         ),
