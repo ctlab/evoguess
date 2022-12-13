@@ -13,7 +13,6 @@ class TestVariables(unittest.TestCase):
         self.assertEqual(str(interval), '1..64')
         self.assertEqual(repr(interval), '[1..64](64)')
 
-        # interval.__info__()
         for i, variable in enumerate(interval):
             self.assertIsInstance(variable, Index)
             self.assertEqual(variable.name, str(i + 1))
@@ -29,7 +28,6 @@ class TestVariables(unittest.TestCase):
         self.assertEqual(str(indexes), str_iterable)
         self.assertEqual(repr(indexes), f'[{str_iterable}]({len(iterable)})')
 
-        # indexes.__info__()
         for i, variable in enumerate(indexes):
             self.assertIsInstance(variable, Index)
             self.assertEqual(variable.name, str(i + 31))
@@ -69,7 +67,6 @@ class TestVariables(unittest.TestCase):
         self.assertEqual(backdoor._length, 10)
         self.assertEqual(backdoor._mask, [1] * 10)
 
-        # backdoor.__info__()
         str_vars = str_iterable.split(' ')
         for i, variable in enumerate(backdoor):
             self.assertIsInstance(variable, Index)
@@ -80,18 +77,42 @@ class TestVariables(unittest.TestCase):
         self.assertEqual(backdoor.get_deps_bases(), [2] * len(int_vars))
 
     def test_vars(self):
-        domain = Domain('d1', [1, 2, 3, 4, 5, 6])
-        self.assertEqual('d1', domain)
-        self.assertEqual(domain, domain)
-
         index = Index(7)
         self.assertEqual(7, index)
         self.assertEqual('7', index)
         self.assertEqual(index, index)
+        self.assertEqual(index, Index(7))
+        self.assertEqual(
+            (index.supplements({index: 0}),
+             index.supplements({index: 1})),
+            (([-7], []), ([7], []))
+        )
+        self.assertEqual(index.supplements({7: 0}), ([-7], []))
+
+        domain = Domain('d1', [1, 2, 3, 4, 5, 6])
+        self.assertEqual('d1', domain)
+        self.assertEqual(domain, domain)
+        self.assertEqual(domain, Domain('d1', [1, 2, 3, 4, 5, 6]))
+        self.assertEqual(
+            domain.supplements({domain: 1}),
+            ([-1, 2, -3, -4, -5, -6], [])
+        )
+        self.assertEqual(
+            domain.supplements({domain: 4}),
+            ([-1, -2, -3, -4, 5, -6], [])
+        )
+        self.assertEqual(
+            domain.supplements({1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 1}),
+            ([-1, -2, -3, -4, -5, 6], [])
+        )
+
+        with self.assertRaises(KeyError):
+            domain.supplements({1: 0, 2: 0}),
 
         xor_switch = XorSwitch('x1', [8, 9])
-        self.assertEqual('x1', xor_switch)
+        self.assertEqual(xor_switch, 'x1')
         self.assertEqual(xor_switch, xor_switch)
+        self.assertEqual(xor_switch, XorSwitch('x1', [8, 9]))
         self.assertEqual(
             xor_switch.supplements({xor_switch: 1}),
             ([], [[8, 9], [-8, -9]])
@@ -141,10 +162,12 @@ class TestVariables(unittest.TestCase):
         for variable in variables:
             self.assertIn(variable, backdoor)
 
+        self.assertEqual(backdoor, copy(backdoor))
+        self.assertNotEqual(backdoor, backdoor.get_copy([1, 1, 1]))
+
         var_deps = {variables[0], *range(7, 15)}
         self.assertEqual(backdoor.get_var_deps(), var_deps)
 
-        # backdoor.__info__()
         values = [4, 1, 1, 0, 0, 1, 0]
         alters = ['d1', 7, 8, 9, 10, 'x1', 'x2']
         for var, alt in zip(variables, alters):

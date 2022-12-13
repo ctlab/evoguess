@@ -9,7 +9,7 @@ class OnePoint(Crossover):
     slug = 'crossover:one-point'
 
     def cross(self, ind1: Backdoor, ind2: Backdoor) -> Tuple[Backdoor, Backdoor]:
-        mask1, mask2 = ind1.get_mask(), ind1.get_mask()
+        mask1, mask2 = ind1.get_mask(), ind2.get_mask()
 
         a = self.random_state.randint(len(mask1))
         b = self.random_state.randint(2) * len(mask1)

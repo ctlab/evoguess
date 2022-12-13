@@ -19,11 +19,12 @@ class Roulette(Selection):
             ranges.append(rng)
 
         def get(prob):
-            for k in range(1, count):
+            for k in range(0, count):
                 if ranges[k] >= prob:
-                    return vector[k - 1]
+                    return vector[k]
             return vector[-1]
 
+        print(ranges)
         return [get(p) for p in self.random_state.rand(size)]
 
 

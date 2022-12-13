@@ -14,7 +14,8 @@ class TestEncodings(unittest.TestCase):
         self.assertEqual(to_oct([1, 1, 1, 0, 0, 1]), 228)
         self.assertEqual(to_bin(45, 8), [0, 0, 1, 0, 1, 1, 0, 1])
 
-        self.assertEqual(list_of(None, [1, 2, 3, 4, 5]), [None] * 5)
+        self.assertEqual(list_of(None, 103), [None] * 103)
+        self.assertEqual(list_of(0, [1, 2, 3, 4, 5]), [0] * 5)
 
         self.assertEqual(pick_by([1, 2, 3, 4], [0, 3, 6]), [1, 4])
         self.assertEqual(pick_by([1, 2, 3, 4], lambda x: x > 3), [4])

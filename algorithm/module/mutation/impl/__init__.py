@@ -10,5 +10,6 @@ mutations = {
 
 __all__ = [
     'Doer',
+    'OneBit',
     'Uniform'
 ]

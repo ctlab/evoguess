@@ -15,11 +15,10 @@ class Domain(Var):
         return [self]
 
     def supplements(self, var_map: VarMap) -> Supplements:
-        if self in var_map:
-            return [var if var_map[self] == i else -var
-                    for i, var in enumerate(self.group)], []
+        if self not in var_map:
+            return [var if var_map[var] else -var for var in self.group], []
         else:
-            return [var_map[i] for i in self.group], []
+            return [var if var_map[self] == i else -var for i, var in enumerate(self.group)], []
 
     def __config__(self) -> Dict[str, Any]:
         return {

@@ -1,13 +1,15 @@
-from typing import Tuple
+from typing import Tuple, TYPE_CHECKING
 
 from ..models import WorkerCallable, Payload, \
     Results, TimeMap, ValueMap, StatusMap, Estimation
 
-from core.module.space import Space
 from function.module.solver import Solver
 from function.module.measure import Measure
 from instance.impl.instance import Instance
 from instance.module.variables import Backdoor
+
+if TYPE_CHECKING:
+    from core.module.space import Space
 
 
 def aggregate_results(results: Results) -> Tuple[TimeMap, ValueMap, StatusMap, int, int]:
@@ -37,7 +39,7 @@ class Function:
     def calculate(self, backdoor: Backdoor, results: Results) -> Estimation:
         raise NotImplementedError
 
-    def get_payload(self, space: Space, instance: Instance, backdoor: Backdoor) -> Payload:
+    def get_payload(self, space: 'Space', instance: Instance, backdoor: Backdoor) -> Payload:
         return space, self.solver, self.measure, instance, backdoor.pack()
 
     def __str__(self):

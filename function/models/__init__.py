@@ -1,17 +1,19 @@
+from typing import Any, Callable, Dict, Tuple, TYPE_CHECKING
+
 from . import worker_t
 from .worker_t import *
 
 from ..module.solver.solver import Solver
 from ..module.measure.measure import Measure
 
-from typing import Any, Callable, Dict, Tuple
-
-from core.module.space import Space
 from instance.impl.instance import Instance
 from instance.module.variables.impl.backdoor import ByteMask
 
+if TYPE_CHECKING:
+    from core.module.space import Space
+
 Payload = Tuple[
-    Space,
+    'Space',
     Solver,
     Measure,
     Instance,

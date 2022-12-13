@@ -57,7 +57,7 @@ class Instance:
         ) if len(dependent_vars) > 0 else None
 
     def __str__(self):
-        return self.slug
+        return f'{self.slug} of {self.encoding}'
 
     def __info__(self):
         return {

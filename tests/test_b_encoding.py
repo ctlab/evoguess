@@ -12,7 +12,6 @@ class TestEncodings(unittest.TestCase):
 
         cnf = CNF(from_clauses=clauses)
         cnf_data = cnf.get_data()
-        # cnf.__info__()
 
         self.assertIsInstance(cnf_data, CNFData)
         self.assertEqual(cnf_data.max_literal, 4)
@@ -40,7 +39,6 @@ class TestEncodings(unittest.TestCase):
         root_path = WorkPath('examples', 'data', root='..')
         cnf = CNF(from_file=root_path.to_file('a5_1.cnf'))
         cnf_data = cnf.get_data()
-        # cnf.__info__()
 
         self.assertEqual(cnf_data.clauses()[0], [65, 9, 30])
         self.assertEqual(cnf_data.clauses()[16], [-68, 17, 65])
@@ -54,18 +52,3 @@ class TestEncodings(unittest.TestCase):
         self.assertEqual(cnf_data.source(), cnf_copy_data.source())
         self.assertEqual(cnf_data.clauses(), cnf_copy_data.clauses())
         self.assertEqual(cnf_data.max_literal, cnf_copy_data.max_literal)
-
-    def test_cnfp_from_clause(self):
-        clauses = [[1, 2], [2, 3], [-1, 2, 3], [-4, 1, 2]]
-        assumptions, constraints = [1, 2, 3], [[-5, 2, -3]]
-
-        cnf = CNFP(from_clauses=clauses, from_atmosts=[])
-        cnfp_data = cnf.get_data()
-
-        cnf_data = cnf.get_data()
-        # cnf.__info__()
-
-        # todo: extend cnfp tests
-        self.assertIsInstance(cnf_data, CNFPData)
-        self.assertEqual(cnf_data.max_literal, 4)
-        self.assertEqual(cnf_data.clauses(), clauses)

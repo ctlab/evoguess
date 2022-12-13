@@ -67,7 +67,7 @@ class CNFP(CNF):
         )
 
     def get_data(self) -> CNFPData:
-        if self.clauses and self.atmosts:
+        if self.clauses:
             return CNFPData(self.clauses, self.atmosts)
         elif self.filepath in cnfp_data:
             return cnfp_data[self.filepath]
