@@ -3,8 +3,7 @@
 Welcome to EvoGuess's documentation!
 ====================================
 
-| Framework for decomposition set searching and hardness estimating of SAT instances.
-| Some Boolean formula is estimated in the following way:
+| Framework for decomposition set (backdoor) searching and hardness estimating of SAT instances. Some Boolean formula is estimated in the following way:
 
 1. the algorithm **chooses** decomposition set of some variables of the Boolean formula;
 2. the original formula is **splits** into a number of simpler formulas using chosen decomposition set;
@@ -38,12 +37,12 @@ At the end of the solver's process, measures are collected for all formulas, whi
 Calculating
 -----------
 
-| The measures collected in the previous step are used to calculate the estimation.
-| For this one of the functions can be used:
+| The measures collected in the previous step are used to calculate the estimation. For this one of the functions can be used:
 
 1. **Guess-and-Determine** (G-a-D)
-2. G-a-D based on **Inverse Backdoor Sets** (IBS), which proposed in [AAAI2018]_
-3. G-a-D based on **ρ-backdoors**, which proposed in [AAAI2022]_
+2. **Inverse Backdoor Sets** (IBS), which proposed in [AAAI2018]_
+3. **Probability Backdoors** based on G-a-D, which proposed in [AAAI2022]_
+4. **Inverse Polynomial Sets** based on IBS
 
 .. toctree::
     :maxdepth: 1

@@ -1,7 +1,15 @@
 Typical use
 ===========
 
-TODO
+Examples
+--------
+
+.. toctree::
+    :maxdepth: 1
+
+    typical_use/rho_function_1
+    typical_use/rho_function_2
+    typical_use/ips_function
 
 How to MPI use
 --------------

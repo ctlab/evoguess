@@ -49,7 +49,7 @@ if __name__ == '__main__':
     cnf_file = data_path.to_file('pvs_4_7.cnf', 'sort')
     instance = Instance(
         encoding=CNF(from_file=cnf_file)
-    )
+    )  # read from file './examples/data/sort/pvs_4_7.cnf
     space = RhoSubset(
         by_mask=[],
         of_size=100,
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     executor = ProcessExecutor(max_workers=16)
     sampling = Const(size=1024, split_into=256)
     limitation = WallTime(from_string='04:00:00')
-
+    # log process to dir './examples/logs/<date_date>
     logs_path = root_path.to_path('logs')
     solution = Optimize(
         space=space,

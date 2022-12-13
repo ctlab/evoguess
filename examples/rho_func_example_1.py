@@ -49,7 +49,7 @@ if __name__ == '__main__':
     cnf_file = data_path.to_file('sgen_150.cnf')
     instance = Instance(
         encoding=CNF(from_file=cnf_file)
-    )
+    )  # read from file './examples/data/sgen_150.cnf
     space = SearchSet(
         by_mask=[],
         variables=Interval(start=1, length=150)
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     executor = ProcessExecutor(max_workers=16)
     sampling = Const(size=1024, split_into=256)
     limitation = WallTime(from_string='04:00:00')
-
+    # log process to dir './examples/logs/<date_date>
     logs_path = root_path.to_path('logs')
     solution = Optimize(
         space=space,
