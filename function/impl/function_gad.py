@@ -107,5 +107,6 @@ class GuessAndDetermine(Function):
 __all__ = [
     'GuessAndDetermine',
     # utils
-    'gad_supplements'
+    'gad_supplements',
+    'sequence_mapper'
 ]

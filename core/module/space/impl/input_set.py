@@ -3,7 +3,7 @@ from typing import Dict, Any
 from ..space import Space
 
 from instance.impl import StreamCipher
-from instance.module.variables import Backdoor
+from instance.module.variables import Backdoor, make_backdoor
 
 
 class InputSet(Space):
@@ -11,10 +11,7 @@ class InputSet(Space):
 
     # noinspection PyProtectedMember
     def get_backdoor(self, cipher: StreamCipher) -> Backdoor:
-        return Backdoor(
-            from_vars=cipher.input_set._vars,
-            from_file=cipher.input_set.filepath,
-        )
+        return make_backdoor(cipher.input_set)
 
     def __config__(self) -> Dict[str, Any]:
         return {

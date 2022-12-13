@@ -24,7 +24,6 @@ class Roulette(Selection):
                     return vector[k]
             return vector[-1]
 
-        print(ranges)
         return [get(p) for p in self.random_state.rand(size)]
 
 

@@ -5,7 +5,7 @@ from ..space import Space
 from typings.optional import Str
 
 from instance.impl import Instance
-from instance.module.variables import Mask, Variables, Backdoor
+from instance.module.variables import Mask, Variables, Backdoor, make_backdoor
 
 
 class SearchSet(Space):
@@ -18,10 +18,7 @@ class SearchSet(Space):
 
     # noinspection PyProtectedMember
     def get_backdoor(self, instance: Instance) -> Backdoor:
-        return Backdoor(
-            from_vars=self.variables._vars,
-            from_file=self.variables.filepath,
-        )
+        return make_backdoor(self.variables)
 
     def __config__(self) -> Dict[str, Any]:
         return {

@@ -1,5 +1,6 @@
 from typing import Any
 
+from output import Logger
 from executor import Executor
 from function import Function
 from instance import Instance
@@ -15,12 +16,13 @@ from ..module.space import Space
 from ..module.sampling import Sampling
 from ..module.comparator import Comparator
 
-from output import Logger
 from typings.optional import Int
 from instance.module.variables import Backdoor
 
 
 class Estimate(Core):
+    slug = 'core:estimate'
+
     def __init__(self,
                  space: Space,
                  logger: Logger,
@@ -31,10 +33,11 @@ class Estimate(Core):
                  comparator: Comparator,
                  random_seed: Int = None):
         self.space = space
+        self.executor = executor
         self.sampling = sampling
         self.function = function
         self.comparator = comparator
-        super().__init__(logger, instance, executor, random_seed)
+        super().__init__(logger, instance, random_seed)
 
         self._job_number = 0
         CORE_CACHE.canceled = {}
@@ -46,6 +49,7 @@ class Estimate(Core):
 
     def estimate(self, backdoor: Backdoor) -> Handle:
         if backdoor in CORE_CACHE.estimating:
+            # todo: refactor estimating handling
             return CORE_CACHE.estimating[backdoor]
 
         point = Point(backdoor, self.comparator)

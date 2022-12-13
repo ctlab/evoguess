@@ -1,11 +1,12 @@
+from math import ceil
+from time import time as now
+from typing import Tuple, List
+
+from output import Logger
 from executor import Executor
 from function import Function
 from instance import Instance
 from algorithm import Algorithm
-
-from math import ceil
-from time import time as now
-from typing import Tuple, List
 
 from ..abc import Estimate
 from ..static import CORE_CACHE
@@ -17,7 +18,6 @@ from ..module.sampling import Sampling
 from ..module.comparator import Comparator
 from ..module.limitation import Limitation
 
-from output import Logger
 from typings.optional import Int
 from util.iterable import omit_by
 
@@ -25,7 +25,7 @@ Await = Tuple[Vector, List[Handle]]
 
 
 class Optimize(Estimate):
-    slug = 'core:optimization'
+    slug = 'core:optimize'
 
     def __init__(self,
                  space: Space,

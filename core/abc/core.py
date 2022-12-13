@@ -16,10 +16,8 @@ class Core:
     def __init__(self,
                  logger: Logger,
                  instance: Instance,
-                 executor: Executor,
                  random_seed: Int = None):
         self.logger = logger
-        self.executor = executor
         self.instance = instance
 
         DEBUGGER.initialize(logger)

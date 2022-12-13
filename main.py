@@ -26,7 +26,7 @@ if __name__ == '__main__':
     data_path = root_path.to_path('data')
     cnf_file = data_path.to_file('sgen_150.cnf')
 
-    logs_path = root_path.to_path('logs', 'a5_1')
+    logs_path = root_path.to_path('logs', 'test')
     solution = Optimize(
         space=SearchSet(
             by_mask=[],
