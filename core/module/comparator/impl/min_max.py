@@ -1,5 +1,5 @@
 from numpy import sign
-from typing import TYPE_CHECKING
+from typing import Dict, Any, TYPE_CHECKING
 
 from ..comparator import Comparator
 
@@ -18,7 +18,7 @@ class MinValueMaxSize(Comparator):
             difference = 0
         return difference or len(obj2) - len(obj1)
 
-    def __config__(self):
+    def __config__(self) -> Dict[str, Any]:
         return {
             'slug': self.slug
         }

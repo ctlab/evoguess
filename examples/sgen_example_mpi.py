@@ -4,7 +4,7 @@ from core.module.sampling import Const
 from core.module.limitation import WallTime
 from core.module.comparator import MinValueMaxSize
 
-from output.impl import VectorLogs
+from output.impl import OptimizeLogger
 from executor.impl import MPIExecutor
 
 from instance.impl import Instance
@@ -27,7 +27,6 @@ if __name__ == '__main__':
 
     solution = Optimize(
         space=InputSet(),
-        logger=VectorLogs(logs_path),
         executor=MPIExecutor(),
         sampling=Const(size=4096, split_into=256),
         instance=Instance(
@@ -45,6 +44,7 @@ if __name__ == '__main__':
             selection=Roulette(),
         ),
         comparator=MinValueMaxSize(),
+        logger=OptimizeLogger(logs_path),
         limitation=WallTime(from_string='00:20:00')
     ).launch()
 

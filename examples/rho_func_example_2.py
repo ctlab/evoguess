@@ -27,7 +27,7 @@ from core.module.limitation import WallTime
 
 # other imports
 from core.impl import Optimize
-from output.impl import VectorLogs
+from output.impl import OptimizeLogger
 from core.module.comparator import MinValueMaxSize
 
 if __name__ == '__main__':
@@ -69,7 +69,7 @@ if __name__ == '__main__':
         algorithm=algorithm,
         limitation=limitation,
         comparator=MinValueMaxSize(),
-        logger=VectorLogs(logs_path),
+        logger=OptimizeLogger(logs_path),
     ).launch()
 
     for point in solution:

@@ -15,7 +15,7 @@ from instance.module.variables import Backdoor
 from instance.module.variables.vars import Supplements, compress
 
 
-def sequence_mapper(var_bases: List[int]) -> Callable[[int], List[int]]:
+def sequence_mapper(var_bases: List[int]) -> Callable:
     reversed_var_bases = var_bases[::-1]
 
     def map_substitution(number: int) -> List[int]:

@@ -23,7 +23,7 @@ class PointManager:
         return self
 
     def solution(self) -> 'Vector':
-        return self._vector
+        return sorted(self._vector)
 
     def insert(self, *points: 'Point') -> Tuple[int, 'Vector']:
         self._buffer.extend(points)

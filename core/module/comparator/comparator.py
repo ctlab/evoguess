@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 
 
 class Comparator:
@@ -9,6 +9,9 @@ class Comparator:
 
     def __str__(self):
         return self.slug
+
+    def __config__(self) -> Dict[str, Any]:
+        raise NotImplementedError
 
 
 __all__ = [

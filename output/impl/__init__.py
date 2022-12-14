@@ -1,14 +1,17 @@
-from .vector_diff import VectorDiff
-from .vector_logs import VectorLogs
+from .logger_optimize import OptimizeLogger
+from .parser_optimize import OptimizeParser
 
 outputs = {
-    VectorLogs.slug: VectorLogs,
-    VectorDiff.slug: VectorDiff
+    # loggers
+    OptimizeLogger.slug: OptimizeLogger,
+    # parsers
+    OptimizeParser.slug: OptimizeParser
 }
 
 __all__ = [
     'outputs',
-    # impls
-    'VectorLogs',
-    'VectorDiff'
+    # loggers
+    'OptimizeLogger',
+    # parsers
+    'OptimizeParser'
 ]

@@ -1,7 +1,6 @@
-from typing import Any
+from typing import Any, Dict
 
 from output import Logger
-from executor import Executor
 from instance import Instance
 
 from ..static import DEBUGGER
@@ -27,12 +26,8 @@ class Core:
     def launch(self, *args, **kwargs) -> Any:
         raise NotImplementedError
 
-    def __config__(self):
-        return {
-            # 'instance': self.instance.__config__(),
-            # 'executor': self.executor.__config__(),
-            'random_seed': self.random_seed,
-        }
+    def __config__(self) -> Dict[str, Any]:
+        raise NotImplementedError
 
 
 __all__ = [

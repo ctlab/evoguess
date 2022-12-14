@@ -11,7 +11,7 @@ from instance.impl import Instance
 from instance.module.encoding import CNF
 from instance.module.variables import Interval
 
-from output.impl import VectorLogs
+from output.impl import OptimizeLogger
 from typings.work_path import WorkPath
 from executor.impl import ProcessExecutor
 
@@ -32,7 +32,6 @@ if __name__ == '__main__':
             by_mask=[],
             variables=Interval(start=1, length=150)
         ),
-        logger=VectorLogs(logs_path),
         executor=ProcessExecutor(max_workers=4),
         sampling=Const(size=1024, split_into=256),
         instance=Instance(
@@ -52,7 +51,8 @@ if __name__ == '__main__':
             min_update_size=6
         ),
         comparator=MinValueMaxSize(),
-        limitation=WallTime(from_string='00:05:00'),
+        logger=OptimizeLogger(logs_path),
+        limitation=WallTime(from_string='00:00:30'),
     ).launch()
 
     for point in solution:

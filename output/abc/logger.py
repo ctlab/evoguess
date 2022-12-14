@@ -1,11 +1,11 @@
 import os
 import json
 
-from typing import Any
+from typing import Any, Dict
 from datetime import datetime
 from time import sleep, time as now
 
-from .output import Output, LogFormat, Module, Configuration
+from .output import Output, LogFormat, Config
 
 from typings.work_path import WorkPath
 from typings.error import OutputSessionError
@@ -21,20 +21,18 @@ class Logger(Output):
 
     def __init__(self, out_path: WorkPath, log_format: LogFormat = LogFormat.JSON_LINE):
         super().__init__(out_path, log_format)
-        self.session_enter = None
 
     def __enter__(self):
         session = None
-        path = str(self._path)
+        path = str(self.out_path)
         name = f'{date_now()}_?'
         while session is None:
             try:
                 os.mkdir(os.path.join(path, name))
-                session = self._path.to_path(name)
+                session = self.out_path.to_path(name)
             except FileExistsError:
                 name = sleep(1) or f'{date_now()}_?'
 
-        self.session_enter = now()
         self._session = session
         self._name = name
         return self
@@ -44,35 +42,24 @@ class Logger(Output):
         name = self._name.replace('?', date_now())
         os.rename(path, path.replace(self._name, name))
         self._session, self._name = None, None
-        self.session_enter = None
 
-    def var_set(self, var_set: Configuration, filename: str = 'var_set.json') -> 'Logger':
+    def _write(self, string: str, filename: str) -> 'Logger':
         if self._session is None:
             raise OutputSessionError
 
         filepath = self._session.to_file(filename)
-        with open(filepath, 'w+') as handle:
-            json.dump(var_set, handle, indent=2)
+        with open(filepath, 'a+') as handle:
+            handle.write(string)
         return self
 
-    def config(self, config: Configuration, filename: str = 'config.json') -> 'Logger':
-        if self._session is None:
-            raise OutputSessionError
+    def _format(self, obj: Dict[str, Any], filename: str) -> 'Logger':
+        if self.log_format == LogFormat.JSON_LINE:
+            return self._write(f'{json.dumps(obj)}\n', filename)
+        else:
+            raise NotImplementedError
 
-        filepath = self._session.to_file(filename)
-        with open(filepath, 'w+') as handle:
-            json.dump(config, handle, indent=2)
-        return self
-
-    def _write(self, *strings: str, filename: str) -> 'Logger':
-        if self._session is None:
-            raise OutputSessionError
-
-        if len(strings) > 0:
-            filepath = self._session.to_file(filename)
-            with open(filepath, 'a+') as f:
-                f.writelines([f'{s}\n' for s in strings])
-        return self
+    def config(self, config: Config, filename: str = 'config.json') -> 'Logger':
+        return self._write(json.dumps(config, indent=2), filename)
 
     def write(self, *args: Any, **kwargs: Any) -> 'Logger':
         raise NotImplementedError

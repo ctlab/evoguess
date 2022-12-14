@@ -4,7 +4,7 @@ from core.module.sampling import Const
 from core.module.limitation import WallTime
 from core.module.comparator import MinValueMaxSize
 
-from output.impl import VectorLogs
+from output.impl import OptimizeLogger
 from executor.impl import ThreadExecutor
 
 from instance.impl import StreamCipher
@@ -27,7 +27,6 @@ if __name__ == '__main__':
 
     solution = Optimize(
         space=InputSet(),
-        logger=VectorLogs(logs_path),
         executor=ThreadExecutor(max_workers=8),
         sampling=Const(size=256, split_into=64),
         instance=StreamCipher(
@@ -46,6 +45,7 @@ if __name__ == '__main__':
             selection=Roulette()
         ),
         comparator=MinValueMaxSize(),
+        logger=OptimizeLogger(logs_path),
         limitation=WallTime(from_string='01:00:00')
     ).launch()
 

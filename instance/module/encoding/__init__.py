@@ -2,7 +2,7 @@ from .impl import *
 from .encoding import *
 from . import impl, encoding
 
-encodings = impl.encodings
+impls = impl.encodings
 
 __all__ = [
     *impl.__all__,

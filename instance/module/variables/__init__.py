@@ -5,7 +5,7 @@ from .impl import *
 from .variables import *
 from .vars import var_from
 
-variables = {
+impls = {
     **impl.variables,
     Variables.slug: Variables,
 }
@@ -19,11 +19,11 @@ def make_backdoor(_variables: Variables) -> Backdoor:
     )
 
 
-def variables_from(config: Dict[str, Any]):
+def variables_from(config: Dict[str, Any]) -> Variables:
     slug = config.pop('slug')
     if config.get('from_vars') is not None:
         config['from_vars'] = list(map(var_from, config['from_vars']))
-    return variables[slug](**config)
+    return impls[slug](**config)
 
 
 __all__ = [
