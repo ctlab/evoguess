@@ -11,16 +11,16 @@ from instance.module.encoding import Clause, CNFData
 from instance.module.variables import Backdoor, Variables, Mask
 
 
-def is2clause(clause: Clause, value: int) -> bool:
+def to2clause(clause: Clause, value: int) -> bool:
     index, size = 0, len(clause)
     while size > 2 and index < len(clause):
         index, literal = index + 1, clause[index]
         if literal == value:
             return False
-        if value is not None:
+        if literal == -value:
             size -= 1
 
-    return size <= 2
+    return len(clause) > 2 >= size
 
 
 class IpsSubset(Space):
@@ -37,21 +37,26 @@ class IpsSubset(Space):
         if not self._subset:
             data = instance.encoding.get_data()
             if isinstance(data, CNFData):
+                not2sat_clauses = [
+                    clause for clause in
+                    data.clauses() if len(clause) > 2
+                ]
                 variable_weights = []
                 for var in self.variables:
-                    counter_0 = 0
-                    for value in var.supplements({var: 0})[0]:
-                        for clause in data.clauses():
-                            counter_0 += is2clause(clause, value)
-                    counter_1 = 0
-                    for value in var.supplements({var: 0})[0]:
-                        for clause in data.clauses():
-                            counter_1 += is2clause(clause, value)
-                    variable_weights.append(counter_0 * counter_1)
+                    print(var.name)
+                    w_plus, w_minus = 0, 0
+                    for clause in not2sat_clauses:
+                        for value in var.supplements({var: 1})[0]:
+                            w_plus += to2clause(clause, value)
+                        for value in var.supplements({var: 0})[0]:
+                            w_minus += to2clause(clause, value)
+                    variable_weights.append(w_plus * w_minus)
 
+                self._subset = instance.input_set.variables()
                 indexes = argsort(variable_weights)[::-1][:self.of_size]
-                self._subset = pick_by(self.variables.variables(), indexes)
+                self._subset += pick_by(self.variables.variables(), indexes)
 
+        print(len(self._subset) - 64)
         return Backdoor(from_vars=self._subset)
 
     def __config__(self) -> Dict[str, Any]:

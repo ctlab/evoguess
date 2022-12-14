@@ -5,8 +5,8 @@ from numpy.random import randint
 from util.iterable import concat, to_oct, to_bin, list_of, pick_by, omit_by, split_by
 
 
-class TestEncodings(unittest.TestCase):
-    def test_general(self):
+class TestUtils(unittest.TestCase):
+    def test_utils(self):
         self.assertEqual(concat([1, 2, 3], [6, 7, 10]), [1, 2, 3, 6, 7, 10])
         self.assertEqual(concat([1, 2], (4,), {5, 5, 5}, range(6, 8)), [1, 2, 4, 5, 6, 7])
 
