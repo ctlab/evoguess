@@ -6,6 +6,8 @@ from ..models import WorkerArgs, WorkerResult, \
     WorkerCallable, Payload, Results, Estimation, Status
 from .function_ibs import InverseBackdoorSets, ibs_supplements
 
+from function.module.solver import Solver
+from function.module.measure import Measure
 from instance.module.variables import Backdoor
 
 
@@ -29,6 +31,10 @@ def ips_worker_fn(args: WorkerArgs, payload: Payload) -> WorkerResult:
 class InversePolynomialSets(InverseBackdoorSets):
     slug = 'function:ips'
 
+    def __init__(self, solver: Solver, measure: Measure, min_solved: float = 0.):
+        super().__init__(solver, measure)
+        self.min_solved = min_solved
+
     def get_worker_fn(self) -> WorkerCallable:
         return ips_worker_fn
 
@@ -39,7 +45,7 @@ class InversePolynomialSets(InverseBackdoorSets):
 
         solved = statuses.get(Status.SOLVED, 0)
         resolved = statuses.get(Status.RESOLVED, 0)
-        if solved + resolved > 0:
+        if solved + resolved > self.min_solved * count:
             value = power * (3. * count / (solved + resolved))
 
         return {

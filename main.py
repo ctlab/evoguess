@@ -32,7 +32,7 @@ if __name__ == '__main__':
             by_mask=[],
             variables=Interval(start=1, length=150)
         ),
-        executor=ProcessExecutor(max_workers=4),
+        executor=ProcessExecutor(max_workers=16),
         sampling=Const(size=1024, split_into=256),
         instance=Instance(
             encoding=CNF(from_file=cnf_file)
@@ -52,7 +52,7 @@ if __name__ == '__main__':
         ),
         comparator=MinValueMaxSize(),
         logger=OptimizeLogger(logs_path),
-        limitation=WallTime(from_string='00:00:30'),
+        limitation=WallTime(from_string='00:30:00'),
     ).launch()
 
     for point in solution:

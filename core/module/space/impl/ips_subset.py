@@ -43,7 +43,6 @@ class IpsSubset(Space):
                 ]
                 variable_weights = []
                 for var in self.variables:
-                    print(var.name)
                     w_plus, w_minus = 0, 0
                     for clause in not2sat_clauses:
                         for value in var.supplements({var: 1})[0]:
@@ -56,7 +55,6 @@ class IpsSubset(Space):
                 indexes = argsort(variable_weights)[::-1][:self.of_size]
                 self._subset += pick_by(self.variables.variables(), indexes)
 
-        print(len(self._subset) - 64)
         return Backdoor(from_vars=self._subset)
 
     def __config__(self) -> Dict[str, Any]:

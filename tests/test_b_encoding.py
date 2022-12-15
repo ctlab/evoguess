@@ -36,7 +36,7 @@ class TestEncodings(unittest.TestCase):
         )
 
     def test_cnf_from_file(self):
-        root_path = WorkPath('examples', 'data', root='..')
+        root_path = WorkPath('examples', 'data')
         cnf = CNF(from_file=root_path.to_file('a5_1.cnf'))
         cnf_data = cnf.get_data()
 
