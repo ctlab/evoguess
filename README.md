@@ -1,3 +1,5 @@
+**The package is deprecated in favor of https://github.com/ctlab/evoguess-ai**
+
 # EvoGuess v2.1
 
 Component for finding decomposition sets and estimating hardness of SAT instances. The search for decomposition sets is realized via the optimization of the special pseudo-Boolean black-box functions that estimate the hardness of the decomposition corresponding to the employed decomposition method and the considered set. To optimize the value of such functions the framework uses metaheuristic algorithms, in particular, the evolutionary ones.
