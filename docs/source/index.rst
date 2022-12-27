@@ -3,7 +3,8 @@
 Welcome to EvoGuess's documentation!
 ====================================
 
-| Framework for decomposition set (backdoor) searching and hardness estimating of SAT instances. Some Boolean formula is estimated in the following way:
+| Framework for decomposition set searching and hardness estimating of SAT instances.
+| Some Boolean formula is estimated in the following way:
 
 1. the algorithm **chooses** decomposition set of some variables of the Boolean formula;
 2. the original formula is **splits** into a number of simpler formulas using chosen decomposition set;
@@ -37,28 +38,41 @@ At the end of the solver's process, measures are collected for all formulas, whi
 Calculating
 -----------
 
-| The measures collected in the previous step are used to calculate the estimation. For this one of the functions can be used:
+| The measures collected in the previous step are used to calculate the estimation.
+| For this one of the functions can be used:
 
 1. **Guess-and-Determine** (G-a-D)
-2. **Inverse Backdoor Sets** (IBS), which proposed in [AAAI2018]_
-3. **Probability Backdoors** based on G-a-D, which proposed in [AAAI2022]_
-4. **Inverse Polynomial Sets** based on IBS
+2. G-a-D based on **Inverse Backdoor Sets** (IBS), which proposed in [AAAI2018]_
+3. G-a-D based on **ρ-backdoors**, which proposed in [AAAI2022]_
 
 .. toctree::
     :maxdepth: 1
     :caption: Getting started
 
     getting_started/installation
-    getting_started/typical_use
+    getting_started/how_use
+    getting_started/configuration
     getting_started/citations
 
 .. toctree::
     :maxdepth: 1
     :caption: User manual
 
-    user_manual/core
-    user_manual/instance
-    user_manual/function
     user_manual/algorithm
+    user_manual/instance
     user_manual/executor
+    user_manual/function
+    user_manual/method
     user_manual/output
+    user_manual/backdoors
+    user_manual/example_configuration
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Advanced usage
+
+    advanced_usage/preliminaries
+    advanced_usage/algorithm.abstract
+    advanced_usage/executor.abstract
+    advanced_usage/function.abstract
+    advanced_usage/output.abstract

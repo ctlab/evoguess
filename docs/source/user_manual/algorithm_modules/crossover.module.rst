@@ -1,51 +1,37 @@
 Crossover
 =========
 
-In genetic algorithms, оператор скрещивания определяет каким образом будут скрещиваться two selected individuals. Особи определяются массивом бит равной длины. При скрещивании заданные биты на одинаковых позициях меняются местами и на выходе получаются две новые особи.
+In evolutionary and genetic algorithms, the crossing operator is used to swap bits between two vectors specifying the corresponding decomposition sets.
 
 Uniform crossover
 -----------------
 
-При скрещивании каждая пара бит может поменяться местами с вероятностью равной **swap_prob**.
+Each bit can be swapped with a probability of **prob** (default **0.2**).
 
-.. code-block:: python
+.. code-block:: none
 
-   from algorithm.module.crossover import Uniform
-
-    crossover = Uniform(
-        swap_prob: float = 0.5,
-        random_seed: Optional[int] = None
-    )
+    'selection': {
+        'slug': 'crossover:uniform',
+        'seed': <optional number>,
+        'prob': <optional float>
+    }
 
 One-point crossover
 -------------------
 
-При скрещивании случайно выбирается индекс **i** внутри массива бит, и каждая пара бит от **0** до **i** меняется местами.
+.. code-block:: none
 
-.. code-block:: python
-
-   from algorithm.module.crossover import OnePoint
-
-    crossover = OnePoint(
-        random_seed: Optional[int] = None
-    )
+    'selection': {
+        'slug': 'crossover:one-point',
+        'seed': <optional number>,
+    }
 
 Two-point crossover
 -------------------
 
-При скрещивании случайно выбирается два индекса **i1** и **i2** внутри массива бит, и каждая пара бит от **i1** до **i2** меняется местами.
+.. code-block:: none
 
-.. code-block:: python
-
-   from algorithm.module.crossover import TwoPoint
-
-    crossover = TwoPoint(
-        random_seed: Optional[int] = None
-    )
-
-
-Other algorithm modules
------------------------
-
-* `Mutation <mutation.module.html>`_
-* `Selection <selection.module.html>`_
+    'selection': {
+        'slug': 'crossover:two-point',
+        'seed': <optional number>,
+    }

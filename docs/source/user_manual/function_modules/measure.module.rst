@@ -3,43 +3,39 @@ Measure
 
 Measure of hardness.
 
-Solving time
+Time measure
 ------------
 
-.. code-block:: python
+.. code-block:: none
 
-    measure = SolvingTime(
-        budget: Optional[float]
-        at_least: Optional[float]
-    )
+    'measure': {
+        'slug': 'measure:time'
+    }
 
-Conflicts
----------
+Conflicts measure
+-----------------
 
-.. code-block:: python
+.. code-block:: none
 
-    measure = Conflicts(
-        budget: Optional[float]
-        at_least: Optional[float]
-    )
+    'measure': {
+        'slug': 'measure:conflicts'
+    }
 
-Propagations
-------------
+Propagations measure
+--------------------
 
-.. code-block:: python
+.. code-block:: none
 
-    measure = Propagations(
-        budget: Optional[float]
-        at_least: Optional[float]
-    )
+    'measure': {
+        'slug': 'measure:propagations'
+    }
 
-Learned literals
-----------------
+Learned literals measure
+------------------------
 
-.. code-block:: python
+.. code-block:: none
 
-    measure = LearnedLiterals(
-        budget: Optional[float]
-        at_least: Optional[float]
-    )
+    'measure': {
+        'slug': 'measure:learned_literals'
+    }
 

@@ -1,0 +1,65 @@
+{
+  "algorithm": {
+    "mu": 1,
+    "lmbda": 5,
+    "slug": "evolution:plus",
+    "limit": {
+      "value": "01:00:00",
+      "slug": "limit:walltime"
+    },
+    "selection": {
+      "slug": "selection:roulette"
+    },
+    "mutation": {
+      "slug": "mutation:doer"
+    },
+    "crossover": {
+      "slug": "crossover:two-point"
+    }
+  },
+  "output": {
+    "slug": "output:json",
+    "path": "wcci22/sgen_150_100/fea_sync"
+  },
+  "instance": {
+    "slug": "instance",
+    "cnf": {
+      "slug": "cnf",
+      "path": "sgen_150_100.cnf"
+    },
+    "input_set": {
+      "slug": "interval",
+      "start": 1,
+      "length": 150
+    }
+  },
+  "method": {
+    "slug": "method",
+    "sampling": {
+      "slug": "sampling:const",
+      "count": 16384
+    }
+  },
+  "function": {
+    "slug": "function:gad",
+    "solver": {
+      "slug": "solver:pysat:cd"
+    },
+    "measure": {
+      "slug": "measure:propagations"
+    }
+  },
+  "executor": {
+    "workers": 36,
+    "slug": "executor:process",
+    "shaping": {
+      "slug": "shaping:chunks",
+      "chunk_rate": 0.44444
+    }
+  },
+  "backdoors": [
+    {
+      "slug": "backdoor:base"
+    }
+  ]
+}

@@ -1,20 +1,22 @@
-from .function_rho import RhoFunction
-from .function_gad import GuessAndDetermine
-from .function_ibs import InverseBackdoorSets
-from .function_ips import InversePolynomialSets
+from .ibs import *
+from .gad import *
+from .up_gad import *
+from .ibs_linear import *
+from .gad_bounded import *
 
 functions = {
-    RhoFunction.slug: RhoFunction,
     GuessAndDetermine.slug: GuessAndDetermine,
+    UPGuessAndDetermine.slug: UPGuessAndDetermine,
+    BoundedGuessAndDetermine.slug: BoundedGuessAndDetermine,
+    #
     InverseBackdoorSets.slug: InverseBackdoorSets,
-    InversePolynomialSets.slug: InversePolynomialSets
+    LinearInverseBackdoorSets.slug: LinearInverseBackdoorSets,
 }
 
 __all__ = [
-    'functions',
-    # impls
-    'RhoFunction',
     'GuessAndDetermine',
-    'InverseBackdoorSets',
-    'InversePolynomialSets'
+    'UPGuessAndDetermine',
+    'BoundedGuessAndDetermine',
+    #
+    'InverseBackdoorSets'
 ]

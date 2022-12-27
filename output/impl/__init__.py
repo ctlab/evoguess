@@ -1,17 +1,9 @@
-from .logger_optimize import OptimizeLogger
-from .parser_optimize import OptimizeParser
+from .json_out import JSONOut
 
 outputs = {
-    # loggers
-    OptimizeLogger.slug: OptimizeLogger,
-    # parsers
-    OptimizeParser.slug: OptimizeParser
+    JSONOut.slug: JSONOut
 }
 
 __all__ = [
-    'outputs',
-    # loggers
-    'OptimizeLogger',
-    # parsers
-    'OptimizeParser'
+    'JSONOut'
 ]

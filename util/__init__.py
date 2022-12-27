@@ -1,11 +1,5 @@
-from operator import getitem
 from functools import reduce
-
-from . import iterable, lazy_file
-
-
-def _key(function):
-    return str(function).split()[1].lower()
+from operator import getitem
 
 
 def load_modules(modules=(()), **kwargs):
@@ -22,18 +16,28 @@ def load_modules(modules=(()), **kwargs):
     return loaded_kwargs
 
 
+def _key(function):
+    return str(function).split()[1].lower()
+
+
 def build(structure, **kwargs):
-    constructor, deps = list(structure.items())[0]
+    constructor, dependencies = list(structure.items())[0]
     key = _key(constructor)
     return key, constructor(kwargs[key], **dict([
-        build(dep, **kwargs) if isinstance(dep, dict) else
-        (_key(dep), dep(kwargs[_key(dep)])) for dep in deps
+        build(dependency, **kwargs) if isinstance(dependency, dict) else
+        (_key(dependency), dependency(kwargs[_key(dependency)]))
+        for dependency in dependencies
     ]))
 
 
 __all__ = [
-    'iterable',
-    'lazy_file',
+    'array',
+    'const',
+    'error',
+    'caster',
+    'bitmask',
+    'numeral',
+    'collection',
     #
     'build',
     'load_modules',

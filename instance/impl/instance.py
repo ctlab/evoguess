@@ -1,72 +1,73 @@
-from itertools import chain
-from typing import List, Optional
-from numpy.random import RandomState
+from ..typings.variables.impl import backdoors
 
-from ..module.encoding import Encoding
-from ..module.variables.vars import Var, Supplements, compress
-from ..module.variables import Variables, get_var_deps, get_var_bases
-
-
-class InstanceVars:
-    def __init__(
-            self,
-            dependent_vars: List[Var],
-            propagation_vars: List[Var]
-    ):
-        self.dependent_vars = dependent_vars
-        self.propagation_vars = propagation_vars
-
-        self._var_deps = get_var_deps(propagation_vars)
-        self._deps_bases = get_var_bases(self._var_deps)
-
-    def get_propagation(self, state: RandomState) -> Supplements:
-        _deps_values = {
-            var: value for var, value in
-            zip(self._var_deps, state.randint(0, self._deps_bases))
-        }
-        return compress(*(
-            var.supplements(_deps_values) for var in self.propagation_vars
-        ))
-
-    def get_dependent(self, solution: List[int]) -> Supplements:
-        _values = {abs(lit): 1 if lit > 0 else 0 for lit in solution}
-        return compress(*(
-            var.supplements(_values) for var in self.dependent_vars
-        ))
+from os.path import isfile
+from util.array import side_trim
+from util.operator import attreq
 
 
 class Instance:
     slug = 'instance'
-    input_dependent = False
+    name = 'Instance'
 
-    def __init__(self, encoding: Encoding):
-        self.encoding = encoding
-
-    def get_propagation_vars(self) -> List[Var]:
-        return []
-
-    def get_dependent_vars(self, *args: Variables) -> List[Var]:
-        return list(chain(*(arg.variables() for arg in args)))
-
-    def get_instance_vars(self, *deps: Variables) -> Optional[InstanceVars]:
-        dependent_vars = self.get_dependent_vars(*deps)
-        # todo: zero check is needed?
-        return InstanceVars(
-            dependent_vars=dependent_vars,
-            propagation_vars=self.get_propagation_vars(),
-        ) if len(dependent_vars) > 0 else None
+    def __init__(self, cnf, input_set, *args, **kwargs):
+        self.cnf = cnf
+        self.input_set = input_set
+        self.extra_set = kwargs.get('extra_set')
 
     def __str__(self):
-        return f'{self.slug} of {self.encoding}'
+        return self.name
+
+    def clauses(self):
+        return self.cnf.clauses()
+
+    def max_literal(self):
+        return self.cnf.max_literal()
+
+    def check(self):
+        return isfile(self.cnf.path)
+
+    def get_backdoor(self, slug='backdoor:base', **kwargs):
+        if '_list' not in kwargs:
+            return backdoors[slug](_list=self.input_set, **kwargs)
+        else:
+            _list = kwargs.pop('_list')
+            if isinstance(_list, str):
+                _list = backdoors[slug]._from_str(_list)
+            mask = [1 if v in _list else 0 for v in self.input_set]
+            return backdoors[slug](_list=self.input_set, **kwargs)._set_mask(mask)
+
+    def get_backdoor2(self, kind, base, mask):
+        Constructor = next(filter(attreq('kind', kind), backdoors.values()), None)
+        backdoor = Constructor(base=base, _list=self.input_set)
+        return backdoor._set_mask(mask)
+
+    def get_bd_mask(self, backdoor):
+        # assert backdoor._list == self.input_set._list
+        return side_trim(backdoor.get_mask(), at_start=False)
+
+    def get_assumptions(self, backdoor, values):
+        variables = backdoor.variables()
+
+        assumptions = [x if values[i] else -x for i, x in enumerate(variables)]
+        return assumptions
+
+    @staticmethod
+    def has_intervals():
+        return False
+
+    def intervals(self):
+        return []
 
     def __info__(self):
         return {
             'slug': self.slug,
-            'encoding': self.encoding.__info__(),
+            'name': self.name,
+            'cnf': self.cnf.__info__(),
+            'input_set': self.input_set.__info__(),
+            'extra_set': self.extra_set and self.extra_set.__info__()
         }
 
 
 __all__ = [
-    'Instance',
-    'InstanceVars'
+    'Instance'
 ]

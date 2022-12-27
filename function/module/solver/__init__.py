@@ -1,10 +1,6 @@
 from .impl import *
-from .solver import *
-from . import impl, solver
+from . import impl
 
 solvers = impl.solvers
 
-__all__ = [
-    *impl.__all__,
-    *solver.__all__,
-]
+__all__ = impl.__all__

@@ -1,20 +1,25 @@
-from os import cpu_count
-from concurrent.futures import ThreadPoolExecutor
+from .._abc.executor import *
 
-from ..abc.executor import *
+from concurrent.futures import as_completed
+from concurrent.futures.thread import ThreadPoolExecutor
 
 
 class ThreadExecutor(Executor):
     slug = 'executor:thread'
+    name = 'Executor: Thread'
 
-    def __init__(self, max_workers: int = None):
-        super().__init__(max_workers or cpu_count())
-        self.executor = ThreadPoolExecutor(max_workers=self.max_workers)
+    awaiter_dict = {
+        'as_completed': as_completed,
+    }
 
-    def submit(self, fn: Callable, *args, **kwargs) -> Future:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.executor = ThreadPoolExecutor(max_workers=self.workers)
+
+    def submit(self, fn: Callable, *args, **kwargs):
         return self.executor.submit(fn, *args, **kwargs)
 
-    def shutdown(self, wait: bool = True):
+    def shutdown(self, wait=True):
         self.executor.shutdown(wait)
 
 
