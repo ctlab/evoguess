@@ -1,4 +1,4 @@
-**The package is deprecated in favor of https://github.com/ctlab/evoguess-ai**
+**The package is deprecated in favor of https://github.com/aimclub/evoguess-ai**
 
 # EvoGuess
 
